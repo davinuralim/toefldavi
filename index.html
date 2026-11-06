@@ -277,6 +277,7 @@
       border-color: #94a3b8;
     }
 
+    /* KONDISI SAAT OPSI DIPILIH (TERCANTUM LANGSUNG) */
     .option-item.selected {
       border-color: var(--primary) !important;
       background: var(--primary-soft) !important;
@@ -413,7 +414,6 @@
       margin-top: 4px;
     }
 
-    /* KOTAK RINCIAN SKOR PER SECTION */
     .score-breakdown-card {
       background: #f8fafc;
       border: 1.5px solid #e2e8f0;
@@ -471,18 +471,10 @@
       color: var(--text-main);
     }
 
-    .btn-modal-review:hover {
-      background: #e2e8f0;
-    }
-
     .btn-modal-retake {
       background: var(--primary);
       color: white;
       box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-    }
-
-    .btn-modal-retake:hover {
-      background: var(--primary-hover);
     }
 
     @keyframes fadeIn {
@@ -502,10 +494,10 @@
     <div class="header-content">
       <div class="brand-box">
         <h1>Simulasi Test TOEFL</h1>
-        <span class="brand-author">By Davi Nur Alim</span>
+        <span class="brand-author">Dibuat oleh Davi Nur Alim</span>
       </div>
       <div class="header-stats">
-        <div class="stat-chip" id="attemptChip">♾️ Soal Baru Tanpa Batas</div>
+        <div class="stat-chip">♾️ Soal Baru Tanpa Batas</div>
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="progressBar"></div>
         </div>
@@ -516,7 +508,7 @@
 
   <main class="container">
     <div id="restoreToast" class="toast-box toast-restore">
-      ✨ <strong>Sesi Dipulihkan!</strong> Soal & jawaban Anda yang sedang dikerjakan berhasil dikembalikan.
+      ✨ <strong>Sesi Dipulihkan!</strong> Soal & jawaban yang sudah Anda isi tetap aman tersimpan.
     </div>
 
     <form id="toeflForm">
@@ -532,20 +524,17 @@
     <p>Simulasi TOEFL PBT Lengkap (50 Soal) • <strong>By Davi Nur Alim</strong></p>
   </footer>
 
-  <!-- MODAL HASIL TEST LENGKAP -->
   <div class="modal-overlay" id="resultModal">
     <div class="modal-card">
       <div style="font-size: 2.8rem; margin-bottom: 4px;">🎯</div>
       <h2 style="font-size: 1.45rem; font-weight: 800;">Hasil Tes TOEFL Anda</h2>
       <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">By Davi Nur Alim</p>
 
-      <!-- SKOR TOTAL TOEFL PBT -->
       <div class="score-badge-circle">
         <span class="num" id="toeflScoreVal">310</span>
         <span class="sub">Total Skor TOEFL</span>
       </div>
 
-      <!-- RINCIAN BENAR SETIAP BAGIAN -->
       <div class="score-breakdown-card">
         <div class="breakdown-row">
           <span>🎧 <strong>Listening:</strong></span>
@@ -574,17 +563,17 @@
 
   <script>
     /* =========================================================
-       MESIN GENERATOR 50 SOAL DINAMIS TANPA BATAS (INFINITE ENGINE)
+       MESIN GENERATOR 50 SOAL DINAMIS TANPA BATAS
     ========================================================== */
     const listeningPatterns = [
       {
-        dialogue: (sub, time, place) => `Woman: Did you finish the research paper for ${sub}? Man: Not yet, the professor pushed back the deadline until ${time}.`,
+        dialogue: (sub, time) => `Woman: Did you finish the research paper for ${sub}? Man: Not yet, the professor pushed back the deadline until ${time}.`,
         q: "What did the man say about the research paper?",
         ans: "The submission date has been postponed.",
         distractors: ["He has already handed it in.", "He refuses to complete it.", "The professor cancelled the assignment."]
       },
       {
-        dialogue: (sub, act, place) => `Man: Are you planning on attending the annual ${sub} seminar this weekend? Woman: I wouldn't miss it for anything in the world!`,
+        dialogue: (sub) => `Man: Are you planning on attending the annual ${sub} seminar this weekend? Woman: I wouldn't miss it for anything in the world!`,
         q: "What does the woman mean?",
         ans: "She is definitely going to the seminar.",
         distractors: ["She cannot afford the ticket.", "She will miss it due to an exam.", "She is indifferent about the topic."]
@@ -592,7 +581,7 @@
       {
         dialogue: (tool, loc, person) => `Woman: I can't find my ${tool} anywhere. Man: I think ${person} left it on the table in the ${loc}.`,
         q: "Where does the man think the item is?",
-        ans: (tool, loc, person) => `On the table in the ${loc}.`,
+        ans: (tool, loc) => `On the table in the ${loc}.`,
         distractors: ["Inside the locker.", "At the bookstore.", "In the professor's office."]
       },
       {
@@ -602,25 +591,25 @@
         distractors: ["Drop the course immediately.", "Change his major.", "Complete the project alone."]
       },
       {
-        dialogue: (dest, mode, reason) => `Woman: Are you taking the flight to ${dest}? Man: Plane tickets were out of my reach, so I booked a ${mode} instead.`,
+        dialogue: (dest, mode) => `Woman: Are you taking the flight to ${dest}? Man: Plane tickets were out of my reach, so I booked a ${mode} instead.`,
         q: "How will the man travel?",
         ans: (d, mode) => `By ${mode}.`,
         distractors: ["By private jet.", "He decided to stay home.", "By renting a bicycle."]
       },
       {
-        dialogue: (event, weather, alt) => `Man: The forecast says it will ${weather} all afternoon. Woman: There goes our plan for ${event}.`,
+        dialogue: (event, weather) => `Man: The forecast says it will ${weather} all afternoon. Woman: There goes our plan for ${event}.`,
         q: "What does the woman imply?",
         ans: (event) => `Their plans for ${event} must be cancelled.`,
         distractors: ["They enjoy being outdoors in the weather.", "The event was moved indoors.", "They are going tomorrow."]
       },
       {
-        dialogue: (food, meal, chef) => `Woman: Is there any specialty dish for ${meal}? Man: The chef prepares a truly exquisite ${food}.`,
+        dialogue: (food, meal) => `Woman: Is there any specialty dish for ${meal}? Man: The chef prepares a truly exquisite ${food}.`,
         q: "What will the man probably recommend?",
         ans: (food) => `The ${food}.`,
         distractors: ["Fast food.", "A cold sandwich.", "A glass of water."]
       },
       {
-        dialogue: (course, status, act) => `Man: How did your evaluation in ${course} turn out? Woman: It couldn't have gone better!`,
+        dialogue: (course) => `Man: How did your evaluation in ${course} turn out? Woman: It couldn't have gone better!`,
         q: "What does the woman mean?",
         ans: "The evaluation went exceptionally well.",
         distractors: ["She failed the evaluation.", "She missed the meeting.", "She wants to retake the test."]
@@ -657,7 +646,7 @@
         })
       },
       {
-        gen: (entity, place, feature) => ({
+        gen: (entity, place) => ({
           q: `________ in the heart of ${place}, the historic ${entity} attracts scholars worldwide.`,
           ans: "Situated",
           distractors: ["Situating", "It is situated", "To situate"]
@@ -678,21 +667,21 @@
         })
       },
       {
-        gen: (elem, use, industry) => ({
+        gen: (elem) => ({
           q: `Because ${elem} is both lightweight and resilient, ________ extensively in aerospace manufacturing.`,
           ans: "it is utilized",
           distractors: ["utilized", "is utilized", "utilizing it"]
         })
       },
       {
-        gen: (item, char, role) => ({
+        gen: () => ({
           q: `Neither the principal investigator nor the assistants ________ satisfied with the preliminary data.`,
           ans: "were",
           distractors: ["was", "is", "being"]
         })
       },
       {
-        gen: (subj, field, verb) => ({
+        gen: () => ({
           q: `Under no circumstances ________ confidential research findings without prior authorization.`,
           ans: "should researchers disclose",
           distractors: ["researchers should disclose", "researchers disclose", "disclose researchers"]
@@ -762,7 +751,6 @@
     function generateDynamic50Questions() {
       const generated = [];
 
-      // 1. Generate 15 Soal Listening
       for (let i = 0; i < 15; i++) {
         const pattern = listeningPatterns[i % listeningPatterns.length];
         const s = pickRandom(vocab.subjects);
@@ -791,7 +779,6 @@
         });
       }
 
-      // 2. Generate 20 Soal Structure
       for (let i = 0; i < 20; i++) {
         const pattern = structurePatterns[i % structurePatterns.length];
         const s = pickRandom(vocab.subjects);
@@ -816,7 +803,6 @@
         });
       }
 
-      // 3. Generate 15 Soal Reading
       for (let i = 0; i < 15; i++) {
         const topic = readingTopics[i % readingTopics.length];
         const opts = shuffle([topic.ans, ...topic.distractors]);
@@ -845,71 +831,85 @@
     }
 
     /* =========================================================
-       SESSION STATE (ANTI-HILANG SAAT REFRESH DI TENGAH JALAN)
+       SISTEM MEMORI PENYIMPANAN AMAN ANTI-RESET
     ========================================================== */
-    const SESSION_KEY = 'TOEFL_DAVI_CLEAN_SESSION';
+    const STORAGE_KEY = 'TOEFL_DAVI_PERSISTENT_SESSION_V2';
     let activeQuestions = [];
     let userAnswers = {};
     let isTestSubmitted = false;
 
     function initTest() {
-      const savedSession = localStorage.getItem(SESSION_KEY);
+      const savedRaw = localStorage.getItem(STORAGE_KEY);
 
-      if (savedSession) {
+      if (savedRaw) {
         try {
-          const parsed = JSON.parse(savedSession);
-          // JIKA SUDAH SELESAI LALU DI-REFRESH: BUAT SOAL BARU LAGI!
-          if (parsed.isCompleted) {
-            localStorage.removeItem(SESSION_KEY);
-            generateFreshTestSession();
+          const parsed = JSON.parse(savedRaw);
+
+          // 1. JIKA SUDAH PERNAH DI-SUBMIT & SKOR KELUAR -> REFRESH = BUAT SOAL BARU
+          if (parsed && parsed.isCompleted === true) {
+            localStorage.removeItem(STORAGE_KEY);
+            startNewTestSession();
             return;
           }
 
-          // JIKA BELUM SELESAI (TERPENCET REFRESH): PULIHKAN PROGRESS
-          activeQuestions = parsed.questions;
-          userAnswers = parsed.answers || {};
-          renderQuestions();
-          restoreSelections();
-          document.getElementById('restoreToast').style.display = 'block';
-          return;
+          // 2. JIKA BELUM SELESAI / BELUM SUBMIT -> PULIHKAN SEMUA SOAL & JAWABAN
+          if (parsed && Array.isArray(parsed.questions) && parsed.questions.length === 50) {
+            activeQuestions = parsed.questions;
+            userAnswers = parsed.answers || {};
+            isTestSubmitted = false;
+            
+            // Render langsung bersama status centang jawaban
+            renderQuestions();
+            updateProgress();
+            
+            // Tampilkan notifikasi pemulihan
+            const toast = document.getElementById('restoreToast');
+            if (toast) toast.style.display = 'block';
+            return;
+          }
         } catch (e) {
-          console.error("Gagal membaca memori sesi:", e);
+          console.error("Gagal membaca session:", e);
         }
       }
 
-      generateFreshTestSession();
+      // 3. JIKA PERTAMA KALI DIBUKA
+      startNewTestSession();
     }
 
-    function generateFreshTestSession() {
+    function startNewTestSession() {
       activeQuestions = generateDynamic50Questions();
       userAnswers = {};
       isTestSubmitted = false;
-      saveActiveSession();
+      saveCurrentState();
       renderQuestions();
       updateProgress();
     }
 
-    function saveActiveSession() {
-      const data = {
-        questions: activeQuestions,
-        answers: userAnswers,
-        isCompleted: isTestSubmitted
-      };
-      localStorage.setItem(SESSION_KEY, JSON.stringify(data));
+    function saveCurrentState() {
+      try {
+        const sessionPayload = {
+          questions: activeQuestions,
+          answers: userAnswers,
+          isCompleted: isTestSubmitted
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionPayload));
+      } catch (err) {
+        console.error("Gagal menyimpan state ke localStorage:", err);
+      }
     }
 
     /* =========================================================
-       RENDER DOM & USER INTERACTION
+       RENDER PERTANYAAN (JAWABAN TERPILIH LANGSUNG DICETAK)
     ========================================================== */
     function renderQuestions() {
       const container = document.getElementById('questionsContainer');
-      container.innerHTML = '';
+      let fullHtml = '';
 
       activeQuestions.forEach((q, index) => {
         const qNum = index + 1;
 
         if (index === 0) {
-          container.innerHTML += `
+          fullHtml += `
             <div class="section-banner">
               <span class="section-badge">Section 1</span>
               <h2>Listening Comprehension (No. 1 - 15)</h2>
@@ -917,7 +917,7 @@
             </div>
           `;
         } else if (index === 15) {
-          container.innerHTML += `
+          fullHtml += `
             <div class="section-banner">
               <span class="section-badge">Section 2</span>
               <h2>Structure & Written Expression (No. 16 - 35)</h2>
@@ -925,7 +925,7 @@
             </div>
           `;
         } else if (index === 35) {
-          container.innerHTML += `
+          fullHtml += `
             <div class="section-banner">
               <span class="section-badge">Section 3</span>
               <h2>Reading Comprehension (No. 36 - 50)</h2>
@@ -934,23 +934,21 @@
           `;
         }
 
-        const card = document.createElement('div');
-        card.className = 'question-card';
-        card.id = `card-q-${index}`;
-
         const typeLabels = { listening: 'Listening', structure: 'Structure', reading: 'Reading' };
 
-        let html = `
-          <div class="q-meta">
-            <span class="q-number">Pertanyaan ${qNum} dari 50</span>
-            <span class="q-tag">${typeLabels[q.type]}</span>
-          </div>
+        fullHtml += `
+          <div class="question-card" id="card-q-${index}">
+            <div class="q-meta">
+              <span class="q-number">Pertanyaan ${qNum} dari 50</span>
+              <span class="q-tag">${typeLabels[q.type]}</span>
+            </div>
         `;
 
         if (q.type === 'listening') {
-          html += `
+          const safeAudio = encodeURIComponent(q.audioText);
+          fullHtml += `
             <div class="audio-player-box">
-              <button type="button" class="audio-btn" onclick="playAudio('${escapeStr(q.audioText)}')">
+              <button type="button" class="audio-btn" data-audio="${safeAudio}" onclick="playAudioFromBtn(this)">
                 🔊 Putar Percakapan
               </button>
               <span style="font-size: 0.8rem; color: #6b21a8; font-weight: 600;">Klik untuk mendengarkan percakapan bahasa Inggris</span>
@@ -959,34 +957,39 @@
         }
 
         if (q.type === 'reading') {
-          html += `<div class="reading-passage">"${q.passage}"</div>`;
+          fullHtml += `<div class="reading-passage">"${q.passage}"</div>`;
         }
 
-        html += `<div class="question-text">${q.question}</div>`;
+        fullHtml += `<div class="question-text">${q.question}</div>`;
 
         const letters = ['A', 'B', 'C', 'D'];
-        html += `<div class="options-group" id="opt-group-${index}">`;
+        fullHtml += `<div class="options-group" id="opt-group-${index}">`;
+
+        // PENTING: Periksa apakah soal ini sudah punya jawaban tersimpan
+        const savedChoice = userAnswers[index] !== undefined ? Number(userAnswers[index]) : null;
+
         q.options.forEach((opt, optIdx) => {
-          html += `
-            <div class="option-item" id="label-q${index}-opt${optIdx}" onclick="chooseOption(${index}, ${optIdx})">
+          // JIKA SUDAH DIPILIH SEBELUMNYA, LANGSUNG BERIKAN KELAS .selected DI SINI
+          const isSelectedClass = (savedChoice !== null && savedChoice === optIdx) ? 'selected' : '';
+
+          fullHtml += `
+            <div class="option-item ${isSelectedClass}" id="label-q${index}-opt${optIdx}" onclick="chooseOption(${index}, ${optIdx})">
               <div class="option-radio-circle"></div>
               <span class="opt-letter">${letters[optIdx]}.</span>
               <span>${opt}</span>
             </div>
           `;
         });
-        html += `</div>`;
 
-        card.innerHTML = html;
-        container.appendChild(card);
+        fullHtml += `</div></div>`;
       });
+
+      // Render satu kali secara instan ke DOM
+      container.innerHTML = fullHtml;
     }
 
-    function escapeStr(str) {
-      return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    }
-
-    function playAudio(text) {
+    function playAudioFromBtn(button) {
+      const text = decodeURIComponent(button.getAttribute('data-audio'));
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
@@ -994,6 +997,9 @@
       window.speechSynthesis.speak(utterance);
     }
 
+    /* =========================================================
+       KLIK OPSI & SIMPAN INSTAN DETIK ITU JUGA
+    ========================================================== */
     function chooseOption(qIndex, optIndex) {
       for (let i = 0; i < 4; i++) {
         const item = document.getElementById(`label-q${qIndex}-opt${i}`);
@@ -1003,16 +1009,11 @@
       const selectedItem = document.getElementById(`label-q${qIndex}-opt${optIndex}`);
       if (selectedItem) selectedItem.classList.add('selected');
 
+      // Kunci jawaban ke memori
       userAnswers[qIndex] = Number(optIndex);
-      saveActiveSession();
-      updateProgress();
-    }
-
-    function restoreSelections() {
-      for (const [qIndex, optIndex] of Object.entries(userAnswers)) {
-        const item = document.getElementById(`label-q${qIndex}-opt${optIndex}`);
-        if (item) item.classList.add('selected');
-      }
+      
+      // Simpan langsung ke penyimpanan browser saat itu juga
+      saveCurrentState();
       updateProgress();
     }
 
@@ -1020,12 +1021,14 @@
       const answeredCount = Object.keys(userAnswers).length;
       const percentage = Math.round((answeredCount / 50) * 100);
 
-      document.getElementById('progressChip').textContent = `${answeredCount} / 50 Terjawab`;
-      document.getElementById('progressBar').style.width = `${percentage}%`;
+      const chip = document.getElementById('progressChip');
+      const bar = document.getElementById('progressBar');
+      if (chip) chip.textContent = `${answeredCount} / 50 Terjawab`;
+      if (bar) bar.style.width = `${percentage}%`;
     }
 
     /* =========================================================
-       SUBMIT, HITUNG RINCIAN NILAI & TAMPILKAN MODAL
+       SUBMIT & SKORING
     ========================================================== */
     document.getElementById('toeflForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -1037,7 +1040,7 @@
       }
 
       if (answeredCount < 50) {
-        const confirmSubmit = confirm(`Perhatian: Anda baru menjawab ${answeredCount} dari 50 soal.\nYakin ingin tetap mengumpulkan dan melihat skor sekarang?`);
+        const confirmSubmit = confirm(`Perhatian: Anda baru menjawab ${answeredCount} dari 50 soal.\nYakin ingin mengumpulkan dan melihat skor sekarang?`);
         if (!confirmSubmit) return;
       }
 
@@ -1065,10 +1068,11 @@
         }
       });
 
+      // TANDAI BAHWA TES RESMI SELESAI
       isTestSubmitted = true;
-      saveActiveSession();
+      saveCurrentState();
 
-      // Konversi Skor TOEFL PBT
+      // Hitung Skor TOEFL PBT
       const scaledL = Math.round(31 + (listeningCorrect / 15) * 37);
       const scaledS = Math.round(31 + (structureCorrect / 20) * 37);
       const scaledR = Math.round(31 + (readingCorrect / 15) * 37);
@@ -1081,20 +1085,15 @@
     });
 
     function showResultModal(totalCorrect, listCorrect, structCorrect, readCorrect, finalScore) {
-      // 1. Total Skor TOEFL PBT di Lingkaran Besar
       document.getElementById('toeflScoreVal').textContent = finalScore;
-
-      // 2. Rincian Benar per Section
       document.getElementById('resListening').textContent = `${listCorrect} / 15 Benar`;
       document.getElementById('resStructure').textContent = `${structCorrect} / 20 Benar`;
       document.getElementById('resReading').textContent = `${readCorrect} / 15 Benar`;
 
-      // 3. Total Benar & Akurasi
       const accuracy = Math.round((totalCorrect / 50) * 100);
       document.getElementById('resAccuracy').textContent = `${accuracy}%`;
       document.getElementById('resTotalCorrect').innerHTML = `<strong>${totalCorrect}</strong> / 50 Benar (${accuracy}%)`;
 
-      // Munculkan Modal Pop-up
       document.getElementById('resultModal').style.display = 'flex';
     }
 
@@ -1104,11 +1103,12 @@
     }
 
     function resetToNewQuestions() {
-      localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(STORAGE_KEY);
       location.reload();
     }
 
-    window.onload = initTest;
+    // Jalankan sesegera mungkin saat file dibuka
+    window.addEventListener('DOMContentLoaded', initTest);
   </script>
 </body>
 </html>
