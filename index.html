@@ -12,20 +12,25 @@
     :root {
       --primary: #4f46e5;
       --primary-hover: #4338ca;
+      --primary-light: #6366f1;
       --primary-soft: #eef2ff;
       --accent: #06b6d4;
+      --accent-glow: rgba(6, 182, 212, 0.25);
       --text-main: #0f172a;
       --text-muted: #64748b;
       --bg: #f8fafc;
       --surface: #ffffff;
-      --border: #cbd5e1;
+      --border: #e2e8f0;
+      --border-focus: #c7d2fe;
       --success: #10b981;
-      --success-soft: #d1fae5;
-      --danger: #ef4444;
-      --danger-soft: #fee2e2;
-      --radius: 14px;
-      --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.05);
-      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+      --success-soft: #ecfdf5;
+      --danger: #f43f5e;
+      --danger-soft: #fff1f2;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-card: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+      --shadow-hover: 0 12px 20px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
     }
 
     * {
@@ -36,19 +41,21 @@
     }
 
     body {
-      background-color: var(--bg);
+      background: radial-gradient(circle at top left, #f1f5f9, #f8fafc 40%);
       color: var(--text-main);
       line-height: 1.6;
+      min-height: 100vh;
     }
 
+    /* HEADER GLASSMORPHISM */
     header {
       position: sticky;
       top: 0;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(12px);
-      border-bottom: 2px solid var(--border);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.9);
       z-index: 100;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04);
     }
 
     .header-content {
@@ -65,7 +72,10 @@
     .brand-box h1 {
       font-size: 1.25rem;
       font-weight: 800;
-      color: var(--primary);
+      background: linear-gradient(135deg, #1e1b4b 0%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
     }
 
     .brand-author {
@@ -75,29 +85,35 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       display: block;
+      margin-top: -2px;
     }
 
     .header-stats {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     .stat-chip {
       font-size: 0.8rem;
       font-weight: 700;
-      padding: 6px 12px;
+      padding: 6px 14px;
       border-radius: 999px;
       border: 1px solid var(--border);
       background: #ffffff;
       color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-card);
     }
 
     .stat-chip.active-chip {
       color: var(--primary);
-      background: var(--primary-soft);
+      background: #ffffff;
       border-color: #c7d2fe;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.15);
     }
 
     .progress-bar-bg {
@@ -106,15 +122,18 @@
       background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
+      position: relative;
     }
 
     .progress-bar-fill {
       width: 0%;
       height: 100%;
       background: linear-gradient(90deg, var(--primary), var(--accent));
-      transition: width 0.3s ease;
+      border-radius: 999px;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
+    /* CONTAINER UTAMA */
     .container {
       max-width: 960px;
       margin: 25px auto 80px;
@@ -123,12 +142,13 @@
 
     .toast-box {
       display: none;
-      padding: 12px 18px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      margin-bottom: 22px;
+      font-size: 0.92rem;
       font-weight: 600;
       animation: fadeIn 0.4s ease;
+      box-shadow: var(--shadow-card);
     }
 
     .toast-restore {
@@ -137,180 +157,229 @@
       color: #065f46;
     }
 
+    /* SECTION BANNERS DENGAN TEMA WARNA KHUSUS */
     .section-banner {
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
       color: #ffffff;
-      padding: 22px 24px;
-      border-radius: var(--radius);
-      margin: 40px 0 20px;
-      box-shadow: var(--shadow-md);
+      padding: 24px 28px;
+      border-radius: var(--radius-lg);
+      margin: 40px 0 22px;
+      box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .banner-listening {
+      background: linear-gradient(135deg, #1e1b4b 0%, #3730a3 50%, #4f46e5 100%);
+    }
+
+    .banner-structure {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    }
+
+    .banner-reading {
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+    }
+
+    .section-banner::after {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 140px;
+      height: 140px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 50%;
+      pointer-events: none;
     }
 
     .section-badge {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-size: 0.72rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.8px;
       background: rgba(255, 255, 255, 0.18);
-      padding: 4px 10px;
-      border-radius: 6px;
-      margin-bottom: 8px;
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
     }
 
     .section-banner h2 {
-      font-size: 1.3rem;
-      font-weight: 700;
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 4px;
     }
 
     .section-banner p {
-      font-size: 0.88rem;
-      color: #cbd5e1;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 400;
     }
 
+    /* KARTU SOAL MODERN */
     .question-card {
       background: var(--surface);
-      border-radius: var(--radius);
-      border: 1.5px solid #e2e8f0;
-      padding: 22px 24px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.2s;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 24px 28px;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow-card);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .question-card:hover {
-      border-color: #cbd5e1;
-      box-shadow: var(--shadow-md);
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
     }
 
     .q-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .q-number {
       font-weight: 800;
       color: var(--primary);
       font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .q-tag {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       font-weight: 700;
       background: #f1f5f9;
       color: var(--text-muted);
-      padding: 3px 8px;
-      border-radius: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #e2e8f0;
     }
 
     .reading-passage {
       background: #f8fafc;
       border-left: 4px solid var(--accent);
-      padding: 14px 18px;
-      border-radius: 0 10px 10px 0;
-      font-size: 0.95rem;
+      padding: 16px 20px;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-size: 0.96rem;
       color: #334155;
-      margin-bottom: 15px;
-      line-height: 1.7;
+      margin-bottom: 18px;
+      line-height: 1.75;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
-    /* KOTAK AUDIO LISTENING MULTI-VOICE */
+    /* WIDGET AUDIO PLAYER (ELEGANT & CLEAN) */
     .audio-player-box {
-      background: #faf5ff;
-      border: 1.5px dashed #c084fc;
-      padding: 14px 18px;
-      border-radius: 12px;
-      margin-bottom: 16px;
+      background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+      border: 1.5px solid #ddd6fe;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      margin-bottom: 18px;
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.05);
     }
 
     .audio-controls-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 12px;
       flex-wrap: wrap;
-      gap: 10px;
     }
 
     .audio-btn {
-      background: #7c3aed;
+      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
+      padding: 10px 22px;
+      border-radius: 999px;
       font-weight: 700;
       font-size: 0.9rem;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
+      gap: 10px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.28);
     }
 
     .audio-btn:hover {
-      background: #6d28d9;
-      transform: translateY(-1px);
+      transform: translateY(-1px) scale(1.02);
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
     }
 
     .audio-btn.is-playing {
-      background: #dc2626 !important;
-      animation: pulseBtn 1s infinite alternate;
+      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
     }
+
+    /* Equalizer Sound Waves */
+    .sound-waves {
+      display: none;
+      align-items: center;
+      gap: 3px;
+      height: 14px;
+    }
+
+    .audio-btn.is-playing .sound-waves {
+      display: inline-flex;
+    }
+
+    .sound-wave-bar {
+      width: 3px;
+      height: 100%;
+      background: #ffffff;
+      border-radius: 2px;
+      animation: soundWave 0.6s infinite ease-in-out alternate;
+    }
+
+    .sound-wave-bar:nth-child(2) { animation-delay: 0.2s; }
+    .sound-wave-bar:nth-child(3) { animation-delay: 0.4s; }
 
     .audio-speed-selector {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #6b21a8;
+      gap: 4px;
+      background: #ffffff;
+      padding: 3px 4px;
+      border-radius: 999px;
+      border: 1px solid #ddd6fe;
     }
 
-    .audio-speed-selector select {
-      padding: 4px 8px;
-      border-radius: 6px;
-      border: 1px solid #d8b4fe;
-      background: white;
-      font-weight: 700;
-      color: #6b21a8;
-      cursor: pointer;
-    }
-
-    .audio-transcript-toggle {
-      background: none;
+    .speed-btn {
+      background: transparent;
       border: none;
-      color: #7c3aed;
+      padding: 5px 12px;
+      border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 700;
+      color: #6b21a8;
       cursor: pointer;
-      text-align: left;
-      padding: 0;
-      text-decoration: underline;
+      transition: all 0.15s ease;
     }
 
-    .audio-transcript-content {
-      display: none;
-      background: #ffffff;
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 1px solid #e9d5ff;
-      font-size: 0.85rem;
-      color: #4c1d95;
-      font-style: italic;
+    .speed-btn.active {
+      background: #7c3aed;
+      color: white;
     }
 
     .question-text {
-      font-size: 1.02rem;
-      font-weight: 600;
+      font-size: 1.05rem;
+      font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
+    /* PILIHAN JAWABAN MODERN */
     .options-group {
       display: flex;
       flex-direction: column;
@@ -320,61 +389,50 @@
     .option-item {
       display: flex;
       align-items: center;
-      padding: 12px 16px;
-      border-radius: 10px;
-      border: 2px solid #e2e8f0;
+      padding: 13px 18px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border);
       background: #ffffff;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       font-size: 0.95rem;
       user-select: none;
     }
 
     .option-item:hover {
       background: #f8fafc;
-      border-color: #94a3b8;
+      border-color: #cbd5e1;
+      transform: translateX(4px);
     }
 
     .option-item.selected {
       border-color: var(--primary) !important;
-      background: var(--primary-soft) !important;
-      font-weight: 700;
+      background: linear-gradient(90deg, #f5f3ff 0%, #ffffff 100%) !important;
       color: #1e1b4b;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
     }
 
-    .option-radio-circle {
-      width: 18px;
-      height: 18px;
-      border: 2px solid #94a3b8;
-      border-radius: 50%;
-      margin-right: 14px;
+    .opt-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      color: var(--text-muted);
+      font-weight: 800;
+      font-size: 0.85rem;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin-right: 14px;
       flex-shrink: 0;
+      transition: all 0.2s ease;
     }
 
-    .option-item.selected .option-radio-circle {
-      border-color: var(--primary);
-    }
-
-    .option-radio-circle::after {
-      content: "";
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: transparent;
-      transition: background 0.15s;
-    }
-
-    .option-item.selected .option-radio-circle::after {
+    .option-item.selected .opt-badge {
       background: var(--primary);
-    }
-
-    .opt-letter {
-      font-weight: 800;
-      margin-right: 8px;
-      color: var(--text-muted);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
     }
 
     .option-item.correct-ans {
@@ -384,45 +442,62 @@
       font-weight: 700 !important;
     }
 
+    .option-item.correct-ans .opt-badge {
+      background: var(--success) !important;
+      color: white !important;
+    }
+
     .option-item.wrong-ans {
       background: var(--danger-soft) !important;
       border-color: var(--danger) !important;
       color: #991b1b !important;
     }
 
+    .option-item.wrong-ans .opt-badge {
+      background: var(--danger) !important;
+      color: white !important;
+    }
+
+    /* TOMBOL SUBMIT MEWAH */
+    .submit-container {
+      margin-top: 45px;
+      text-align: center;
+    }
+
     .btn-submit {
-      background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, #3730a3 100%);
       color: white;
       border: none;
-      padding: 16px 48px;
-      font-size: 1.1rem;
+      padding: 18px 56px;
+      font-size: 1.12rem;
       font-weight: 800;
-      border-radius: 12px;
+      border-radius: 999px;
       cursor: pointer;
-      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
-      transition: all 0.2s;
+      box-shadow: 0 8px 24px -2px rgba(79, 70, 229, 0.4);
+      transition: all 0.25s ease;
+      letter-spacing: 0.3px;
     }
 
     .btn-submit:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 28px -2px rgba(79, 70, 229, 0.5);
     }
 
     footer {
       text-align: center;
-      padding: 24px;
+      padding: 28px;
       background: #ffffff;
       border-top: 1px solid var(--border);
       color: var(--text-muted);
       font-size: 0.9rem;
     }
 
-    /* MODAL HASIL TEST */
+    /* MODAL HASIL TEST EKSKLUSIF */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(5px);
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
       display: none;
       justify-content: center;
       align-items: center;
@@ -432,31 +507,31 @@
 
     .modal-card {
       background: white;
-      max-width: 500px;
+      max-width: 480px;
       width: 100%;
-      border-radius: 24px;
-      padding: 32px 26px;
+      border-radius: var(--radius-lg);
+      padding: 34px 28px;
       text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-      animation: modalPop 0.3s ease;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      animation: modalPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .score-badge-circle {
-      width: 145px;
-      height: 145px;
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #e0e7ff, #ede9fe);
-      border: 5px solid var(--primary);
-      margin: 15px auto;
+      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+      border: 6px solid var(--primary);
+      margin: 18px auto;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.15);
+      box-shadow: 0 10px 25px -4px rgba(79, 70, 229, 0.25);
     }
 
     .score-badge-circle .num {
-      font-size: 2.8rem;
+      font-size: 3rem;
       font-weight: 800;
       color: var(--primary);
       line-height: 1;
@@ -466,17 +541,17 @@
       font-size: 0.75rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.6px;
       color: var(--text-muted);
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     .score-breakdown-card {
       background: #f8fafc;
       border: 1.5px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 16px;
-      margin: 18px 0;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin: 20px 0;
       text-align: left;
     }
 
@@ -484,7 +559,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 0;
+      padding: 10px 0;
       font-size: 0.92rem;
       border-bottom: 1px solid #e2e8f0;
     }
@@ -496,9 +571,9 @@
 
     .breakdown-badge {
       font-weight: 800;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.9rem;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.88rem;
     }
 
     .badge-listening { background: #e0e7ff; color: #3730a3; }
@@ -509,18 +584,18 @@
     .modal-btns {
       display: flex;
       gap: 12px;
-      margin-top: 15px;
+      margin-top: 20px;
     }
 
     .btn-modal {
       flex: 1;
-      padding: 13px;
-      border-radius: 12px;
-      font-weight: 700;
+      padding: 14px;
+      border-radius: 999px;
+      font-weight: 800;
       font-size: 0.92rem;
       cursor: pointer;
       border: none;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
 
     .btn-modal-review {
@@ -533,13 +608,14 @@
     }
 
     .btn-modal-retake {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
       color: white;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
     }
 
     .btn-modal-retake:hover {
-      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
     }
 
     @keyframes fadeIn {
@@ -548,13 +624,13 @@
     }
 
     @keyframes modalPop {
-      from { transform: scale(0.92); opacity: 0; }
+      from { transform: scale(0.9); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
 
-    @keyframes pulseBtn {
-      from { opacity: 1; }
-      to { opacity: 0.7; }
+    @keyframes soundWave {
+      0%, 100% { height: 4px; }
+      50% { height: 14px; }
     }
   </style>
 </head>
@@ -564,7 +640,7 @@
     <div class="header-content">
       <div class="brand-box">
         <h1>Simulasi Test TOEFL</h1>
-        <span class="brand-author">Dibuat secara resmi oleh Davi Nur Alim</span>
+        <span class="brand-author">Dibuat Secara resmi oleh Davi Nur Alim</span>
       </div>
       <div class="header-stats">
         <div class="stat-chip">♾️ Soal Baru Tanpa Batas</div>
@@ -578,13 +654,13 @@
 
   <main class="container">
     <div id="restoreToast" class="toast-box toast-restore">
-      ✨ <strong>Sesi Dipulihkan!</strong> Soal & jawaban yang sudah Anda isi tetap aman tersimpan.
+      ✨ <strong>Sesi Dipulihkan!</strong> Soal dan jawaban yang Anda isi sebelumnya tetap aman tersimpan.
     </div>
 
     <form id="toeflForm">
       <div id="questionsContainer"></div>
       
-      <div style="text-align: center; margin-top: 35px;">
+      <div class="submit-container">
         <button type="submit" class="btn-submit">Selesai & Cek Skor TOEFL</button>
       </div>
     </form>
@@ -597,29 +673,29 @@
   <div class="modal-overlay" id="resultModal">
     <div class="modal-card">
       <div style="font-size: 2.8rem; margin-bottom: 4px;">🎯</div>
-      <h2 style="font-size: 1.45rem; font-weight: 800;">Hasil Tes TOEFL Anda</h2>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">By Davi Nur Alim</p>
+      <h2 style="font-size: 1.5rem; font-weight: 800;">Hasil Tes TOEFL Anda</h2>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;">By Davi Nur Alim</p>
 
       <div class="score-badge-circle">
         <span class="num" id="toeflScoreVal">310</span>
-        <span class="sub">Total Skor TOEFL</span>
+        <span class="sub">Total Skor TOEFL PBT</span>
       </div>
 
       <div class="score-breakdown-card">
         <div class="breakdown-row">
-          <span>🎧 <strong>Listening:</strong></span>
+          <span>🎧 <strong>Listening Comprehension:</strong></span>
           <span class="breakdown-badge badge-listening" id="resListening">0 / 15 Benar</span>
         </div>
         <div class="breakdown-row">
-          <span>✍️ <strong>Structure:</strong></span>
+          <span>✍️ <strong>Structure & Written Expression:</strong></span>
           <span class="breakdown-badge badge-structure" id="resStructure">0 / 20 Benar</span>
         </div>
         <div class="breakdown-row">
-          <span>📖 <strong>Reading:</strong></span>
+          <span>📖 <strong>Reading Comprehension:</strong></span>
           <span class="breakdown-badge badge-reading" id="resReading">0 / 15 Benar</span>
         </div>
         <div class="breakdown-row" style="margin-top: 4px; padding-top: 10px; border-top: 2px dashed #cbd5e1;">
-          <span>✅ <strong>Total Benar:</strong></span>
+          <span>✅ <strong>Total Benar Keseluruhan:</strong></span>
           <span class="breakdown-badge badge-total" id="resTotalCorrect">0 / 50 Benar (<span id="resAccuracy">0%</span>)</span>
         </div>
       </div>
@@ -633,7 +709,7 @@
 
   <script>
     /* =========================================================
-       MESIN GENERATOR 50 SOAL DINAMIS TANPA BATAS
+       MESIN GENERATOR 50 SOAL TOEFL DINAMIS TANPA BATAS
     ========================================================== */
     const listeningPatterns = [
       {
@@ -903,7 +979,7 @@
     /* =========================================================
        SISTEM PENYIMPANAN AMAN ANTI-RESET
     ========================================================== */
-    const STORAGE_KEY = 'TOEFL_DAVI_PERSISTENT_SESSION_V3';
+    const STORAGE_KEY = 'TOEFL_DAVI_PERSISTENT_SESSION_V4';
     let activeQuestions = [];
     let userAnswers = {};
     let isTestSubmitted = false;
@@ -964,7 +1040,7 @@
     }
 
     /* =========================================================
-       RENDER PERTANYAAN DENGAN FITUR AUDIO LISTENING JERNIH
+       RENDER PERTANYAAN (DESAIN MODERN & TANPA TOMBOL INTIP SKRIP)
     ========================================================== */
     function renderQuestions() {
       const container = document.getElementById('questionsContainer');
@@ -975,24 +1051,24 @@
 
         if (index === 0) {
           fullHtml += `
-            <div class="section-banner">
-              <span class="section-badge">Section 1</span>
+            <div class="section-banner banner-listening">
+              <span class="section-badge">🎧 Section 1</span>
               <h2>Listening Comprehension (No. 1 - 15)</h2>
-              <p>Dengarkan percakapan dengan menekan tombol audio. Suara wanita & pria dipisah dengan artikulasi jernih.</p>
+              <p>Dengarkan audio percakapan dengan menekan tombol. Suara wanita & pria dipisah dengan artikulasi jernih.</p>
             </div>
           `;
         } else if (index === 15) {
           fullHtml += `
-            <div class="section-banner">
-              <span class="section-badge">Section 2</span>
+            <div class="section-banner banner-structure">
+              <span class="section-badge">✍️ Section 2</span>
               <h2>Structure & Written Expression (No. 16 - 35)</h2>
               <p>Pilihlah salah satu kata atau frasa yang melengkapi kalimat dengan kaidah tata bahasa Inggris yang benar.</p>
             </div>
           `;
         } else if (index === 35) {
           fullHtml += `
-            <div class="section-banner">
-              <span class="section-badge">Section 3</span>
+            <div class="section-banner banner-reading">
+              <span class="section-badge">📖 Section 3</span>
               <h2>Reading Comprehension (No. 36 - 50)</h2>
               <p>Bacalah teks bacaan berikut ini dengan teliti, kemudian jawab pertanyaan sesuai isi teks.</p>
             </div>
@@ -1009,7 +1085,7 @@
             </div>
         `;
 
-        // BAGIAN KONTROL AUDIO LISTENING DENGAN SPEED & DUAL VOICE
+        // KOTAK AUDIO LISTENING BERSIH TANPA SKRIP
         if (q.type === 'listening') {
           const safeAudio = encodeURIComponent(q.audioText);
           const safeQuestion = encodeURIComponent(q.question);
@@ -1020,22 +1096,16 @@
                 <button type="button" class="audio-btn" id="audio-btn-${index}" 
                         data-audio="${safeAudio}" data-question="${safeQuestion}" 
                         onclick="playRealisticListening(this, ${index})">
-                  🔊 Putar Percakapan
+                  <span>🔊 Putar Percakapan</span>
+                  <div class="sound-waves">
+                    <span class="sound-wave-bar"></span>
+                    <span class="sound-wave-bar"></span>
+                    <span class="sound-wave-bar"></span>
+                  </div>
                 </button>
                 <div class="audio-speed-selector">
-                  <span>Kecepatan:</span>
-                  <select id="speed-${index}">
-                    <option value="0.95" selected>Normal</option>
-                    <option value="0.82">Lambat (Jelas)</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <button type="button" class="audio-transcript-toggle" onclick="toggleTranscript(${index})">
-                  📝 Intip Skrip Percakapan (Jika Kurang Jelas)
-                </button>
-                <div class="audio-transcript-content" id="transcript-${index}">
-                  ${q.audioText.replace(/Woman:/g, '<strong>👩 Woman:</strong>').replace(/Man:/g, '<br><strong>👨 Man:</strong>')}
+                  <button type="button" class="speed-btn active" id="spd-norm-${index}" onclick="setSpeed(${index}, 0.95, this)">1.0x Normal</button>
+                  <button type="button" class="speed-btn" id="spd-slow-${index}" onclick="setSpeed(${index}, 0.82, this)">0.8x Lambat</button>
                 </div>
               </div>
             </div>
@@ -1058,8 +1128,7 @@
 
           fullHtml += `
             <div class="option-item ${isSelectedClass}" id="label-q${index}-opt${optIdx}" onclick="chooseOption(${index}, ${optIdx})">
-              <div class="option-radio-circle"></div>
-              <span class="opt-letter">${letters[optIdx]}.</span>
+              <div class="opt-badge">${letters[optIdx]}</div>
               <span>${opt}</span>
             </div>
           `;
@@ -1072,11 +1141,11 @@
     }
 
     /* =========================================================
-       AUDIO ENGINE LISTENING: DUAL-VOICE + NARRATOR + NATURAL PAUSE
+       AUDIO ENGINE LISTENING: DUAL-VOICE + NARRATOR
     ========================================================== */
     let isCurrentlySpeaking = false;
+    let selectedSpeeds = {};
 
-    // Cache daftar suara berkualitas tinggi
     let availableVoices = [];
     function loadVoices() {
       availableVoices = window.speechSynthesis.getVoices();
@@ -1086,7 +1155,6 @@
 
     function findBestVoice(gender = 'female') {
       if (!availableVoices.length) availableVoices = window.speechSynthesis.getVoices();
-
       const enVoices = availableVoices.filter(v => v.lang.startsWith('en'));
       if (!enVoices.length) return null;
 
@@ -1110,6 +1178,13 @@
       }
     }
 
+    function setSpeed(qIdx, speedVal, btn) {
+      selectedSpeeds[qIdx] = speedVal;
+      const parent = btn.parentElement;
+      parent.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
     function playRealisticListening(btn, index) {
       if (isCurrentlySpeaking) {
         window.speechSynthesis.cancel();
@@ -1119,15 +1194,13 @@
 
       const rawDialogue = decodeURIComponent(btn.getAttribute('data-audio'));
       const rawQuestion = decodeURIComponent(btn.getAttribute('data-question'));
-      const speedSelect = document.getElementById(`speed-${index}`);
-      const rate = speedSelect ? parseFloat(speedSelect.value) : 0.95;
+      const rate = selectedSpeeds[index] || 0.95;
 
       window.speechSynthesis.cancel();
       isCurrentlySpeaking = true;
       btn.classList.add('is-playing');
-      btn.innerHTML = '⏹️ Menghentikan Audio...';
+      btn.querySelector('span').textContent = '⏹️ Hentikan Audio';
 
-      // Parse baris percakapan Woman dan Man
       const lines = [];
       const parts = rawDialogue.split(/(Woman:|Man:)/g).filter(p => p.trim().length > 0);
 
@@ -1150,7 +1223,6 @@
         if (!isCurrentlySpeaking) return;
 
         if (idx >= lines.length) {
-          // Setelah percakapan selesai, jeda 0.8 detik lalu Narator membacakan soal
           setTimeout(() => {
             if (!isCurrentlySpeaking) return;
             const qUtter = new SpeechSynthesisUtterance("Question. " + rawQuestion);
@@ -1159,14 +1231,8 @@
             qUtter.pitch = 1.0;
             if (maleVoice) qUtter.voice = maleVoice;
 
-            qUtter.onend = () => {
-              isCurrentlySpeaking = false;
-              resetAllAudioButtons();
-            };
-            qUtter.onerror = () => {
-              isCurrentlySpeaking = false;
-              resetAllAudioButtons();
-            };
+            qUtter.onend = () => resetAllAudioButtons();
+            qUtter.onerror = () => resetAllAudioButtons();
 
             window.speechSynthesis.speak(qUtter);
           }, 800);
@@ -1179,24 +1245,20 @@
         utter.rate = rate;
 
         if (currentLine.speaker === 'woman') {
-          utter.pitch = 1.15; // Nada suara feminin & jernih
+          utter.pitch = 1.15;
           if (femaleVoice) utter.voice = femaleVoice;
         } else {
-          utter.pitch = 0.82; // Nada suara maskulin & berbobot
+          utter.pitch = 0.82;
           if (maleVoice) utter.voice = maleVoice;
         }
 
         utter.onend = () => {
-          // Jeda alami antar lawan bicara (0.6 detik)
           setTimeout(() => {
             if (isCurrentlySpeaking) speakLineSequence(idx + 1);
           }, 600);
         };
 
-        utter.onerror = () => {
-          isCurrentlySpeaking = false;
-          resetAllAudioButtons();
-        };
+        utter.onerror = () => resetAllAudioButtons();
 
         window.speechSynthesis.speak(utter);
       }
@@ -1207,16 +1269,9 @@
     function resetAllAudioButtons() {
       document.querySelectorAll('.audio-btn').forEach(b => {
         b.classList.remove('is-playing');
-        b.innerHTML = '🔊 Putar Percakapan';
+        b.querySelector('span').textContent = '🔊 Putar Percakapan';
       });
       isCurrentlySpeaking = false;
-    }
-
-    function toggleTranscript(index) {
-      const box = document.getElementById(`transcript-${index}`);
-      if (box) {
-        box.style.display = box.style.display === 'block' ? 'none' : 'block';
-      }
     }
 
     /* =========================================================
