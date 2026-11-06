@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- ANTI-CACHE: MEMAKSA BROWSER SELALU MEMUAT VERSI TERBARU -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
   <title>Simulasi Test TOEFL By Davi Nur Alim</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -33,6 +32,17 @@
       --radius-lg: 20px;
       --shadow-card: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
       --shadow-hover: 0 12px 20px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+    }
+
+    /* KUNCI: BLOKIR & LENYAPKAN SEMUA SISA INTIP SKRIP APAPUN */
+    .audio-transcript-toggle,
+    .audio-transcript-content,
+    [id^="transcript-"] {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
 
     * {
@@ -178,18 +188,6 @@
       background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
     }
 
-    .section-banner::after {
-      content: '';
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 140px;
-      height: 140px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
     .section-badge {
       display: inline-flex;
       align-items: center;
@@ -266,18 +264,13 @@
       line-height: 1.75;
     }
 
-    /* AUDIO PLAYER BERSIH (TANPA SKRIP) */
+    /* AUDIO PLAYER BERSIH & MEWAH */
     .audio-player-box {
       background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
       border: 1.5px solid #ddd6fe;
       padding: 14px 20px;
       border-radius: var(--radius-md);
       margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
       box-shadow: 0 4px 12px rgba(124, 58, 237, 0.05);
     }
 
@@ -947,13 +940,15 @@
       return a;
     }
 
-    /* KUNCI PENYIMPANAN SESI TERBARU */
-    const STORAGE_KEY = 'TOEFL_DAVI_ULTIMATE_CLEAN_V5';
+    const STORAGE_KEY = 'TOEFL_DAVI_ULTIMATE_CLEAN_V6';
     let activeQuestions = [];
     let userAnswers = {};
     let isTestSubmitted = false;
 
     function initTest() {
+      // HAPUS SECARA PAKSA SETIAP ELEMEN SKRIP YANG TERSISA
+      document.querySelectorAll('.audio-transcript-toggle, .audio-transcript-content, [id^="transcript-"]').forEach(el => el.remove());
+
       const savedRaw = localStorage.getItem(STORAGE_KEY);
 
       if (savedRaw) {
@@ -1103,6 +1098,9 @@
       });
 
       container.innerHTML = fullHtml;
+
+      // PASTIKAN ULANG: Hapus paksa jika ada sisa
+      document.querySelectorAll('.audio-transcript-toggle, .audio-transcript-content, [id^="transcript-"]').forEach(el => el.remove());
     }
 
     let isCurrentlySpeaking = false;
