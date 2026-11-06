@@ -8,10 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- FIREBASE SDK RESMI GOOGLE -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
   <style>
     :root {
       --primary: #4f46e5;
@@ -363,6 +359,7 @@
       font-size: 0.9rem;
     }
 
+    /* MODAL HASIL TEST */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -377,20 +374,18 @@
 
     .modal-card {
       background: white;
-      max-width: 520px;
+      max-width: 500px;
       width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
       border-radius: 24px;
-      padding: 30px 24px;
+      padding: 32px 26px;
       text-align: center;
       box-shadow: 0 20px 40px rgba(0,0,0,0.25);
       animation: modalPop 0.3s ease;
     }
 
     .score-badge-circle {
-      width: 140px;
-      height: 140px;
+      width: 145px;
+      height: 145px;
       border-radius: 50%;
       background: linear-gradient(135deg, #e0e7ff, #ede9fe);
       border: 5px solid var(--primary);
@@ -403,7 +398,7 @@
     }
 
     .score-badge-circle .num {
-      font-size: 2.7rem;
+      font-size: 2.8rem;
       font-weight: 800;
       color: var(--primary);
       line-height: 1;
@@ -418,90 +413,57 @@
       margin-top: 4px;
     }
 
-    .name-input-box {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 12px;
-      padding: 14px;
-      margin: 15px 0;
-    }
-
-    .name-input-box input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1.5px solid #93c5fd;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-top: 6px;
-      outline: none;
-    }
-
-    .btn-save-db {
-      width: 100%;
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 8px;
-    }
-
-    .leaderboard-section {
-      margin-top: 20px;
-      text-align: left;
+    /* KOTAK RINCIAN SKOR PER SECTION */
+    .score-breakdown-card {
       background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
       border-radius: 14px;
-      padding: 14px;
-      border: 1px solid #e2e8f0;
+      padding: 16px;
+      margin: 18px 0;
+      text-align: left;
     }
 
-    .leaderboard-title {
-      font-weight: 800;
-      font-size: 0.95rem;
-      margin-bottom: 10px;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .leaderboard-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      max-height: 160px;
-      overflow-y: auto;
-    }
-
-    .leaderboard-item {
+    .breakdown-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: white;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      border: 1px solid #e2e8f0;
+      padding: 8px 0;
+      font-size: 0.92rem;
+      border-bottom: 1px solid #e2e8f0;
     }
+
+    .breakdown-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .breakdown-badge {
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .badge-listening { background: #e0e7ff; color: #3730a3; }
+    .badge-structure { background: #fef3c7; color: #92400e; }
+    .badge-reading   { background: #dcfce7; color: #166534; }
+    .badge-total     { background: #ede9fe; color: #5b21b6; }
 
     .modal-btns {
       display: flex;
       gap: 12px;
-      margin-top: 20px;
+      margin-top: 15px;
     }
 
     .btn-modal {
       flex: 1;
-      padding: 12px;
+      padding: 13px;
       border-radius: 12px;
       font-weight: 700;
       font-size: 0.92rem;
       cursor: pointer;
       border: none;
+      transition: all 0.2s;
     }
 
     .btn-modal-review {
@@ -509,9 +471,18 @@
       color: var(--text-main);
     }
 
+    .btn-modal-review:hover {
+      background: #e2e8f0;
+    }
+
     .btn-modal-retake {
       background: var(--primary);
       color: white;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-modal-retake:hover {
+      background: var(--primary-hover);
     }
 
     @keyframes fadeIn {
@@ -530,8 +501,8 @@
   <header>
     <div class="header-content">
       <div class="brand-box">
-        <h1>Simulasi TOEFL Test</h1>
-        <span class="brand-author">Dibuat oleh Davi Nur Alim</span>
+        <h1>Simulasi Test TOEFL</h1>
+        <span class="brand-author">By Davi Nur Alim</span>
       </div>
       <div class="header-stats">
         <div class="stat-chip" id="attemptChip">♾️ Soal Baru Tanpa Batas</div>
@@ -558,37 +529,40 @@
   </main>
 
   <footer>
-    <p>Simulasi TOEFL PBT Lengkap (50 Soal) • <strong>Dibuat oleh Davi Nur Alim</strong></p>
+    <p>Simulasi TOEFL PBT Lengkap (50 Soal) • <strong>By Davi Nur Alim</strong></p>
   </footer>
 
+  <!-- MODAL HASIL TEST LENGKAP -->
   <div class="modal-overlay" id="resultModal">
     <div class="modal-card">
       <div style="font-size: 2.8rem; margin-bottom: 4px;">🎯</div>
-      <h2 style="font-size: 1.45rem; font-weight: 800;">Skor TOEFL Anda</h2>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Simulasi Resmi • Davi Nur Alim</p>
+      <h2 style="font-size: 1.45rem; font-weight: 800;">Hasil Tes TOEFL Anda</h2>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">By Davi Nur Alim</p>
 
+      <!-- SKOR TOTAL TOEFL PBT -->
       <div class="score-badge-circle">
         <span class="num" id="toeflScoreVal">310</span>
-        <span class="sub">Estimasi Skor PBT</span>
+        <span class="sub">Total Skor TOEFL</span>
       </div>
 
-      <p style="font-size: 0.95rem; font-weight: 700;">
-        Benar: <span id="correctScore">0</span> / 50 Soal (<span id="accuracyVal">0%</span>)
-      </p>
-
-      <div class="name-input-box" id="saveDbBox">
-        <p style="font-size: 0.85rem; font-weight: 700; color: #1e3a8a;">
-          💾 Simpan Skor Anda ke Database & Leaderboard:
-        </p>
-        <input type="text" id="participantName" placeholder="Ketik Nama Anda di sini..." maxlength="30">
-        <button type="button" class="btn-save-db" id="btnSaveToDb" onclick="saveScoreToFirebase()">Simpan ke Leaderboard</button>
-      </div>
-
-      <div class="leaderboard-section">
-        <div class="leaderboard-title">🏆 Top 10 Papan Peringkat (Live)</div>
-        <ul class="leaderboard-list" id="leaderboardList">
-          <li style="text-align: center; color: var(--text-muted); font-size: 0.8rem;">Memuat data leaderboard...</li>
-        </ul>
+      <!-- RINCIAN BENAR SETIAP BAGIAN -->
+      <div class="score-breakdown-card">
+        <div class="breakdown-row">
+          <span>🎧 <strong>Listening:</strong></span>
+          <span class="breakdown-badge badge-listening" id="resListening">0 / 15 Benar</span>
+        </div>
+        <div class="breakdown-row">
+          <span>✍️ <strong>Structure:</strong></span>
+          <span class="breakdown-badge badge-structure" id="resStructure">0 / 20 Benar</span>
+        </div>
+        <div class="breakdown-row">
+          <span>📖 <strong>Reading:</strong></span>
+          <span class="breakdown-badge badge-reading" id="resReading">0 / 15 Benar</span>
+        </div>
+        <div class="breakdown-row" style="margin-top: 4px; padding-top: 10px; border-top: 2px dashed #cbd5e1;">
+          <span>✅ <strong>Total Benar:</strong></span>
+          <span class="breakdown-badge badge-total" id="resTotalCorrect">0 / 50 Benar (<span id="resAccuracy">0%</span>)</span>
+        </div>
       </div>
 
       <div class="modal-btns">
@@ -600,35 +574,7 @@
 
   <script>
     /* =========================================================
-       1. FIREBASE CONFIGURATION (PROJECT: toeofl-davi)
-    ========================================================== */
-    const firebaseConfig = {
-      apiKey: localStorage.getItem('DAVI_FIREBASE_APIKEY') || "AIzaSy_GANTI_DENGAN_APIKEY_ANDA",
-      authDomain: "toeofl-davi.firebaseapp.com",
-      projectId: "toeofl-davi",
-      storageBucket: "toeofl-davi.appspot.com",
-      messagingSenderId: "305284102941",
-      appId: "1:305284102941:web:abcdef123456"
-    };
-
-    let db = null;
-    let isFirebaseReady = false;
-
-    function setupFirebase() {
-      try {
-        if (!firebase.apps.length) {
-          firebase.initializeApp(firebaseConfig);
-        }
-        db = firebase.firestore();
-        isFirebaseReady = true;
-      } catch (err) {
-        console.warn("Firebase initialized with local fallback:", err);
-      }
-    }
-    setupFirebase();
-
-    /* =========================================================
-       2. MESIN GENERATOR SOAL DINAMIS TANPA BATAS (INFINITE ENGINE)
+       MESIN GENERATOR 50 SOAL DINAMIS TANPA BATAS (INFINITE ENGINE)
     ========================================================== */
     const listeningPatterns = [
       {
@@ -792,7 +738,6 @@
       }
     ];
 
-    // Bank kosakata variatif untuk memastikan ratusan ribu variasi tak terbatas
     const vocab = {
       subjects: ["Astrophysics", "Molecular Biology", "Macroeconomics", "Organic Chemistry", "Anthropology", "Paleontology", "Geophysics", "Environmental Law", "Cognitive Psychology"],
       times: ["Friday afternoon", "midnight tomorrow", "the end of the semester", "next Tuesday", "the upcoming recess"],
@@ -814,7 +759,6 @@
       return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    // Generator 50 Soal TOEFL yang Selalu Baru Setiap Sesi
     function generateDynamic50Questions() {
       const generated = [];
 
@@ -901,14 +845,12 @@
     }
 
     /* =========================================================
-       3. SESSION MANAGEMENT (ANTI-HILANG SAAT REFRESH DI TENGAH JALAN)
+       SESSION STATE (ANTI-HILANG SAAT REFRESH DI TENGAH JALAN)
     ========================================================== */
-    const SESSION_KEY = 'TOEFL_DAVI_INFINITE_SESSION';
+    const SESSION_KEY = 'TOEFL_DAVI_CLEAN_SESSION';
     let activeQuestions = [];
     let userAnswers = {};
     let isTestSubmitted = false;
-    let currentCalculatedScore = 310;
-    let currentCalculatedCorrect = 0;
 
     function initTest() {
       const savedSession = localStorage.getItem(SESSION_KEY);
@@ -916,14 +858,14 @@
       if (savedSession) {
         try {
           const parsed = JSON.parse(savedSession);
-          // JIKA SUDAH SELESAI LALU DI-REFRESH: BUAT SOAL BARU TANPA BATAS!
+          // JIKA SUDAH SELESAI LALU DI-REFRESH: BUAT SOAL BARU LAGI!
           if (parsed.isCompleted) {
             localStorage.removeItem(SESSION_KEY);
             generateFreshTestSession();
             return;
           }
 
-          // JIKA BELUM SELESAI (TERPENCET REFRESH): PULIHKAN SOAL DAN JAWABAN
+          // JIKA BELUM SELESAI (TERPENCET REFRESH): PULIHKAN PROGRESS
           activeQuestions = parsed.questions;
           userAnswers = parsed.answers || {};
           renderQuestions();
@@ -957,7 +899,7 @@
     }
 
     /* =========================================================
-       4. RENDER DOM & USER INTERACTIONS
+       RENDER DOM & USER INTERACTION
     ========================================================== */
     function renderQuestions() {
       const container = document.getElementById('questionsContainer');
@@ -1083,7 +1025,7 @@
     }
 
     /* =========================================================
-       5. SKORING TOEFL PBT RESMI
+       SUBMIT, HITUNG RINCIAN NILAI & TAMPILKAN MODAL
     ========================================================== */
     document.getElementById('toeflForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -1095,7 +1037,7 @@
       }
 
       if (answeredCount < 50) {
-        const confirmSubmit = confirm(`Perhatian: Anda baru menjawab ${answeredCount} dari 50 soal.\nYakin ingin mengumpulkan sekarang?`);
+        const confirmSubmit = confirm(`Perhatian: Anda baru menjawab ${answeredCount} dari 50 soal.\nYakin ingin tetap mengumpulkan dan melihat skor sekarang?`);
         if (!confirmSubmit) return;
       }
 
@@ -1126,6 +1068,7 @@
       isTestSubmitted = true;
       saveActiveSession();
 
+      // Konversi Skor TOEFL PBT
       const scaledL = Math.round(31 + (listeningCorrect / 15) * 37);
       const scaledS = Math.round(31 + (structureCorrect / 20) * 37);
       const scaledR = Math.round(31 + (readingCorrect / 15) * 37);
@@ -1134,20 +1077,25 @@
       if (finalScore > 677) finalScore = 677;
       if (finalScore < 310) finalScore = 310;
 
-      currentCalculatedScore = finalScore;
-      currentCalculatedCorrect = correctCount;
-
-      showResultModal(correctCount, finalScore);
+      showResultModal(correctCount, listeningCorrect, structureCorrect, readingCorrect, finalScore);
     });
 
-    function showResultModal(totalCorrect, finalScore) {
-      document.getElementById('correctScore').textContent = totalCorrect;
-      const accuracy = Math.round((totalCorrect / 50) * 100);
-      document.getElementById('accuracyVal').textContent = `${accuracy}%`;
+    function showResultModal(totalCorrect, listCorrect, structCorrect, readCorrect, finalScore) {
+      // 1. Total Skor TOEFL PBT di Lingkaran Besar
       document.getElementById('toeflScoreVal').textContent = finalScore;
 
+      // 2. Rincian Benar per Section
+      document.getElementById('resListening').textContent = `${listCorrect} / 15 Benar`;
+      document.getElementById('resStructure').textContent = `${structCorrect} / 20 Benar`;
+      document.getElementById('resReading').textContent = `${readCorrect} / 15 Benar`;
+
+      // 3. Total Benar & Akurasi
+      const accuracy = Math.round((totalCorrect / 50) * 100);
+      document.getElementById('resAccuracy').textContent = `${accuracy}%`;
+      document.getElementById('resTotalCorrect').innerHTML = `<strong>${totalCorrect}</strong> / 50 Benar (${accuracy}%)`;
+
+      // Munculkan Modal Pop-up
       document.getElementById('resultModal').style.display = 'flex';
-      loadLeaderboard();
     }
 
     function closeModal() {
@@ -1158,92 +1106,6 @@
     function resetToNewQuestions() {
       localStorage.removeItem(SESSION_KEY);
       location.reload();
-    }
-
-    /* =========================================================
-       6. SIMPAN DATA KE FIREBASE & REALTIME LEADERBOARD
-    ========================================================== */
-    async function saveScoreToFirebase() {
-      const nameInput = document.getElementById('participantName');
-      const name = nameInput.value.trim();
-
-      if (!name) {
-        alert("Silakan ketik nama Anda terlebih dahulu!");
-        return;
-      }
-
-      if (!isFirebaseReady || firebaseConfig.apiKey.includes("GANTI_DENGAN")) {
-        const inputKey = prompt("Masukkan API Key Firebase Anda (hanya perlu sekali saja):");
-        if (inputKey) {
-          localStorage.setItem('DAVI_FIREBASE_APIKEY', inputKey.trim());
-          firebaseConfig.apiKey = inputKey.trim();
-          setupFirebase();
-        } else {
-          return;
-        }
-      }
-
-      const btn = document.getElementById('btnSaveToDb');
-      btn.textContent = "Menyimpan ke Cloud...";
-      btn.disabled = true;
-
-      try {
-        await db.collection("toefl_scores").add({
-          name: name,
-          toeflScore: currentCalculatedScore,
-          correctCount: currentCalculatedCorrect,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        alert(`Selamat ${name}, skor Anda (${currentCalculatedScore}) berhasil disimpan ke database Google!`);
-        document.getElementById('saveDbBox').innerHTML = `<p style="color: #16a34a; font-weight:700;">✅ Skor ${name} telah masuk ke Leaderboard!</p>`;
-        loadLeaderboard();
-      } catch (error) {
-        console.error("Gagal simpan ke Firebase:", error);
-        alert("Gagal menyimpan ke database. Pastikan Firestore rules Anda sudah diset ke 'Test Mode'.");
-        btn.textContent = "Simpan ke Leaderboard";
-        btn.disabled = false;
-      }
-    }
-
-    async function loadLeaderboard() {
-      const listContainer = document.getElementById('leaderboardList');
-
-      if (!isFirebaseReady || firebaseConfig.apiKey.includes("GANTI_DENGAN")) {
-        listContainer.innerHTML = `<li style="text-align:center; color:#94a3b8; font-size:0.8rem;">(Leaderboard siap digunakan setelah API Key dimasukkan)</li>`;
-        return;
-      }
-
-      try {
-        const snapshot = await db.collection("toefl_scores")
-          .orderBy("toeflScore", "desc")
-          .limit(10)
-          .get();
-
-        if (snapshot.empty) {
-          listContainer.innerHTML = `<li style="text-align:center; color:#94a3b8; font-size:0.8rem;">Belum ada peserta. Jadilah yang pertama di Leaderboard!</li>`;
-          return;
-        }
-
-        listContainer.innerHTML = '';
-        let rank = 1;
-
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
-          
-          listContainer.innerHTML += `
-            <li class="leaderboard-item">
-              <span><strong>${medal}</strong> ${data.name || 'Anonim'}</span>
-              <span style="font-weight: 800; color: var(--primary);">${data.toeflScore}</span>
-            </li>
-          `;
-          rank++;
-        });
-      } catch (err) {
-        console.warn("Gagal load leaderboard:", err);
-        listContainer.innerHTML = `<li style="text-align:center; color:#ef4444; font-size:0.8rem;">Gagal memuat peringkat. Pastikan Firestore Rules dalam Test Mode.</li>`;
-      }
     }
 
     window.onload = initTest;
