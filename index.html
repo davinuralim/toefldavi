@@ -34,16 +34,6 @@
       --shadow-hover: 0 12px 20px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
     }
 
-    .audio-transcript-toggle,
-    .audio-transcript-content,
-    [id^="transcript-"] {
-      display: none !important;
-      visibility: hidden !important;
-      height: 0 !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
     * {
       box-sizing: border-box;
       margin: 0;
@@ -61,7 +51,7 @@
     header {
       position: sticky;
       top: 0;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(226, 232, 240, 0.9);
       z-index: 100;
@@ -275,10 +265,11 @@
       line-height: 1.75;
     }
 
+    /* KOTAK AUDIO RESMI TOEFL DENGAN STATUS LIVE */
     .audio-player-box {
       background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
       border: 1.5px solid #ddd6fe;
-      padding: 14px 20px;
+      padding: 16px 20px;
       border-radius: var(--radius-md);
       margin-bottom: 18px;
       box-shadow: 0 4px 12px rgba(124, 58, 237, 0.05);
@@ -297,10 +288,10 @@
       background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
       color: white;
       border: none;
-      padding: 10px 22px;
+      padding: 11px 24px;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -352,7 +343,7 @@
     .speed-btn {
       background: transparent;
       border: none;
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 700;
@@ -364,6 +355,25 @@
     .speed-btn.active {
       background: #7c3aed;
       color: white;
+    }
+
+    .audio-status-label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #6d28d9;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .audio-status-label::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #8b5cf6;
+      display: inline-block;
     }
 
     .question-text {
@@ -620,7 +630,7 @@
         <span class="brand-author">By Davi Nur Alim</span>
       </div>
       <div class="header-stats">
-        <div class="stat-chip">🎯 Edisi 2026 • Soal Baru Tanpa Batas ♾️</div>
+        <div class="stat-chip">🎧 Official Listening Chime • Audio Jernih</div>
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="progressBar"></div>
         </div>
@@ -686,54 +696,86 @@
 
   <script>
     /* =========================================================
-       MESIN GENERATOR SOAL DINAMIS - EDISI STANDAR 2026
+       NADA LONCENG CHIME RESMI ETS TOEFL (WEB AUDIO API)
+    ========================================================== */
+    function playToeflAcousticChime(callback) {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+
+        // Nada Chime ganda khas TOEFL (587 Hz -> 880 Hz)
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(587.33, now); // D5
+        osc1.frequency.exponentialRampToValueAtTime(880, now + 0.18); // A5
+
+        gain1.gain.setValueAtTime(0.2, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+
+        osc1.start(now);
+        osc1.stop(now + 0.55);
+
+        setTimeout(callback, 600);
+      } catch (err) {
+        callback();
+      }
+    }
+
+    /* =========================================================
+       MESIN GENERATOR SOAL DINAMIS STANDAR AKADEMIK 2026
     ========================================================== */
     const listeningPatterns2026 = [
       {
-        dialogue: (sub, time) => `Woman: Have you uploaded the research simulation for ${sub}? Man: Not yet, the department granted an extension until ${time} due to server upgrades.`,
-        q: "What did the man state regarding his research simulation?",
+        dialogue: (sub, time) => `Woman: Have you submitted the research simulation for ${sub}? Man: Not yet. The department granted an extension until ${time} due to server upgrades.`,
+        q: "What does the man say about his research simulation?",
         ans: "The submission deadline was extended by the department.",
         distractors: ["He had already completed and uploaded it.", "The assignment was completely discarded.", "The server upgrade caused him to fail."]
       },
       {
         dialogue: (sub) => `Man: Are you attending the international symposium on ${sub} this Thursday? Woman: Nothing on earth could keep me from that session!`,
-        q: "What does the woman imply about the symposium?",
+        q: "What does the woman mean?",
         ans: "She considers attending the symposium essential.",
         distractors: ["She intends to travel overseas instead.", "She is unable to register due to fees.", "She knows very little about the topic."]
       },
       {
-        dialogue: (tool, loc, person) => `Woman: I can't locate the calibration device for ${tool}. Man: I believe ${person} stored it inside the primary terminal in the ${loc}.`,
+        dialogue: (tool, loc, person) => `Woman: I cannot locate the calibration device for ${tool}. Man: I believe ${person} stored it inside the primary terminal in the ${loc}.`,
         q: "Where does the man assume the calibration device is?",
         ans: (tool, loc) => `Inside the terminal in the ${loc}.`,
         distractors: ["At the university bookstore.", "Inside the lecture hall.", "At the administrative front desk."]
       },
       {
-        dialogue: (sub, act, person) => `Man: Formulating this algorithmic thesis model for ${sub} is proving difficult. Woman: Why not consult with ${person}? She successfully defended a related paper last semester.`,
+        dialogue: (sub, act, person) => `Man: Formulating this algorithmic model for ${sub} is proving very difficult. Woman: Why not consult with ${person}? She successfully defended a related thesis last semester.`,
         q: "What advice does the woman give to the man?",
         ans: (s, a, person) => `Seek guidance directly from ${person}.`,
         distractors: ["Abandon the algorithmic model entirely.", "Postpone his graduation schedule.", "Change his primary academic major."]
       },
       {
-        dialogue: (dest, mode) => `Woman: Are you taking an express flight to the conference in ${dest}? Man: Ticket pricing exceeded my departmental budget, so I reserved a seat on the ${mode}.`,
+        dialogue: (dest, mode) => `Woman: Are you taking a flight to the conference in ${dest}? Man: Ticket prices exceeded my departmental budget, so I reserved a seat on the ${mode}.`,
         q: "How will the man travel to the conference?",
         ans: (d, mode) => `By traveling on the ${mode}.`,
         distractors: ["By chartering an airplane.", "By riding a bicycle.", "He will cancel his conference attendance."]
       },
       {
-        dialogue: (event, weather) => `Man: The regional meteorological bureau predicted severe ${weather} throughout the afternoon. Woman: Well, that puts an end to our field testing for ${event}.`,
-        q: "What does the woman mean?",
+        dialogue: (event, weather) => `Man: The meteorological bureau predicted severe ${weather} throughout the afternoon. Woman: Well, that puts an end to our field testing for ${event}.`,
+        q: "What does the woman imply?",
         ans: (event) => `Their outdoor field testing for ${event} cannot proceed.`,
         distractors: ["They will continue field testing in the rain.", "The test was relocated to another state.", "The weather will clear up shortly."]
       },
       {
-        dialogue: (food, meal) => `Woman: Does the sustainable cafeteria feature any signature dish for ${meal}? Man: The culinary team prepares an exceptional ${food}.`,
-        q: "What will the man most likely suggest?",
+        dialogue: (food, meal) => `Woman: Does the cafeteria feature any signature dish for ${meal}? Man: The culinary team prepares an exceptional ${food}.`,
+        q: "What will the man most likely recommend?",
         ans: (food) => `Ordering the ${food}.`,
         distractors: ["A packaged instant meal.", "Dining off-campus.", "Only drinking cold water."]
       },
       {
-        dialogue: (course) => `Man: How did your committee evaluation in ${course} turn out this morning? Woman: It couldn't have gone any smoother!`,
-        q: "What did the woman communicate about her evaluation?",
+        dialogue: (course) => `Man: How did your committee evaluation in ${course} turn out this morning? Woman: It could not have gone any smoother!`,
+        q: "What does the woman say about her evaluation?",
         ans: "The evaluation session was remarkably successful.",
         distractors: ["She was disqualified by the committee.", "The evaluation was postponed until next week.", "She struggled to answer questions."]
       }
@@ -854,7 +896,7 @@
       subjects: ["Quantum Computing", "Synthetic Biology", "Geothermal Geoengineering", "Computational Linguistics", "Autonomous Robotics", "Atmospheric Climatology", "Cognitive Neuroscience", "Nanomaterial Physics"],
       times: ["Friday midnight", "the upcoming symposium recess", "the start of the second academic term", "next Wednesday morning", "the final submission cycle"],
       places: ["quantum cleanroom laboratory", "microgrid development pavilion", "advanced supercomputing cluster", "biomolecular research wing", "academic archive center"],
-      people: ["Dr. Vance", "Professor Richardson", "Dr. Montgomery", "Professor Evans", "Dr. Sterling", "Elena", "Marcus", "Jonathan"],
+      people: ["Doctor Vance", "Professor Richardson", "Doctor Montgomery", "Professor Evans", "Doctor Sterling", "Elena", "Marcus", "Jonathan"],
       modes: ["high-speed electric rail", "autonomous regional shuttle", "zero-emission magnetic transit", "shared hydrogen van"],
       destinations: ["Zurich", "Boston", "Tokyo", "Reykjavik", "San Francisco", "Singapore"],
       weather: ["blizzard conditions", "torrential precipitation", "gale-force storms", "freezing temperature drops"],
@@ -953,14 +995,12 @@
       return a;
     }
 
-    const STORAGE_KEY = 'TOEFL_DAVI_2026_STANDARDS_SESSION';
+    const STORAGE_KEY = 'TOEFL_DAVI_OFFICIAL_2026_V1';
     let activeQuestions = [];
     let userAnswers = {};
     let isTestSubmitted = false;
 
     function initTest() {
-      document.querySelectorAll('.audio-transcript-toggle, .audio-transcript-content, [id^="transcript-"]').forEach(el => el.remove());
-
       const savedRaw = localStorage.getItem(STORAGE_KEY);
 
       if (savedRaw) {
@@ -1027,7 +1067,7 @@
             <div class="section-banner banner-listening">
               <span class="section-badge">🎧 Section 1</span>
               <h2>Listening Comprehension (No. 1 - 15)</h2>
-              <p>Dengarkan audio dialog akademis 2026. Suara wanita & pria dipisah dengan artikulasi jernih.</p>
+              <p>Dengarkan audio dialog resmi TOEFL. Tekan tombol audio untuk mendengarkan nada pembuka, percakapan, dan narator soal.</p>
             </div>
           `;
         } else if (index === 15) {
@@ -1067,8 +1107,8 @@
               <div class="audio-controls-row">
                 <button type="button" class="audio-btn" id="audio-btn-${index}" 
                         data-audio="${safeAudio}" data-question="${safeQuestion}" 
-                        onclick="playRealisticListening(this, ${index})">
-                  <span>🔊 Putar Percakapan</span>
+                        onclick="playOfficialToeflAudio(this, ${index})">
+                  <span>🔊 Putar Percakapan Resmi</span>
                   <div class="sound-waves">
                     <span class="sound-wave-bar"></span>
                     <span class="sound-wave-bar"></span>
@@ -1076,10 +1116,11 @@
                   </div>
                 </button>
                 <div class="audio-speed-selector">
-                  <button type="button" class="speed-btn active" id="spd-norm-${index}" onclick="setSpeed(${index}, 0.95, this)">1.0x Normal</button>
-                  <button type="button" class="speed-btn" id="spd-slow-${index}" onclick="setSpeed(${index}, 0.82, this)">0.8x Lambat</button>
+                  <button type="button" class="speed-btn active" id="spd-norm-${index}" onclick="setSpeed(${index}, 0.90, this)">1.0x Standar TOEFL</button>
+                  <button type="button" class="speed-btn" id="spd-slow-${index}" onclick="setSpeed(${index}, 0.80, this)">0.8x Perlahan</button>
                 </div>
               </div>
+              <div class="audio-status-label" id="audio-status-${index}">Siap diputar (Dilengkapi nada chime & narator resmi)</div>
             </div>
           `;
         }
@@ -1110,41 +1151,33 @@
       });
 
       container.innerHTML = fullHtml;
-      document.querySelectorAll('.audio-transcript-toggle, .audio-transcript-content, [id^="transcript-"]').forEach(el => el.remove());
     }
 
+    /* =========================================================
+       AUDIO ENGINE RESMI: NATIVE AMERICAN + NATURAL PITCH 1.0
+    ========================================================== */
     let isCurrentlySpeaking = false;
     let selectedSpeeds = {};
-
     let availableVoices = [];
-    function loadVoices() {
+
+    function populateVoices() {
       availableVoices = window.speechSynthesis.getVoices();
     }
-    window.speechSynthesis.onvoiceschanged = loadVoices;
-    loadVoices();
+    window.speechSynthesis.onvoiceschanged = populateVoices;
+    populateVoices();
 
-    function findBestVoice(gender = 'female') {
+    function getNativeAmericanVoice(gender = 'female') {
       if (!availableVoices.length) availableVoices = window.speechSynthesis.getVoices();
-      const enVoices = availableVoices.filter(v => v.lang.startsWith('en'));
-      if (!enVoices.length) return null;
+      
+      const usVoices = availableVoices.filter(v => v.lang === 'en-US' || v.lang === 'en_US');
+      const pool = usVoices.length ? usVoices : availableVoices.filter(v => v.lang.startsWith('en'));
+      
+      if (!pool.length) return null;
 
       if (gender === 'female') {
-        return enVoices.find(v => 
-          v.name.includes('Natural') || 
-          v.name.includes('Google US English') || 
-          v.name.includes('Samantha') || 
-          v.name.includes('Zira') || 
-          v.name.includes('Jenny') || 
-          v.name.includes('Female')
-        ) || enVoices[0];
+        return pool.find(v => /Ava|Jenny|Aria|Samantha|Google US English|Victoria|Zira|Female/i.test(v.name)) || pool[0];
       } else {
-        return enVoices.find(v => 
-          v.name.includes('Natural') && (v.name.includes('Guy') || v.name.includes('David')) ||
-          v.name.includes('David') || 
-          v.name.includes('George') || 
-          v.name.includes('Guy') || 
-          v.name.includes('Male')
-        ) || enVoices[1] || enVoices[0];
+        return pool.find(v => /Guy|David|Alex|Tom|Aaron|George|Male/i.test(v.name)) || pool[1] || pool[0];
       }
     }
 
@@ -1155,7 +1188,7 @@
       btn.classList.add('active');
     }
 
-    function playRealisticListening(btn, index) {
+    function playOfficialToeflAudio(btn, index) {
       if (isCurrentlySpeaking) {
         window.speechSynthesis.cancel();
         resetAllAudioButtons();
@@ -1164,82 +1197,100 @@
 
       const rawDialogue = decodeURIComponent(btn.getAttribute('data-audio'));
       const rawQuestion = decodeURIComponent(btn.getAttribute('data-question'));
-      const rate = selectedSpeeds[index] || 0.95;
+      const rate = selectedSpeeds[index] || 0.90;
+      const statusLabel = document.getElementById(`audio-status-${index}`);
 
       window.speechSynthesis.cancel();
       isCurrentlySpeaking = true;
       btn.classList.add('is-playing');
       btn.querySelector('span').textContent = '⏹️ Hentikan Audio';
 
-      const lines = [];
-      const parts = rawDialogue.split(/(Woman:|Man:)/g).filter(p => p.trim().length > 0);
+      if (statusLabel) statusLabel.textContent = "Sedang memutar nada pembuka chime...";
 
-      for (let i = 0; i < parts.length; i += 2) {
-        if (parts[i] && parts[i + 1]) {
-          const speaker = parts[i].replace(':', '').trim().toLowerCase();
-          const text = parts[i + 1].trim();
-          lines.push({ speaker, text });
-        }
-      }
-
-      if (!lines.length) {
-        lines.push({ speaker: 'woman', text: rawDialogue });
-      }
-
-      const femaleVoice = findBestVoice('female');
-      const maleVoice = findBestVoice('male');
-
-      function speakLineSequence(idx) {
+      // 1. Putar Lonceng Chime Khas Ujian TOEFL
+      playToeflAcousticChime(() => {
         if (!isCurrentlySpeaking) return;
 
-        if (idx >= lines.length) {
-          setTimeout(() => {
-            if (!isCurrentlySpeaking) return;
-            const qUtter = new SpeechSynthesisUtterance("Question. " + rawQuestion);
-            qUtter.lang = 'en-US';
-            qUtter.rate = rate * 0.95;
-            qUtter.pitch = 1.0;
-            if (maleVoice) qUtter.voice = maleVoice;
+        // 2. Parse kalimat percakapan (Hanya baca isi kalimat, tidak mengeja tulisan 'Woman' / 'Man')
+        const lines = [];
+        const parts = rawDialogue.split(/(Woman:|Man:)/g).filter(p => p.trim().length > 0);
 
-            qUtter.onend = () => resetAllAudioButtons();
-            qUtter.onerror = () => resetAllAudioButtons();
-
-            window.speechSynthesis.speak(qUtter);
-          }, 800);
-          return;
+        for (let i = 0; i < parts.length; i += 2) {
+          if (parts[i] && parts[i + 1]) {
+            const speaker = parts[i].replace(':', '').trim().toLowerCase();
+            const text = parts[i + 1].trim();
+            lines.push({ speaker, text });
+          }
         }
 
-        const currentLine = lines[idx];
-        const utter = new SpeechSynthesisUtterance(currentLine.text);
-        utter.lang = 'en-US';
-        utter.rate = rate;
-
-        if (currentLine.speaker === 'woman') {
-          utter.pitch = 1.15;
-          if (femaleVoice) utter.voice = femaleVoice;
-        } else {
-          utter.pitch = 0.82;
-          if (maleVoice) utter.voice = maleVoice;
+        if (!lines.length) {
+          lines.push({ speaker: 'woman', text: rawDialogue });
         }
 
-        utter.onend = () => {
-          setTimeout(() => {
-            if (isCurrentlySpeaking) speakLineSequence(idx + 1);
-          }, 600);
-        };
+        const femaleVoice = getNativeAmericanVoice('female');
+        const maleVoice = getNativeAmericanVoice('male');
 
-        utter.onerror = () => resetAllAudioButtons();
+        function speakConversation(step) {
+          if (!isCurrentlySpeaking) return;
 
-        window.speechSynthesis.speak(utter);
-      }
+          // Setelah dialog selesai, jeda 1 detik lalu Narator membacakan soal
+          if (step >= lines.length) {
+            if (statusLabel) statusLabel.textContent = "Narator sedang membacakan pertanyaan...";
+            
+            setTimeout(() => {
+              if (!isCurrentlySpeaking) return;
 
-      speakLineSequence(0);
+              const narratorUtter = new SpeechSynthesisUtterance("Narrator. " + rawQuestion);
+              narratorUtter.lang = 'en-US';
+              narratorUtter.rate = rate * 0.96;
+              narratorUtter.pitch = 1.0; // Suara manusia normal 1.0 tanpa distorsi robot
+              if (maleVoice) narratorUtter.voice = maleVoice;
+
+              narratorUtter.onend = () => resetAllAudioButtons();
+              narratorUtter.onerror = () => resetAllAudioButtons();
+
+              window.speechSynthesis.speak(narratorUtter);
+            }, 900);
+            return;
+          }
+
+          const currentLine = lines[step];
+          const utter = new SpeechSynthesisUtterance(currentLine.text);
+          utter.lang = 'en-US';
+          utter.rate = rate;
+          utter.pitch = 1.0; // PENTING: Pitch natural manusia tanpa pitch warping
+
+          if (currentLine.speaker === 'woman') {
+            if (femaleVoice) utter.voice = femaleVoice;
+            if (statusLabel) statusLabel.textContent = "Pembicara wanita sedang berbicara...";
+          } else {
+            if (maleVoice) utter.voice = maleVoice;
+            if (statusLabel) statusLabel.textContent = "Pembicara pria sedang berbicara...";
+          }
+
+          utter.onend = () => {
+            // Jeda percakapan alami antar pembicara (0.7 detik)
+            setTimeout(() => {
+              if (isCurrentlySpeaking) speakConversation(step + 1);
+            }, 700);
+          };
+
+          utter.onerror = () => resetAllAudioButtons();
+
+          window.speechSynthesis.speak(utter);
+        }
+
+        speakConversation(0);
+      });
     }
 
     function resetAllAudioButtons() {
       document.querySelectorAll('.audio-btn').forEach(b => {
         b.classList.remove('is-playing');
-        b.querySelector('span').textContent = '🔊 Putar Percakapan';
+        b.querySelector('span').textContent = '🔊 Putar Percakapan Resmi';
+      });
+      document.querySelectorAll('.audio-status-label').forEach(lbl => {
+        lbl.textContent = "Selesai diputar. Klik tombol untuk mengulang.";
       });
       isCurrentlySpeaking = false;
     }
