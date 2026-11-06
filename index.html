@@ -48,6 +48,7 @@
       min-height: 100vh;
     }
 
+    /* HEADER */
     header {
       position: sticky;
       top: 0;
@@ -93,6 +94,22 @@
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
+    }
+
+    /* BADGE TIMER BARU */
+    .timer-badge {
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid #c7d2fe;
+      background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.08);
+      font-variant-numeric: tabular-nums;
     }
 
     .stat-chip {
@@ -155,6 +172,7 @@
       color: #065f46;
     }
 
+    /* SECTION BANNERS */
     .section-banner {
       color: #ffffff;
       padding: 24px 28px;
@@ -265,7 +283,6 @@
       line-height: 1.75;
     }
 
-    /* KOTAK AUDIO RESMI TOEFL DENGAN STATUS LIVE */
     .audio-player-box {
       background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
       border: 1.5px solid #ddd6fe;
@@ -460,6 +477,49 @@
       color: white !important;
     }
 
+    /* KOTAK PEMBAHASAN MATERI (EDUKATIF) */
+    .explanation-box {
+      display: none;
+      margin-top: 18px;
+      padding: 16px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      animation: fadeIn 0.3s ease;
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    .explanation-box.is-correct-box {
+      border-left: 5px solid var(--success);
+      background: #f0fdf4;
+      color: #166534;
+    }
+
+    .explanation-box.is-wrong-box {
+      border-left: 5px solid var(--danger);
+      background: #fff1f2;
+      color: #991b1b;
+    }
+
+    .explanation-header {
+      font-weight: 800;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .explanation-content {
+      color: #334155;
+      font-size: 0.88rem;
+    }
+
+    .explanation-content strong {
+      color: #0f172a;
+    }
+
     .submit-container {
       margin-top: 45px;
       text-align: center;
@@ -630,7 +690,10 @@
         <span class="brand-author">By Davi Nur Alim</span>
       </div>
       <div class="header-stats">
-        <div class="stat-chip">🎧 Official Listening Chime • Audio Jernih</div>
+        <!-- BADGE TIMER STOPWATCH REALTIME -->
+        <div class="timer-badge">
+          ⏱️ <span id="timerDisplay">00:00</span> • TOEFL PBT Exam
+        </div>
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="progressBar"></div>
         </div>
@@ -688,7 +751,7 @@
       </div>
 
       <div class="modal-btns">
-        <button type="button" class="btn-modal btn-modal-review" onclick="closeModal()">Lihat Pembahasan</button>
+        <button type="button" class="btn-modal btn-modal-review" onclick="closeModal()">Lihat Pembahasan Lengkap</button>
         <button type="button" class="btn-modal btn-modal-retake" onclick="resetToNewQuestions()">Kerjakan Soal Baru</button>
       </div>
     </div>
@@ -696,7 +759,26 @@
 
   <script>
     /* =========================================================
-       NADA LONCENG CHIME RESMI ETS TOEFL (WEB AUDIO API)
+       1. LIVE STOPWATCH TIMER UJIAN
+    ========================================================== */
+    let elapsedSeconds = 0;
+    let timerInterval = null;
+
+    function startExamTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!isTestSubmitted) {
+          elapsedSeconds++;
+          const mins = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
+          const secs = String(elapsedSeconds % 60).padStart(2, '0');
+          const display = document.getElementById('timerDisplay');
+          if (display) display.textContent = `${mins}:${secs}`;
+        }
+      }, 1000);
+    }
+
+    /* =========================================================
+       2. NADA LONCENG CHIME RESMI ETS TOEFL
     ========================================================== */
     function playToeflAcousticChime(callback) {
       try {
@@ -704,13 +786,12 @@
         const ctx = new AudioCtx();
         const now = ctx.currentTime;
 
-        // Nada Chime ganda khas TOEFL (587 Hz -> 880 Hz)
         const osc1 = ctx.createOscillator();
         const gain1 = ctx.createGain();
 
         osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(587.33, now); // D5
-        osc1.frequency.exponentialRampToValueAtTime(880, now + 0.18); // A5
+        osc1.frequency.setValueAtTime(587.33, now);
+        osc1.frequency.exponentialRampToValueAtTime(880, now + 0.18);
 
         gain1.gain.setValueAtTime(0.2, now);
         gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
@@ -728,56 +809,64 @@
     }
 
     /* =========================================================
-       MESIN GENERATOR SOAL DINAMIS STANDAR AKADEMIK 2026
+       3. MESIN GENERATOR SOAL DINAMIS + PEMBAHASAN EDUKATIF
     ========================================================== */
     const listeningPatterns2026 = [
       {
         dialogue: (sub, time) => `Woman: Have you submitted the research simulation for ${sub}? Man: Not yet. The department granted an extension until ${time} due to server upgrades.`,
         q: "What does the man say about his research simulation?",
         ans: "The submission deadline was extended by the department.",
-        distractors: ["He had already completed and uploaded it.", "The assignment was completely discarded.", "The server upgrade caused him to fail."]
+        distractors: ["He had already completed and uploaded it.", "The assignment was completely discarded.", "The server upgrade caused him to fail."],
+        explain: (sub, time) => `<strong>Kaidah Listening Part A:</strong> Fokus utama selalu pada pembicara kedua. Pembicara pria mengatakan <em>'The department granted an extension until ${time}'</em>, yang bermakna sama persis (parafrase) dengan tenggat waktu pengumpulan tugas yang diperpanjang (postponed/extended).`
       },
       {
         dialogue: (sub) => `Man: Are you attending the international symposium on ${sub} this Thursday? Woman: Nothing on earth could keep me from that session!`,
         q: "What does the woman mean?",
         ans: "She considers attending the symposium essential.",
-        distractors: ["She intends to travel overseas instead.", "She is unable to register due to fees.", "She knows very little about the topic."]
+        distractors: ["She intends to travel overseas instead.", "She is unable to register due to fees.", "She knows very little about the topic."],
+        explain: () => `<strong>Kaidah Idiom TOEFL:</strong> Ungkapan <em>'Nothing on earth could keep me from...'</em> merupakan idiom hiperbola dalam bahasa Inggris Amerika yang berarti seseorang sangat bertekad dan menganggap kegiatan tersebut wajib ia hadiri.`
       },
       {
         dialogue: (tool, loc, person) => `Woman: I cannot locate the calibration device for ${tool}. Man: I believe ${person} stored it inside the primary terminal in the ${loc}.`,
         q: "Where does the man assume the calibration device is?",
         ans: (tool, loc) => `Inside the terminal in the ${loc}.`,
-        distractors: ["At the university bookstore.", "Inside the lecture hall.", "At the administrative front desk."]
+        distractors: ["At the university bookstore.", "Inside the lecture hall.", "At the administrative front desk."],
+        explain: (tool, loc, person) => `<strong>Kaidah Informasi Faktual:</strong> Pembicara pria menyatakan secara langsung letak benda: <em>'stored it inside the primary terminal in the ${loc}'</em>. Kuncinya ada pada kata kunci lokasi <strong>${loc}</strong>.`
       },
       {
         dialogue: (sub, act, person) => `Man: Formulating this algorithmic model for ${sub} is proving very difficult. Woman: Why not consult with ${person}? She successfully defended a related thesis last semester.`,
         q: "What advice does the woman give to the man?",
         ans: (s, a, person) => `Seek guidance directly from ${person}.`,
-        distractors: ["Abandon the algorithmic model entirely.", "Postpone his graduation schedule.", "Change his primary academic major."]
+        distractors: ["Abandon the algorithmic model entirely.", "Postpone his graduation schedule.", "Change his primary academic major."],
+        explain: (s, a, person) => `<strong>Kaidah Pola Saran (Suggestion):</strong> Pola kalimat tanya <em>'Why not + verb...?'</em> digunakan oleh pembicara untuk memberikan saran tindakan. Wanita itu menyarankan agar pria meminta bantuan langsung kepada <strong>${person}</strong>.`
       },
       {
         dialogue: (dest, mode) => `Woman: Are you taking a flight to the conference in ${dest}? Man: Ticket prices exceeded my departmental budget, so I reserved a seat on the ${mode}.`,
         q: "How will the man travel to the conference?",
         ans: (d, mode) => `By traveling on the ${mode}.`,
-        distractors: ["By chartering an airplane.", "By riding a bicycle.", "He will cancel his conference attendance."]
+        distractors: ["By chartering an airplane.", "By riding a bicycle.", "He will cancel his conference attendance."],
+        explain: (d, mode) => `<strong>Kaidah Pemecahan Masalah:</strong> Pria membatalkan rencana naik pesawat karena kendala biaya (<em>'exceeded my budget'</em>), dan memilih opsi alternatif yang terjangkau yaitu menaiki <strong>${mode}</strong>.`
       },
       {
         dialogue: (event, weather) => `Man: The meteorological bureau predicted severe ${weather} throughout the afternoon. Woman: Well, that puts an end to our field testing for ${event}.`,
         q: "What does the woman imply?",
         ans: (event) => `Their outdoor field testing for ${event} cannot proceed.`,
-        distractors: ["They will continue field testing in the rain.", "The test was relocated to another state.", "The weather will clear up shortly."]
+        distractors: ["They will continue field testing in the rain.", "The test was relocated to another state.", "The weather will clear up shortly."],
+        explain: (event) => `<strong>Kaidah Implikasi Idiom:</strong> Frasa <em>'That puts an end to...'</em> berarti membatalkan atau menghentikan suatu rencana karena kendala cuaca buruk.`
       },
       {
         dialogue: (food, meal) => `Woman: Does the cafeteria feature any signature dish for ${meal}? Man: The culinary team prepares an exceptional ${food}.`,
         q: "What will the man most likely recommend?",
         ans: (food) => `Ordering the ${food}.`,
-        distractors: ["A packaged instant meal.", "Dining off-campus.", "Only drinking cold water."]
+        distractors: ["A packaged instant meal.", "Dining off-campus.", "Only drinking cold water."],
+        explain: (food) => `<strong>Kaidah Rekomendasi:</strong> Kata sifat <em>'exceptional'</em> berarti luar biasa istimewa. Pria secara langsung merekomendasikan menu <strong>${food}</strong>.`
       },
       {
         dialogue: (course) => `Man: How did your committee evaluation in ${course} turn out this morning? Woman: It could not have gone any smoother!`,
         q: "What does the woman say about her evaluation?",
         ans: "The evaluation session was remarkably successful.",
-        distractors: ["She was disqualified by the committee.", "The evaluation was postponed until next week.", "She struggled to answer questions."]
+        distractors: ["She was disqualified by the committee.", "The evaluation was postponed until next week.", "She struggled to answer questions."],
+        explain: () => `<strong>Kaidah Implikasi Negatif Ganda:</strong> Frasa <em>'It could not have gone any smoother'</em> adalah bentuk idiom kepuasan mutlak, yang berarti evaluasinya berjalan sangat sukses dan sempurna tanpa hambatan.`
       }
     ];
 
@@ -786,70 +875,80 @@
         gen: (sub, context) => ({
           q: `Not until the mid-2020s ________ widespread algorithmic validation across modern ${context}.`,
           ans: `did ${sub} achieve`,
-          distractors: [`${sub} achieved`, `${sub} was achieving`, `achieved ${sub}`]
+          distractors: [`${sub} achieved`, `${sub} was achieving`, `achieved ${sub}`],
+          explain: `<strong>Kaidah Inversi Negatif TOEFL:</strong> Kalimat yang diawali frasa negatif <em>'Not until...'</em> wajib mengalami pola inversi pada klausa utamanya: <strong>Auxiliary + Subjek + Verb dasar (V1)</strong>. Karena kalimat berlatar waktu lampau, pola yang benar adalah <em>'did ${sub} achieve'</em>.`
         })
       },
       {
         gen: (org, loc, num) => ({
           q: `A synchronized swarm of ${org} in ${loc} ________ telemetry data across ${num} micro-nodes.`,
           ans: "can transmit",
-          distractors: ["it transmits", "transmitting", "to be transmitting"]
+          distractors: ["it transmits", "transmitting", "to be transmitting"],
+          explain: `<strong>Kaidah Subjek & Predikat:</strong> Kalimat ini sudah memiliki subjek lengkap (<em>'A synchronized swarm of ${org} in ${loc}'</em>) tetapi belum memiliki kata kerja utama (finite verb). Pilihan <em>'can transmit'</em> melengkapi kalimat sebagai predikat sah.`
         })
       },
       {
         gen: (subj, field) => ({
           q: `It is mandatory that every ${subj} ________ raw dataset telemetry prior to peer review in ${field}.`,
           ans: "submit",
-          distractors: ["submits", "submitted", "is submitting"]
+          distractors: ["submits", "submitted", "is submitting"],
+          explain: `<strong>Kaidah Subjunctive Mood:</strong> Frasa ekspresi keharusan <em>'It is mandatory that...'</em> mengharuskan klausa setelahnya menggunakan kata kerja bentuk dasar (<strong>bare infinitive</strong>) tanpa imbuhan -s/-ed, terlepas dari apakah subjeknya tunggal. Maka yang benar adalah <em>'submit'</em>.`
         })
       },
       {
         gen: (phenom, field) => ({
           q: `Rarely ________ such conclusive empirical proof of ${phenom} during clinical trials in ${field}.`,
           ans: "did investigators document",
-          distractors: ["investigators documented", "investigators had documented", "documenting investigators"]
+          distractors: ["investigators documented", "investigators had documented", "documenting investigators"],
+          explain: `<strong>Kaidah Inversi Adverbial:</strong> Kata keterangan pembatas frekuensi seperti <em>'Rarely'</em>, <em>'Seldom'</em>, atau <em>'Never'</em> di awal kalimat mewajibkan pembalikan posisi kata kerja bantu sebelum subjek: <strong>did + subjek + verb</strong>.`
         })
       },
       {
         gen: (entity, place) => ({
           q: `________ in the volcanic geological strata of ${place}, the bio-repository ${entity} stores vital genetic specimens.`,
           ans: "Constructed",
-          distractors: ["Constructing", "It was constructed", "To construct"]
+          distractors: ["Constructing", "It was constructed", "To construct"],
+          explain: `<strong>Kaidah Participle Clause (Pasif):</strong> Klausa keterangan di awal kalimat merupakan bentuk peringkasan dari <em>'Because it was constructed...'</em>. Karena subjeknya (fasilitas repository) berstatus pasif (dibangun), maka digunakan past participle (V3): <em>'Constructed'</em>.`
         })
       },
       {
         gen: (cond1, context) => ({
           q: `Had the climate monitoring network detected the ${cond1} earlier, engineers ________ the regional ${context}.`,
           ans: "would have fortified",
-          distractors: ["will fortify", "fortified", "would fortify"]
+          distractors: ["will fortify", "fortified", "would fortify"],
+          explain: `<strong>Kaidah Inverted Conditional Type 3:</strong> Pola <em>'Had + Subjek + V3'</em> merupakan bentuk inversi dari <em>'If the network had detected...'</em> (pengandaian masa lampau). Pasangan klausa hasilnya wajib menggunakan rumus: <strong>would have + Past Participle (V3)</strong>.`
         })
       },
       {
         gen: (factor1, process) => ({
           q: `The higher the ${factor1} in synthetic membranes, ________ the efficiency of ${process}.`,
           ans: `the greater`,
-          distractors: ["greater", "the greatest", "it is greater"]
+          distractors: ["greater", "the greatest", "it is greater"],
+          explain: `<strong>Kaidah Double Comparative:</strong> Pola perbandingan proporsional ganda selalu memakai rumus: <strong>The + comparative..., the + comparative...</strong> (contoh: <em>The higher..., the greater...</em>).`
         })
       },
       {
         gen: (elem) => ({
           q: `Because ${elem} exhibits zero electrical resistance at ambient cold, ________ widely in quantum sub-systems.`,
           ans: "it is applied",
-          distractors: ["applied", "is applied", "applying it"]
+          distractors: ["applied", "is applied", "applying it"],
+          explain: `<strong>Kaidah Klausa Utama:</strong> Kalimat diawali anak kalimat pengantar <em>'Because ${elem} exhibits...'</em>. Klausa utama setelah tanda koma wajib memiliki subjek dan predikat utuh: <strong>it is applied</strong>.`
         })
       },
       {
         gen: () => ({
           q: `Neither the chief roboticist nor the system programmers ________ satisfied with the autonomous navigational latency.`,
           ans: "were",
-          distractors: ["was", "is", "being"]
+          distractors: ["was", "is", "being"],
+          explain: `<strong>Kaidah Kesesuaian Subjek (Neither... nor):</strong> Pada pola correlative conjunction <em>Neither A nor B</em>, bentuk kata kerja mengikuti subjek kedua setelah kata <em>'nor'</em>. Karena <em>'system programmers'</em> berbentuk jamak, maka to be lampau yang tepat adalah <strong>were</strong>.`
         })
       },
       {
         gen: () => ({
           q: `Under no circumstances ________ laboratory personnel to bypass secondary biohazard containment protocols.`,
           ans: "are researchers permitted",
-          distractors: ["researchers are permitted", "researchers permit", "permit researchers"]
+          distractors: ["researchers are permitted", "researchers permit", "permit researchers"],
+          explain: `<strong>Kaidah Negative Prepositional Inversion:</strong> Frasa larangan mutlak seperti <em>'Under no circumstances'</em> di awal kalimat mengharuskan struktur inversi pasif: <strong>To Be (are) + Subjek (researchers) + Participle (permitted)</strong>.`
         })
       }
     ];
@@ -860,35 +959,40 @@
         pass: "Computational structural biology utilizes deep neural models to predict macromolecular folding coordinates with sub-angstrom atomic precision. By simulating non-covalent energetic bonds and electrostatic potentials directly from amino acid sequences, modern molecular pipelines synthesise targeted therapeutic biocatalysts, revolutionizing targeted pharmacology across global clinical medicine.",
         q: "According to the passage, how do neural models determine macromolecular folding coordinates?",
         ans: "By simulating energetic bonds and electrostatic potentials from amino acid sequences",
-        distractors: ["Through macroscopic surgical dissection exclusively", "By radiating live cellular membranes", "Using manual mechanical chemical measurement"]
+        distractors: ["Through macroscopic surgical dissection exclusively", "By radiating live cellular membranes", "Using manual mechanical chemical measurement"],
+        explain: "<strong>Kutipan Bukti Bacaan:</strong> Kalimat kedua menyatakan: <em>'By simulating non-covalent energetic bonds and electrostatic potentials directly from amino acid sequences...'</em>. Fakta ini secara gamblang menjelaskan metode komputasi yang dipakai model saraf."
       },
       {
         theme: "Atmospheric Spectroscopy of Habitable Exoplanets",
         pass: "Next-generation orbital observatories capture transmission spectroscopy when an exoplanet transits its host star. When stellar radiation filters through upper atmospheric vapor, specific photochemical wavelengths are absorbed, allowing ground astrophysicists to decipher telltale molecular signatures such as ozone, methane, and water vapor indicative of potential extraterrestrial biospheres.",
         q: "What astronomical phenomenon enables astrophysicists to identify atmospheric gases on distant planets?",
         ans: "Selective absorption of starlight filtering through atmospheric vapor during planetary transit",
-        distractors: ["Direct physical extraction of oceanic liquid samples", "Visual photographs taken from planetary landers", "Gamma-ray bursts reflecting off asteroid belts"]
+        distractors: ["Direct physical extraction of oceanic liquid samples", "Visual photographs taken from planetary landers", "Gamma-ray bursts reflecting off asteroid belts"],
+        explain: "<strong>Kutipan Bukti Bacaan:</strong> Teks menyebutkan: <em>'When stellar radiation filters through upper atmospheric vapor, specific photochemical wavelengths are absorbed...'</em>. Fenomena penyerapan spektrum cahaya bintang inilah yang mengungkap komposisi gas atmosfer."
       },
       {
         theme: "Direct Air Mineral Carbonation in Basaltic Formations",
         pass: "Direct air carbon capture technologies increasingly sequester atmospheric carbon dioxide through permanent basaltic mineralization. By dissolving gaseous carbon dioxide into water under pressure and injecting it into permeable volcanic basalt, the carbonic solution reacts with divalent cations, solidifying carbon dioxide permanently into inert carbonate stone within less than two years.",
         q: "What causes carbon dioxide to solidify permanently in volcanic basalt?",
         ans: "Chemical reactions between pressurized carbonic fluid and divalent metallic cations",
-        distractors: ["Rapid atmospheric evaporation into the stratosphere", "Exposure to high-altitude ultraviolet radiation", "Photosynthetic absorption by lichen on surface rocks"]
+        distractors: ["Rapid atmospheric evaporation into the stratosphere", "Exposure to high-altitude ultraviolet radiation", "Photosynthetic absorption by lichen on surface rocks"],
+        explain: "<strong>Kutipan Bukti Bacaan:</strong> Paragraf menjelaskan: <em>'...the carbonic solution reacts with divalent cations, solidifying carbon dioxide permanently into inert carbonate stone...'</em>."
       },
       {
         theme: "Neural Interfaces & Biocompatible Electrodes",
         pass: "Advanced intracortical brain-computer interfaces employ flexible conductive polymers that mimic brain tissue viscoelasticity. These microscopic neural probes register synaptic field potentials with minimal glial scarring, permitting individuals with motor neurological impairments to control external robotic appendages with millisecond cognitive intent.",
         q: "Why do flexible polymer neural probes reduce glial scarring in brain tissue?",
         ans: "Because their mechanical viscoelasticity closely matches natural brain tissue",
-        distractors: ["They emit high-voltage sterilizing currents", "They dissolve completely into cerebrospinal fluid", "They operate without touching neural membranes"]
+        distractors: ["They emit high-voltage sterilizing currents", "They dissolve completely into cerebrospinal fluid", "They operate without touching neural membranes"],
+        explain: "<strong>Kutipan Bukti Bacaan:</strong> Kalimat pertama dan kedua menghubungkan fleksibilitas elektroda: <em>'...polymers that mimic brain tissue viscoelasticity. These microscopic neural probes register synaptic field potentials with minimal glial scarring...'</em>."
       },
       {
         theme: "Deep-Sea Hydrothermal Ecosystems & Chemolithoautotrophy",
         pass: "Abyssal hydrothermal vents expel mineral-dense geothermal fluids exceeding three hundred degrees Celsius under immense hydrostatic pressure. Entire vent biomes flourish without solar photons through chemolithoautotrophy, wherein symbiotic archaebacteria synthesize organic biomass using reduced sulfur and methane compounds as electron donors.",
         q: "What serves as the primary energetic foundation for organisms residing around abyssal vents?",
         ans: "Chemolithoautotrophy using inorganic sulfur and methane compounds as electron donors",
-        distractors: ["Solar photosynthesis filtering through shallow surface waters", "Decomposing plant matter drifting from coastal forests", "Thermal radiation stored inside volcanic glass"]
+        distractors: ["Solar photosynthesis filtering through shallow surface waters", "Decomposing plant matter drifting from coastal forests", "Thermal radiation stored inside volcanic glass"],
+        explain: "<strong>Kutipan Bukti Bacaan:</strong> Kalimat kedua menegaskan: <em>'...flourish without solar photons through chemolithoautotrophy, wherein symbiotic archaebacteria synthesize organic biomass using reduced sulfur and methane compounds...'</em>."
       }
     ];
 
@@ -933,6 +1037,7 @@
         const correct = typeof pattern.ans === 'function' ? pattern.ans(s, t, pe, f, ev, m) : pattern.ans;
         const opts = shuffle([correct, ...pattern.distractors]);
         const ansIdx = opts.indexOf(correct);
+        const explanationText = typeof pattern.explain === 'function' ? pattern.explain(s, t, pe, f, ev, m) : pattern.explain;
 
         generated.push({
           id: `GEN_2026_L_${Date.now()}_${i}`,
@@ -940,7 +1045,8 @@
           audioText: text,
           question: pattern.q,
           options: opts,
-          answer: ansIdx
+          answer: ansIdx,
+          explanation: explanationText
         });
       }
 
@@ -964,7 +1070,8 @@
           type: 'structure',
           question: built.q,
           options: opts,
-          answer: ansIdx
+          answer: ansIdx,
+          explanation: built.explain
         });
       }
 
@@ -979,7 +1086,8 @@
           passage: topic.pass,
           question: topic.q,
           options: opts,
-          answer: ansIdx
+          answer: ansIdx,
+          explanation: topic.explain
         });
       }
 
@@ -995,7 +1103,7 @@
       return a;
     }
 
-    const STORAGE_KEY = 'TOEFL_DAVI_OFFICIAL_2026_V1';
+    const STORAGE_KEY = 'TOEFL_DAVI_PEMBAHASAN_V2';
     let activeQuestions = [];
     let userAnswers = {};
     let isTestSubmitted = false;
@@ -1020,6 +1128,7 @@
             
             renderQuestions();
             updateProgress();
+            startExamTimer();
             
             const toast = document.getElementById('restoreToast');
             if (toast) toast.style.display = 'block';
@@ -1037,9 +1146,11 @@
       activeQuestions = generateDynamic50Questions();
       userAnswers = {};
       isTestSubmitted = false;
+      elapsedSeconds = 0;
       saveCurrentState();
       renderQuestions();
       updateProgress();
+      startExamTimer();
     }
 
     function saveCurrentState() {
@@ -1067,7 +1178,7 @@
             <div class="section-banner banner-listening">
               <span class="section-badge">🎧 Section 1</span>
               <h2>Listening Comprehension (No. 1 - 15)</h2>
-              <p>Dengarkan audio dialog resmi TOEFL. Tekan tombol audio untuk mendengarkan nada pembuka, percakapan, dan narator soal.</p>
+              <p>Dengarkan dialog resmi TOEFL. Tekan tombol audio untuk mendengarkan nada pembuka, percakapan, dan narator soal.</p>
             </div>
           `;
         } else if (index === 15) {
@@ -1147,15 +1258,26 @@
           `;
         });
 
-        fullHtml += `</div></div>`;
+        fullHtml += `</div>`;
+
+        // KOTAK PEMBAHASAN MATERI (TERSEMBUNYI SAAT UJIAN, MUNCUL SETELAH SUBMIT)
+        fullHtml += `
+          <div class="explanation-box" id="explain-box-${index}">
+            <div class="explanation-header" id="explain-header-${index}">💡 Pembahasan & Analisis Soal</div>
+            <div class="explanation-content" id="explain-content-${index}">
+              <p style="margin-bottom:6px;"><strong>Kunci Jawaban: (${letters[q.answer]}) ${q.options[q.answer]}</strong></p>
+              <div>${q.explanation}</div>
+            </div>
+          </div>
+        `;
+
+        fullHtml += `</div>`;
       });
 
       container.innerHTML = fullHtml;
     }
 
-    /* =========================================================
-       AUDIO ENGINE RESMI: NATIVE AMERICAN + NATURAL PITCH 1.0
-    ========================================================== */
+    /* AUDIO ENGINE */
     let isCurrentlySpeaking = false;
     let selectedSpeeds = {};
     let availableVoices = [];
@@ -1171,7 +1293,6 @@
       
       const usVoices = availableVoices.filter(v => v.lang === 'en-US' || v.lang === 'en_US');
       const pool = usVoices.length ? usVoices : availableVoices.filter(v => v.lang.startsWith('en'));
-      
       if (!pool.length) return null;
 
       if (gender === 'female') {
@@ -1207,11 +1328,9 @@
 
       if (statusLabel) statusLabel.textContent = "Sedang memutar nada pembuka chime...";
 
-      // 1. Putar Lonceng Chime Khas Ujian TOEFL
       playToeflAcousticChime(() => {
         if (!isCurrentlySpeaking) return;
 
-        // 2. Parse kalimat percakapan (Hanya baca isi kalimat, tidak mengeja tulisan 'Woman' / 'Man')
         const lines = [];
         const parts = rawDialogue.split(/(Woman:|Man:)/g).filter(p => p.trim().length > 0);
 
@@ -1233,7 +1352,6 @@
         function speakConversation(step) {
           if (!isCurrentlySpeaking) return;
 
-          // Setelah dialog selesai, jeda 1 detik lalu Narator membacakan soal
           if (step >= lines.length) {
             if (statusLabel) statusLabel.textContent = "Narator sedang membacakan pertanyaan...";
             
@@ -1243,7 +1361,7 @@
               const narratorUtter = new SpeechSynthesisUtterance("Narrator. " + rawQuestion);
               narratorUtter.lang = 'en-US';
               narratorUtter.rate = rate * 0.96;
-              narratorUtter.pitch = 1.0; // Suara manusia normal 1.0 tanpa distorsi robot
+              narratorUtter.pitch = 1.0;
               if (maleVoice) narratorUtter.voice = maleVoice;
 
               narratorUtter.onend = () => resetAllAudioButtons();
@@ -1258,7 +1376,7 @@
           const utter = new SpeechSynthesisUtterance(currentLine.text);
           utter.lang = 'en-US';
           utter.rate = rate;
-          utter.pitch = 1.0; // PENTING: Pitch natural manusia tanpa pitch warping
+          utter.pitch = 1.0;
 
           if (currentLine.speaker === 'woman') {
             if (femaleVoice) utter.voice = femaleVoice;
@@ -1269,7 +1387,6 @@
           }
 
           utter.onend = () => {
-            // Jeda percakapan alami antar pembicara (0.7 detik)
             setTimeout(() => {
               if (isCurrentlySpeaking) speakConversation(step + 1);
             }, 700);
@@ -1296,6 +1413,8 @@
     }
 
     function chooseOption(qIndex, optIndex) {
+      if (isTestSubmitted) return; // Kunci setelah submit
+
       for (let i = 0; i < 4; i++) {
         const item = document.getElementById(`label-q${qIndex}-opt${i}`);
         if (item) item.classList.remove('selected');
@@ -1319,6 +1438,7 @@
       if (bar) bar.style.width = `${percentage}%`;
     }
 
+    /* SUBMIT & AKTIFKAN PEMBAHASAN */
     document.getElementById('toeflForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -1344,18 +1464,36 @@
       activeQuestions.forEach((q, idx) => {
         const userChoice = userAnswers[idx] !== undefined ? Number(userAnswers[idx]) : null;
 
+        // Tandai kunci benar warna hijau
         const correctLabel = document.getElementById(`label-q${idx}-opt${q.answer}`);
         if (correctLabel) correctLabel.classList.add('correct-ans');
 
-        if (userChoice !== null) {
-          if (userChoice === Number(q.answer)) {
-            correctCount++;
-            if (q.type === 'listening') listeningCorrect++;
-            else if (q.type === 'structure') structureCorrect++;
-            else if (q.type === 'reading') readingCorrect++;
+        const explainBox = document.getElementById(`explain-box-${idx}`);
+        const explainHeader = document.getElementById(`explain-header-${idx}`);
+
+        // Tampilkan kotak pembahasan
+        if (explainBox) {
+          explainBox.style.display = 'block';
+
+          if (userChoice !== null) {
+            if (userChoice === Number(q.answer)) {
+              correctCount++;
+              if (q.type === 'listening') listeningCorrect++;
+              else if (q.type === 'structure') structureCorrect++;
+              else if (q.type === 'reading') readingCorrect++;
+
+              explainBox.className = 'explanation-box is-correct-box';
+              if (explainHeader) explainHeader.innerHTML = '🟢 <strong>Jawaban Anda Benar!</strong>';
+            } else {
+              const wrongLabel = document.getElementById(`label-q${idx}-opt${userChoice}`);
+              if (wrongLabel) wrongLabel.classList.add('wrong-ans');
+
+              explainBox.className = 'explanation-box is-wrong-box';
+              if (explainHeader) explainHeader.innerHTML = '🔴 <strong>Jawaban Anda Kurang Tepat</strong>';
+            }
           } else {
-            const wrongLabel = document.getElementById(`label-q${idx}-opt${userChoice}`);
-            if (wrongLabel) wrongLabel.classList.add('wrong-ans');
+            explainBox.className = 'explanation-box is-wrong-box';
+            if (explainHeader) explainHeader.innerHTML = '⚪ <strong>Soal Ini Tidak Anda Jawab</strong>';
           }
         }
       });
@@ -1389,6 +1527,7 @@
 
     function closeModal() {
       document.getElementById('resultModal').style.display = 'none';
+      // Scroll halus ke soal pertama untuk mulai membaca pembahasan
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
