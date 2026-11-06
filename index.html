@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ANTI-CACHE: MEMAKSA BROWSER SELALU MEMUAT VERSI TERBARU -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <title>Simulasi Test TOEFL By Davi Nur Alim</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,10 +17,8 @@
     :root {
       --primary: #4f46e5;
       --primary-hover: #4338ca;
-      --primary-light: #6366f1;
       --primary-soft: #eef2ff;
       --accent: #06b6d4;
-      --accent-glow: rgba(6, 182, 212, 0.25);
       --text-main: #0f172a;
       --text-muted: #64748b;
       --bg: #f8fafc;
@@ -26,7 +29,6 @@
       --success-soft: #ecfdf5;
       --danger: #f43f5e;
       --danger-soft: #fff1f2;
-      --radius-sm: 8px;
       --radius-md: 14px;
       --radius-lg: 20px;
       --shadow-card: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
@@ -47,7 +49,6 @@
       min-height: 100vh;
     }
 
-    /* HEADER GLASSMORPHISM */
     header {
       position: sticky;
       top: 0;
@@ -122,7 +123,6 @@
       background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
-      position: relative;
     }
 
     .progress-bar-fill {
@@ -133,7 +133,6 @@
       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* CONTAINER UTAMA */
     .container {
       max-width: 960px;
       margin: 25px auto 80px;
@@ -157,7 +156,6 @@
       color: #065f46;
     }
 
-    /* SECTION BANNERS DENGAN TEMA WARNA KHUSUS */
     .section-banner {
       color: #ffffff;
       padding: 24px 28px;
@@ -216,10 +214,8 @@
     .section-banner p {
       font-size: 0.9rem;
       color: rgba(255, 255, 255, 0.85);
-      font-weight: 400;
     }
 
-    /* KARTU SOAL MODERN */
     .question-card {
       background: var(--surface);
       border-radius: var(--radius-lg);
@@ -247,9 +243,6 @@
       font-weight: 800;
       color: var(--primary);
       font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
 
     .q-tag {
@@ -271,10 +264,9 @@
       color: #334155;
       margin-bottom: 18px;
       line-height: 1.75;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
-    /* WIDGET AUDIO PLAYER (ELEGANT & CLEAN) */
+    /* AUDIO PLAYER BERSIH (TANPA SKRIP) */
     .audio-player-box {
       background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
       border: 1.5px solid #ddd6fe;
@@ -294,6 +286,8 @@
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
+      width: 100%;
+      justify-content: space-between;
     }
 
     .audio-btn {
@@ -313,16 +307,13 @@
     }
 
     .audio-btn:hover {
-      transform: translateY(-1px) scale(1.02);
-      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+      transform: translateY(-1px);
     }
 
     .audio-btn.is-playing {
       background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
-      box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
     }
 
-    /* Equalizer Sound Waves */
     .sound-waves {
       display: none;
       align-items: center;
@@ -379,7 +370,6 @@
       margin-bottom: 18px;
     }
 
-    /* PILIHAN JAWABAN MODERN */
     .options-group {
       display: flex;
       flex-direction: column;
@@ -432,7 +422,6 @@
     .option-item.selected .opt-badge {
       background: var(--primary);
       color: #ffffff;
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
     }
 
     .option-item.correct-ans {
@@ -458,7 +447,6 @@
       color: white !important;
     }
 
-    /* TOMBOL SUBMIT MEWAH */
     .submit-container {
       margin-top: 45px;
       text-align: center;
@@ -475,12 +463,10 @@
       cursor: pointer;
       box-shadow: 0 8px 24px -2px rgba(79, 70, 229, 0.4);
       transition: all 0.25s ease;
-      letter-spacing: 0.3px;
     }
 
     .btn-submit:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 12px 28px -2px rgba(79, 70, 229, 0.5);
+      transform: translateY(-2px);
     }
 
     footer {
@@ -492,7 +478,6 @@
       font-size: 0.9rem;
     }
 
-    /* MODAL HASIL TEST EKSKLUSIF */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -595,7 +580,6 @@
       font-size: 0.92rem;
       cursor: pointer;
       border: none;
-      transition: all 0.2s ease;
     }
 
     .btn-modal-review {
@@ -603,19 +587,9 @@
       color: var(--text-main);
     }
 
-    .btn-modal-review:hover {
-      background: #e2e8f0;
-    }
-
     .btn-modal-retake {
       background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
       color: white;
-      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
-    }
-
-    .btn-modal-retake:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(79, 70, 229, 0.45);
     }
 
     @keyframes fadeIn {
@@ -708,9 +682,6 @@
   </div>
 
   <script>
-    /* =========================================================
-       MESIN GENERATOR 50 SOAL TOEFL DINAMIS TANPA BATAS
-    ========================================================== */
     const listeningPatterns = [
       {
         dialogue: (sub, time) => `Woman: Did you finish the research paper for ${sub}? Man: Not yet, the professor pushed back the deadline until ${time}.`,
@@ -976,10 +947,8 @@
       return a;
     }
 
-    /* =========================================================
-       SISTEM PENYIMPANAN AMAN ANTI-RESET
-    ========================================================== */
-    const STORAGE_KEY = 'TOEFL_DAVI_PERSISTENT_SESSION_V4';
+    /* KUNCI PENYIMPANAN SESI TERBARU */
+    const STORAGE_KEY = 'TOEFL_DAVI_ULTIMATE_CLEAN_V5';
     let activeQuestions = [];
     let userAnswers = {};
     let isTestSubmitted = false;
@@ -1039,9 +1008,6 @@
       }
     }
 
-    /* =========================================================
-       RENDER PERTANYAAN (DESAIN MODERN & TANPA TOMBOL INTIP SKRIP)
-    ========================================================== */
     function renderQuestions() {
       const container = document.getElementById('questionsContainer');
       let fullHtml = '';
@@ -1085,7 +1051,6 @@
             </div>
         `;
 
-        // KOTAK AUDIO LISTENING BERSIH TANPA SKRIP
         if (q.type === 'listening') {
           const safeAudio = encodeURIComponent(q.audioText);
           const safeQuestion = encodeURIComponent(q.question);
@@ -1140,9 +1105,6 @@
       container.innerHTML = fullHtml;
     }
 
-    /* =========================================================
-       AUDIO ENGINE LISTENING: DUAL-VOICE + NARRATOR
-    ========================================================== */
     let isCurrentlySpeaking = false;
     let selectedSpeeds = {};
 
@@ -1274,9 +1236,6 @@
       isCurrentlySpeaking = false;
     }
 
-    /* =========================================================
-       KLIK OPSI & SIMPAN INSTAN
-    ========================================================== */
     function chooseOption(qIndex, optIndex) {
       for (let i = 0; i < 4; i++) {
         const item = document.getElementById(`label-q${qIndex}-opt${i}`);
@@ -1301,9 +1260,6 @@
       if (bar) bar.style.width = `${percentage}%`;
     }
 
-    /* =========================================================
-       SUBMIT & SKORING
-    ========================================================== */
     document.getElementById('toeflForm').addEventListener('submit', function(e) {
       e.preventDefault();
 
