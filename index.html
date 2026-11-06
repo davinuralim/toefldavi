@@ -216,34 +216,92 @@
       line-height: 1.7;
     }
 
+    /* KOTAK AUDIO LISTENING MULTI-VOICE */
     .audio-player-box {
       background: #faf5ff;
-      border: 1px dashed #d8b4fe;
-      padding: 12px 16px;
-      border-radius: 10px;
+      border: 1.5px dashed #c084fc;
+      padding: 14px 18px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .audio-controls-row {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .audio-btn {
       background: #7c3aed;
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.88rem;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
       transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.25);
     }
 
     .audio-btn:hover {
       background: #6d28d9;
+      transform: translateY(-1px);
+    }
+
+    .audio-btn.is-playing {
+      background: #dc2626 !important;
+      animation: pulseBtn 1s infinite alternate;
+    }
+
+    .audio-speed-selector {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #6b21a8;
+    }
+
+    .audio-speed-selector select {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #d8b4fe;
+      background: white;
+      font-weight: 700;
+      color: #6b21a8;
+      cursor: pointer;
+    }
+
+    .audio-transcript-toggle {
+      background: none;
+      border: none;
+      color: #7c3aed;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .audio-transcript-content {
+      display: none;
+      background: #ffffff;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #e9d5ff;
+      font-size: 0.85rem;
+      color: #4c1d95;
+      font-style: italic;
     }
 
     .question-text {
@@ -277,7 +335,6 @@
       border-color: #94a3b8;
     }
 
-    /* KONDISI SAAT OPSI DIPILIH (TERCANTUM LANGSUNG) */
     .option-item.selected {
       border-color: var(--primary) !important;
       background: var(--primary-soft) !important;
@@ -471,10 +528,18 @@
       color: var(--text-main);
     }
 
+    .btn-modal-review:hover {
+      background: #e2e8f0;
+    }
+
     .btn-modal-retake {
       background: var(--primary);
       color: white;
       box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-modal-retake:hover {
+      background: var(--primary-hover);
     }
 
     @keyframes fadeIn {
@@ -486,6 +551,11 @@
       from { transform: scale(0.92); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
+
+    @keyframes pulseBtn {
+      from { opacity: 1; }
+      to { opacity: 0.7; }
+    }
   </style>
 </head>
 <body>
@@ -494,7 +564,7 @@
     <div class="header-content">
       <div class="brand-box">
         <h1>Simulasi Test TOEFL</h1>
-        <span class="brand-author">Dibuat oleh Davi Nur Alim</span>
+        <span class="brand-author">Dibuat secara resmi oleh Davi Nur Alim</span>
       </div>
       <div class="header-stats">
         <div class="stat-chip">♾️ Soal Baru Tanpa Batas</div>
@@ -831,9 +901,9 @@
     }
 
     /* =========================================================
-       SISTEM MEMORI PENYIMPANAN AMAN ANTI-RESET
+       SISTEM PENYIMPANAN AMAN ANTI-RESET
     ========================================================== */
-    const STORAGE_KEY = 'TOEFL_DAVI_PERSISTENT_SESSION_V2';
+    const STORAGE_KEY = 'TOEFL_DAVI_PERSISTENT_SESSION_V3';
     let activeQuestions = [];
     let userAnswers = {};
     let isTestSubmitted = false;
@@ -845,24 +915,20 @@
         try {
           const parsed = JSON.parse(savedRaw);
 
-          // 1. JIKA SUDAH PERNAH DI-SUBMIT & SKOR KELUAR -> REFRESH = BUAT SOAL BARU
           if (parsed && parsed.isCompleted === true) {
             localStorage.removeItem(STORAGE_KEY);
             startNewTestSession();
             return;
           }
 
-          // 2. JIKA BELUM SELESAI / BELUM SUBMIT -> PULIHKAN SEMUA SOAL & JAWABAN
           if (parsed && Array.isArray(parsed.questions) && parsed.questions.length === 50) {
             activeQuestions = parsed.questions;
             userAnswers = parsed.answers || {};
             isTestSubmitted = false;
             
-            // Render langsung bersama status centang jawaban
             renderQuestions();
             updateProgress();
             
-            // Tampilkan notifikasi pemulihan
             const toast = document.getElementById('restoreToast');
             if (toast) toast.style.display = 'block';
             return;
@@ -872,7 +938,6 @@
         }
       }
 
-      // 3. JIKA PERTAMA KALI DIBUKA
       startNewTestSession();
     }
 
@@ -894,12 +959,12 @@
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionPayload));
       } catch (err) {
-        console.error("Gagal menyimpan state ke localStorage:", err);
+        console.error("Gagal menyimpan state:", err);
       }
     }
 
     /* =========================================================
-       RENDER PERTANYAAN (JAWABAN TERPILIH LANGSUNG DICETAK)
+       RENDER PERTANYAAN DENGAN FITUR AUDIO LISTENING JERNIH
     ========================================================== */
     function renderQuestions() {
       const container = document.getElementById('questionsContainer');
@@ -913,7 +978,7 @@
             <div class="section-banner">
               <span class="section-badge">Section 1</span>
               <h2>Listening Comprehension (No. 1 - 15)</h2>
-              <p>Dengarkan audio percakapan dengan menekan tombol speaker, lalu pilih jawaban terbaik.</p>
+              <p>Dengarkan percakapan dengan menekan tombol audio. Suara wanita & pria dipisah dengan artikulasi jernih.</p>
             </div>
           `;
         } else if (index === 15) {
@@ -944,14 +1009,35 @@
             </div>
         `;
 
+        // BAGIAN KONTROL AUDIO LISTENING DENGAN SPEED & DUAL VOICE
         if (q.type === 'listening') {
           const safeAudio = encodeURIComponent(q.audioText);
+          const safeQuestion = encodeURIComponent(q.question);
+
           fullHtml += `
             <div class="audio-player-box">
-              <button type="button" class="audio-btn" data-audio="${safeAudio}" onclick="playAudioFromBtn(this)">
-                🔊 Putar Percakapan
-              </button>
-              <span style="font-size: 0.8rem; color: #6b21a8; font-weight: 600;">Klik untuk mendengarkan percakapan bahasa Inggris</span>
+              <div class="audio-controls-row">
+                <button type="button" class="audio-btn" id="audio-btn-${index}" 
+                        data-audio="${safeAudio}" data-question="${safeQuestion}" 
+                        onclick="playRealisticListening(this, ${index})">
+                  🔊 Putar Percakapan
+                </button>
+                <div class="audio-speed-selector">
+                  <span>Kecepatan:</span>
+                  <select id="speed-${index}">
+                    <option value="0.95" selected>Normal</option>
+                    <option value="0.82">Lambat (Jelas)</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <button type="button" class="audio-transcript-toggle" onclick="toggleTranscript(${index})">
+                  📝 Intip Skrip Percakapan (Jika Kurang Jelas)
+                </button>
+                <div class="audio-transcript-content" id="transcript-${index}">
+                  ${q.audioText.replace(/Woman:/g, '<strong>👩 Woman:</strong>').replace(/Man:/g, '<br><strong>👨 Man:</strong>')}
+                </div>
+              </div>
             </div>
           `;
         }
@@ -965,11 +1051,9 @@
         const letters = ['A', 'B', 'C', 'D'];
         fullHtml += `<div class="options-group" id="opt-group-${index}">`;
 
-        // PENTING: Periksa apakah soal ini sudah punya jawaban tersimpan
         const savedChoice = userAnswers[index] !== undefined ? Number(userAnswers[index]) : null;
 
         q.options.forEach((opt, optIdx) => {
-          // JIKA SUDAH DIPILIH SEBELUMNYA, LANGSUNG BERIKAN KELAS .selected DI SINI
           const isSelectedClass = (savedChoice !== null && savedChoice === optIdx) ? 'selected' : '';
 
           fullHtml += `
@@ -984,21 +1068,159 @@
         fullHtml += `</div></div>`;
       });
 
-      // Render satu kali secara instan ke DOM
       container.innerHTML = fullHtml;
     }
 
-    function playAudioFromBtn(button) {
-      const text = decodeURIComponent(button.getAttribute('data-audio'));
+    /* =========================================================
+       AUDIO ENGINE LISTENING: DUAL-VOICE + NARRATOR + NATURAL PAUSE
+    ========================================================== */
+    let isCurrentlySpeaking = false;
+
+    // Cache daftar suara berkualitas tinggi
+    let availableVoices = [];
+    function loadVoices() {
+      availableVoices = window.speechSynthesis.getVoices();
+    }
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+    loadVoices();
+
+    function findBestVoice(gender = 'female') {
+      if (!availableVoices.length) availableVoices = window.speechSynthesis.getVoices();
+
+      const enVoices = availableVoices.filter(v => v.lang.startsWith('en'));
+      if (!enVoices.length) return null;
+
+      if (gender === 'female') {
+        return enVoices.find(v => 
+          v.name.includes('Natural') || 
+          v.name.includes('Google US English') || 
+          v.name.includes('Samantha') || 
+          v.name.includes('Zira') || 
+          v.name.includes('Jenny') || 
+          v.name.includes('Female')
+        ) || enVoices[0];
+      } else {
+        return enVoices.find(v => 
+          v.name.includes('Natural') && (v.name.includes('Guy') || v.name.includes('David')) ||
+          v.name.includes('David') || 
+          v.name.includes('George') || 
+          v.name.includes('Guy') || 
+          v.name.includes('Male')
+        ) || enVoices[1] || enVoices[0];
+      }
+    }
+
+    function playRealisticListening(btn, index) {
+      if (isCurrentlySpeaking) {
+        window.speechSynthesis.cancel();
+        resetAllAudioButtons();
+        return;
+      }
+
+      const rawDialogue = decodeURIComponent(btn.getAttribute('data-audio'));
+      const rawQuestion = decodeURIComponent(btn.getAttribute('data-question'));
+      const speedSelect = document.getElementById(`speed-${index}`);
+      const rate = speedSelect ? parseFloat(speedSelect.value) : 0.95;
+
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.88;
-      window.speechSynthesis.speak(utterance);
+      isCurrentlySpeaking = true;
+      btn.classList.add('is-playing');
+      btn.innerHTML = '⏹️ Menghentikan Audio...';
+
+      // Parse baris percakapan Woman dan Man
+      const lines = [];
+      const parts = rawDialogue.split(/(Woman:|Man:)/g).filter(p => p.trim().length > 0);
+
+      for (let i = 0; i < parts.length; i += 2) {
+        if (parts[i] && parts[i + 1]) {
+          const speaker = parts[i].replace(':', '').trim().toLowerCase();
+          const text = parts[i + 1].trim();
+          lines.push({ speaker, text });
+        }
+      }
+
+      if (!lines.length) {
+        lines.push({ speaker: 'woman', text: rawDialogue });
+      }
+
+      const femaleVoice = findBestVoice('female');
+      const maleVoice = findBestVoice('male');
+
+      function speakLineSequence(idx) {
+        if (!isCurrentlySpeaking) return;
+
+        if (idx >= lines.length) {
+          // Setelah percakapan selesai, jeda 0.8 detik lalu Narator membacakan soal
+          setTimeout(() => {
+            if (!isCurrentlySpeaking) return;
+            const qUtter = new SpeechSynthesisUtterance("Question. " + rawQuestion);
+            qUtter.lang = 'en-US';
+            qUtter.rate = rate * 0.95;
+            qUtter.pitch = 1.0;
+            if (maleVoice) qUtter.voice = maleVoice;
+
+            qUtter.onend = () => {
+              isCurrentlySpeaking = false;
+              resetAllAudioButtons();
+            };
+            qUtter.onerror = () => {
+              isCurrentlySpeaking = false;
+              resetAllAudioButtons();
+            };
+
+            window.speechSynthesis.speak(qUtter);
+          }, 800);
+          return;
+        }
+
+        const currentLine = lines[idx];
+        const utter = new SpeechSynthesisUtterance(currentLine.text);
+        utter.lang = 'en-US';
+        utter.rate = rate;
+
+        if (currentLine.speaker === 'woman') {
+          utter.pitch = 1.15; // Nada suara feminin & jernih
+          if (femaleVoice) utter.voice = femaleVoice;
+        } else {
+          utter.pitch = 0.82; // Nada suara maskulin & berbobot
+          if (maleVoice) utter.voice = maleVoice;
+        }
+
+        utter.onend = () => {
+          // Jeda alami antar lawan bicara (0.6 detik)
+          setTimeout(() => {
+            if (isCurrentlySpeaking) speakLineSequence(idx + 1);
+          }, 600);
+        };
+
+        utter.onerror = () => {
+          isCurrentlySpeaking = false;
+          resetAllAudioButtons();
+        };
+
+        window.speechSynthesis.speak(utter);
+      }
+
+      speakLineSequence(0);
+    }
+
+    function resetAllAudioButtons() {
+      document.querySelectorAll('.audio-btn').forEach(b => {
+        b.classList.remove('is-playing');
+        b.innerHTML = '🔊 Putar Percakapan';
+      });
+      isCurrentlySpeaking = false;
+    }
+
+    function toggleTranscript(index) {
+      const box = document.getElementById(`transcript-${index}`);
+      if (box) {
+        box.style.display = box.style.display === 'block' ? 'none' : 'block';
+      }
     }
 
     /* =========================================================
-       KLIK OPSI & SIMPAN INSTAN DETIK ITU JUGA
+       KLIK OPSI & SIMPAN INSTAN
     ========================================================== */
     function chooseOption(qIndex, optIndex) {
       for (let i = 0; i < 4; i++) {
@@ -1009,10 +1231,7 @@
       const selectedItem = document.getElementById(`label-q${qIndex}-opt${optIndex}`);
       if (selectedItem) selectedItem.classList.add('selected');
 
-      // Kunci jawaban ke memori
       userAnswers[qIndex] = Number(optIndex);
-      
-      // Simpan langsung ke penyimpanan browser saat itu juga
       saveCurrentState();
       updateProgress();
     }
@@ -1044,6 +1263,9 @@
         if (!confirmSubmit) return;
       }
 
+      window.speechSynthesis.cancel();
+      resetAllAudioButtons();
+
       let correctCount = 0;
       let listeningCorrect = 0;
       let structureCorrect = 0;
@@ -1068,11 +1290,9 @@
         }
       });
 
-      // TANDAI BAHWA TES RESMI SELESAI
       isTestSubmitted = true;
       saveCurrentState();
 
-      // Hitung Skor TOEFL PBT
       const scaledL = Math.round(31 + (listeningCorrect / 15) * 37);
       const scaledS = Math.round(31 + (structureCorrect / 20) * 37);
       const scaledR = Math.round(31 + (readingCorrect / 15) * 37);
@@ -1107,7 +1327,6 @@
       location.reload();
     }
 
-    // Jalankan sesegera mungkin saat file dibuka
     window.addEventListener('DOMContentLoaded', initTest);
   </script>
 </body>
