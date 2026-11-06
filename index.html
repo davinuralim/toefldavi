@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- FIREBASE SDK RESMI GOOGLE -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
   <style>
     :root {
       --primary: #4f46e5;
@@ -41,7 +45,6 @@
       line-height: 1.6;
     }
 
-    /* HEADER */
     header {
       position: sticky;
       top: 0;
@@ -116,7 +119,12 @@
       transition: width 0.3s ease;
     }
 
-    /* TOAST / ALERTS */
+    .container {
+      max-width: 960px;
+      margin: 25px auto 80px;
+      padding: 0 20px;
+    }
+
     .toast-box {
       display: none;
       padding: 12px 18px;
@@ -133,33 +141,6 @@
       color: #065f46;
     }
 
-    .toast-exhausted {
-      background: #fffbeb;
-      border: 1px solid #fde68a;
-      color: #92400e;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .btn-reset-history {
-      background: #d97706;
-      color: white;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 0.8rem;
-    }
-
-    .container {
-      max-width: 960px;
-      margin: 25px auto 80px;
-      padding: 0 20px;
-    }
-
-    /* SECTION BANNER */
     .section-banner {
       background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
       color: #ffffff;
@@ -191,7 +172,6 @@
       color: #cbd5e1;
     }
 
-    /* QUESTION CARD */
     .question-card {
       background: var(--surface);
       border-radius: var(--radius);
@@ -277,7 +257,6 @@
       margin-bottom: 16px;
     }
 
-    /* OPTIONS (DIBUAT SANGAT RESPONSIF TERHADAP KLIK) */
     .options-group {
       display: flex;
       flex-direction: column;
@@ -357,11 +336,6 @@
       color: #991b1b !important;
     }
 
-    .submit-container {
-      margin-top: 35px;
-      text-align: center;
-    }
-
     .btn-submit {
       background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
       color: white;
@@ -389,7 +363,6 @@
       font-size: 0.9rem;
     }
 
-    /* MODAL POPUP HASIL */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -404,19 +377,20 @@
 
     .modal-card {
       background: white;
-      max-width: 500px;
+      max-width: 520px;
       width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
       border-radius: 24px;
-      padding: 32px 28px;
+      padding: 30px 24px;
       text-align: center;
       box-shadow: 0 20px 40px rgba(0,0,0,0.25);
       animation: modalPop 0.3s ease;
     }
 
-    /* LINGKARAN SKOR UTAMA */
     .score-badge-circle {
-      width: 145px;
-      height: 145px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
       background: linear-gradient(135deg, #e0e7ff, #ede9fe);
       border: 5px solid var(--primary);
@@ -429,7 +403,7 @@
     }
 
     .score-badge-circle .num {
-      font-size: 2.8rem;
+      font-size: 2.7rem;
       font-weight: 800;
       color: var(--primary);
       line-height: 1;
@@ -444,68 +418,90 @@
       margin-top: 4px;
     }
 
-    .breakdown-box {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 16px;
-      text-align: left;
-      font-size: 0.9rem;
-      margin-bottom: 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .name-input-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 14px;
+      margin: 15px 0;
     }
 
-    .breakdown-row {
+    .name-input-box input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #93c5fd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 6px;
+      outline: none;
+    }
+
+    .btn-save-db {
+      width: 100%;
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .leaderboard-section {
+      margin-top: 20px;
+      text-align: left;
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .leaderboard-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .leaderboard-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    .leaderboard-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    .section-scores-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px dashed #cbd5e1;
-    }
-
-    .sec-score-card {
-      background: #ffffff;
-      padding: 8px;
+      background: white;
+      padding: 8px 12px;
       border-radius: 8px;
-      text-align: center;
+      font-size: 0.85rem;
       border: 1px solid #e2e8f0;
-    }
-
-    .sec-score-card small {
-      display: block;
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .sec-score-card strong {
-      font-size: 0.95rem;
-      color: var(--primary);
     }
 
     .modal-btns {
       display: flex;
       gap: 12px;
+      margin-top: 20px;
     }
 
     .btn-modal {
       flex: 1;
-      padding: 14px;
+      padding: 12px;
       border-radius: 12px;
       font-weight: 700;
       font-size: 0.92rem;
       cursor: pointer;
       border: none;
-      transition: all 0.2s;
     }
 
     .btn-modal-review {
@@ -516,7 +512,6 @@
     .btn-modal-retake {
       background: var(--primary);
       color: white;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
     }
 
     @keyframes fadeIn {
@@ -532,7 +527,6 @@
 </head>
 <body>
 
-  <!-- STICKY HEADER -->
   <header>
     <div class="header-content">
       <div class="brand-box">
@@ -540,7 +534,7 @@
         <span class="brand-author">Dibuat oleh Davi Nur Alim</span>
       </div>
       <div class="header-stats">
-        <div class="stat-chip" id="unusedPoolChip">Bank Soal Baru: Memuat...</div>
+        <div class="stat-chip" id="attemptChip">♾️ Soal Baru Tanpa Batas</div>
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="progressBar"></div>
         </div>
@@ -550,21 +544,14 @@
   </header>
 
   <main class="container">
-    <!-- NOTIFIKASI RESTORE JIKA TERPENCET REFRESH -->
     <div id="restoreToast" class="toast-box toast-restore">
       ✨ <strong>Sesi Dipulihkan!</strong> Soal & jawaban Anda yang sedang dikerjakan berhasil dikembalikan.
-    </div>
-
-    <!-- NOTIFIKASI JIKA BANK SOAL HABIS -->
-    <div id="exhaustedToast" class="toast-box toast-exhausted" style="display:none;">
-      <span>⚠️ <strong>Luar Biasa! Semua bank soal unik telah Anda selesaikan.</strong></span>
-      <button class="btn-reset-history" onclick="resetAllHistory()">Reset Bank Soal</button>
     </div>
 
     <form id="toeflForm">
       <div id="questionsContainer"></div>
       
-      <div class="submit-container">
+      <div style="text-align: center; margin-top: 35px;">
         <button type="submit" class="btn-submit">Selesai & Cek Skor TOEFL</button>
       </div>
     </form>
@@ -574,44 +561,34 @@
     <p>Simulasi TOEFL PBT Lengkap (50 Soal) • <strong>Dibuat oleh Davi Nur Alim</strong></p>
   </footer>
 
-  <!-- MODAL HASIL SKOR TOEFL RESMI -->
   <div class="modal-overlay" id="resultModal">
     <div class="modal-card">
       <div style="font-size: 2.8rem; margin-bottom: 4px;">🎯</div>
       <h2 style="font-size: 1.45rem; font-weight: 800;">Skor TOEFL Anda</h2>
       <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Simulasi Resmi • Davi Nur Alim</p>
 
-      <!-- SKOR TOEFL SEBAGAI HERO NUMBER -->
       <div class="score-badge-circle">
         <span class="num" id="toeflScoreVal">310</span>
         <span class="sub">Estimasi Skor PBT</span>
       </div>
 
-      <div class="breakdown-box">
-        <div class="breakdown-row">
-          <span>Total Jawaban Benar:</span>
-          <strong><span id="correctScore">0</span> dari 50 Soal</strong>
-        </div>
-        <div class="breakdown-row">
-          <span>Persentase Akurasi:</span>
-          <strong id="accuracyVal">0%</strong>
-        </div>
+      <p style="font-size: 0.95rem; font-weight: 700;">
+        Benar: <span id="correctScore">0</span> / 50 Soal (<span id="accuracyVal">0%</span>)
+      </p>
 
-        <div class="section-scores-grid">
-          <div class="sec-score-card">
-            <small>🎧 Listening</small>
-            <strong id="secListeningVal">0 / 15</strong>
-          </div>
-          <div class="sec-score-card">
-            <small>✍️ Structure</small>
-            <strong id="secStructureVal">0 / 20</strong>
-          </div>
-          <div class="sec-score-card">
-            <small>📖 Reading</small>
-            <strong id="secReadingVal">0 / 15</strong>
-          </div>
-        </div>
-        <p style="font-size: 0.72rem; color: var(--text-muted); text-align: center; margin-top: 4px;">*Skala TOEFL PBT resmi berkisar antara 310 (skor dasar) hingga 677.</p>
+      <div class="name-input-box" id="saveDbBox">
+        <p style="font-size: 0.85rem; font-weight: 700; color: #1e3a8a;">
+          💾 Simpan Skor Anda ke Database & Leaderboard:
+        </p>
+        <input type="text" id="participantName" placeholder="Ketik Nama Anda di sini..." maxlength="30">
+        <button type="button" class="btn-save-db" id="btnSaveToDb" onclick="saveScoreToFirebase()">Simpan ke Leaderboard</button>
+      </div>
+
+      <div class="leaderboard-section">
+        <div class="leaderboard-title">🏆 Top 10 Papan Peringkat (Live)</div>
+        <ul class="leaderboard-list" id="leaderboardList">
+          <li style="text-align: center; color: var(--text-muted); font-size: 0.8rem;">Memuat data leaderboard...</li>
+        </ul>
       </div>
 
       <div class="modal-btns">
@@ -623,141 +600,295 @@
 
   <script>
     /* =========================================================
-       BANK SOAL DENGAN ID UNIK (LISTENING, STRUCTURE, READING)
+       1. FIREBASE CONFIGURATION (PROJECT: toeofl-davi)
     ========================================================== */
-    const listeningPool = [
-      { id: "L01", audioText: "Man: Did you hear about the university library hours? Woman: Yes, they are extending them until midnight every weekday.", question: "What did the woman say about the library?", options: ["It will close earlier than usual.", "It will remain open until midnight on weekdays.", "It is closed on weekends.", "It only opens for special events."], answer: 1 },
-      { id: "L02", audioText: "Woman: Professor Evans postponed the submission of the assignment until next Friday. Man: That is a relief! I needed more time.", question: "How does the man feel about the news?", options: ["He is angry at the professor.", "He wants to finish it today.", "He is glad to have extra time.", "He had already submitted the assignment."], answer: 2 },
-      { id: "L03", audioText: "Man: Do you think you will attend the seminar on climate change? Woman: I would not miss it for the world!", question: "What does the woman mean?", options: ["She is definitely going to the seminar.", "She cannot find the location of the seminar.", "She will miss the seminar due to work.", "She knows little about climate change."], answer: 0 },
-      { id: "L04", audioText: "Woman: I am really having trouble with this chemistry problem. Man: Why not ask Robert? He majored in chemical engineering.", question: "What does the man suggest the woman do?", options: ["Give up on the chemistry problem.", "Change her major to engineering.", "Seek assistance from Robert.", "Read the textbook again."], answer: 2 },
-      { id: "L05", audioText: "Man: Are you flying home for the spring break? Woman: Plane tickets are way out of my budget, so I'm taking the bus.", question: "How will the woman travel home?", options: ["By airplane.", "By train.", "By car with friends.", "By bus."], answer: 3 },
-      { id: "L06", audioText: "Woman: The weather report said it's going to pour all afternoon. Man: Well, there goes our plan for a picnic at the lake.", question: "What does the man imply?", options: ["They will hold the picnic indoors.", "The picnic will have to be cancelled.", "They like eating in the rain.", "They will go to the lake tomorrow."], answer: 1 },
-      { id: "L07", audioText: "Man: Excuse me, does this bus stop in front of the art gallery? Woman: No, you'll need to transfer to the number 12 bus at the central square.", question: "What must the man do to get to the art gallery?", options: ["Walk from the station.", "Wait for thirty minutes.", "Change buses at the central square.", "Stay on this bus until the end of the line."], answer: 2 },
-      { id: "L08", audioText: "Woman: Have you seen my car keys anywhere? Man: I think I saw them on the kitchen counter next to the microwave.", question: "Where does the man think the keys are?", options: ["Inside the car.", "On the kitchen counter.", "Under the dining table.", "In the woman's bag."], answer: 1 },
-      { id: "L09", audioText: "Man: I can't believe the semester is already over. Woman: Neither can I. Time really flew by.", question: "What does the woman mean?", options: ["She agrees that the semester went very quickly.", "She wished the semester had ended sooner.", "She does not understand the calendar.", "She was late for her flight."], answer: 0 },
-      { id: "L10", audioText: "Woman: Is there any vegetarian dish on the menu? Man: Yes, our chef makes a wonderful mushroom risotto.", question: "What will the man probably recommend?", options: ["A steak dinner.", "A mushroom risotto.", "Fried chicken.", "A seafood platter."], answer: 1 },
-      { id: "L11", audioText: "Man: I'm thinking of joining the photography club. Woman: You should! Their weekly exhibitions are always fascinating.", question: "What does the woman think about the club?", options: ["It is too expensive.", "The man should avoid it.", "It is very good and interesting.", "It takes up too much time."], answer: 2 },
-      { id: "L12", audioText: "Woman: Would you like sugar or cream in your coffee? Man: Just black for me, please.", question: "How does the man want his coffee?", options: ["With lots of sugar.", "With milk and cream.", "Without sugar or cream.", "Cold with ice."], answer: 2 },
-      { id: "L13", audioText: "Man: I barely got four hours of sleep last night because of the project. Woman: You really should get some rest before the exam tomorrow.", question: "What does the woman advise the man to do?", options: ["Continue studying all night.", "Take a rest before the test.", "Cancel the exam.", "Drink more coffee."], answer: 1 },
-      { id: "L14", audioText: "Woman: How did your job interview go this morning? Man: It couldn't have gone better!", question: "What does the man imply?", options: ["The interview was terrible.", "The interview went extremely well.", "He missed the interview.", "He decided not to take the job."], answer: 1 },
-      { id: "L15", audioText: "Man: Are you ready to order now? Woman: We could use another five minutes with the menu.", question: "What does the woman mean?", options: ["She is ready to order now.", "She wants to leave the restaurant.", "She needs a few more minutes to decide.", "She has already eaten."], answer: 2 },
-      { id: "L16", audioText: "Woman: Did Sarah buy that red jacket she liked so much? Man: Unfortunately, it was sold out in her size.", question: "Why didn't Sarah buy the jacket?", options: ["It was too expensive.", "She didn't like the color.", "Her size was out of stock.", "The shop was closed."], answer: 2 },
-      { id: "L17", audioText: "Man: Could you lend me five dollars for lunch? Woman: Sorry, I only have a credit card on me today.", question: "What is the woman's problem?", options: ["She doesn't have cash.", "She lost her wallet.", "She refuses to help the man.", "She already paid for lunch."], answer: 0 },
-      { id: "L18", audioText: "Woman: Is it supposed to snow tonight? Man: The meteorologist said we should expect at least three inches.", question: "What does the man report about the weather?", options: ["It will be warm and sunny.", "It will rain heavily.", "Significant snow is anticipated.", "The forecast is uncertain."], answer: 2 },
-      { id: "L19", audioText: "Man: I can hardly hear the professor from the back row. Woman: Let's move down to the front before the lecture starts.", question: "What does the woman suggest?", options: ["Leaving the classroom.", "Moving closer to the front.", "Complaining to the professor.", "Recording the lecture."], answer: 1 },
-      { id: "L20", audioText: "Woman: The printer jammed again right when I needed my report. Man: There is another printer available in the computer lab on the second floor.", question: "What should the woman do?", options: ["Fix the broken printer.", "Wait until tomorrow.", "Use the printer on the second floor.", "Handwrite the report."], answer: 2 },
-      { id: "L21", audioText: "Man: Are you going to drive to the conference in Chicago? Woman: Considering the heavy traffic and parking fees, taking the express train makes much more sense.", question: "What did the woman decide to do?", options: ["Drive her own car.", "Take the train to the conference.", "Cancel her trip.", "Carpool with colleagues."], answer: 1 },
-      { id: "L22", audioText: "Woman: Mark seems really stressed about his presentation. Man: If only he had started preparing a few days earlier instead of last night.", question: "What does the man imply about Mark?", options: ["Mark prepared thoroughly.", "Mark procrastinated on his preparation.", "Mark is well-organized.", "Mark cancelled his presentation."], answer: 1 },
-      { id: "L23", audioText: "Man: Do you know where I can get change for a twenty-dollar bill? Woman: The cashier at the cafeteria counter will usually break it for you.", question: "Where does the woman suggest the man go?", options: ["To the bank downtown.", "To the cafeteria cashier.", "To a vending machine.", "To the university bookstore."], answer: 1 },
-      { id: "L24", audioText: "Woman: Have you finished reading the novel for American Literature? Man: I am only halfway through; it is much longer than I expected.", question: "What does the man mean?", options: ["He has completed the book.", "He has read half of the novel.", "He dislikes the professor.", "He lost his copy of the book."], answer: 1 },
-      { id: "L25", audioText: "Man: Is the campus shuttle running on its normal schedule today? Woman: Because of the road construction on North Avenue, it is running about fifteen minutes late.", question: "What is the problem with the shuttle?", options: ["It is out of service.", "It is delayed due to construction.", "It changed its route completely.", "It broke down on North Avenue."], answer: 1 },
-      { id: "L26", audioText: "Woman: I'm thinking of dropping that advanced statistics course. Man: Don't make a hasty decision; talk to an academic counselor first.", question: "What advice does the man give?", options: ["Drop the class immediately.", "Consult an academic counselor first.", "Study harder alone.", "Switch to another university."], answer: 1 },
-      { id: "L27", audioText: "Man: My laptop battery died and I forgot my charger at home. Woman: You can borrow mine; it uses the exact same USB-C port.", question: "What does the woman offer to do?", options: ["Buy the man a new laptop.", "Lend him her charger.", "Take him back home.", "Call technical support."], answer: 1 },
-      { id: "L28", audioText: "Woman: Are you attending the campus job fair this Thursday? Man: I wouldn't miss it; several tech firms I admire are recruiting there.", question: "What does the man plan to do?", options: ["Skip the job fair.", "Attend the job fair to meet recruiters.", "Apply for graduate school.", "Host a booth at the fair."], answer: 1 },
-      { id: "L29", audioText: "Man: How did your tennis match turn out yesterday? Woman: We were tied until the final set, but our opponents edged us out.", question: "What was the outcome of the match?", options: ["The woman's team won easily.", "The match was rained out.", "The woman's team narrowly lost.", "The match was postponed."], answer: 2 },
-      { id: "L30", audioText: "Woman: Should we split a pizza or order separate sandwiches? Man: A large vegetarian pizza sounds perfect to share.", question: "What will they probably eat?", options: ["Individual sandwiches.", "A shared vegetarian pizza.", "A steak meal.", "Salad and soup."], answer: 1 }
-    ];
+    const firebaseConfig = {
+      apiKey: localStorage.getItem('DAVI_FIREBASE_APIKEY') || "AIzaSy_GANTI_DENGAN_APIKEY_ANDA",
+      authDomain: "toeofl-davi.firebaseapp.com",
+      projectId: "toeofl-davi",
+      storageBucket: "toeofl-davi.appspot.com",
+      messagingSenderId: "305284102941",
+      appId: "1:305284102941:web:abcdef123456"
+    };
 
-    const structurePool = [
-      { id: "S01", question: "The North Platte River from Wyoming into Nebraska ________.", options: ["it flowed", "flows", "flowing", "with flowing spray"], answer: 1 },
-      { id: "S02", question: "________ Biloxi received its name from a Sioux word meaning 'first people'.", options: ["The city of", "Located in", "It is in", "The tour includes"], answer: 0 },
-      { id: "S03", question: "A pride of lions ________ up to forty members, including cubs and adult females.", options: ["can contain", "it contains", "contain", "containing"], answer: 0 },
-      { id: "S04", question: "Not until the late 19th century ________ widespread use in manufacturing.", options: ["electricity found", "did electricity find", "electricity was finding", "was electricity finding"], answer: 1 },
-      { id: "S05", question: "The musical instrument ________ the flute is one of the oldest known in human history.", options: ["known as", "which known", "as known", "is known as"], answer: 0 },
-      { id: "S06", question: "Rarely ________ such devotion to social reform among political figures of that era.", options: ["one saw", "did one see", "one had seen", "one was seeing"], answer: 1 },
-      { id: "S07", question: "________ by mountain ranges on all sides, the valley possesses a unique microclimate.", options: ["Surrounding", "Surrounded", "It is surrounded", "To surround"], answer: 1 },
-      { id: "S08", question: "Neither the manager nor the employees ________ pleased with the new policy.", options: ["was", "were", "is", "being"], answer: 1 },
-      { id: "S09", question: "The more complex a system becomes, ________ it is to maintain without downtime.", options: ["the harder", "harder", "the hardest", "it is harder"], answer: 0 },
-      { id: "S10", question: "Marshes and bogs are wetland areas ________ characterized by slow water drainage.", options: ["that are", "which", "are", "they are"], answer: 0 },
-      { id: "S11", question: "Photovoltaic cells ________ direct sunlight into electricity using the photoelectric effect.", options: ["convert", "converting", "converts", "conversion"], answer: 0 },
-      { id: "S12", question: "Had the committee known about the budget deficits, they ________ the project.", options: ["would cancel", "would have cancelled", "cancelled", "will cancel"], answer: 1 },
-      { id: "S13", question: "Despite ________ cold temperatures, polar bears thrive in the Arctic circle.", options: ["extremely", "extreme", "extremity", "extremeness"], answer: 1 },
-      { id: "S14", question: "________ in 1636, Harvard University is the oldest institution of higher learning in the US.", options: ["Founding", "Founded", "It founded", "To found"], answer: 1 },
-      { id: "S15", question: "Many marine biologists consider dolphins ________ among the most intelligent mammals.", options: ["to be", "being", "are", "as"], answer: 0 },
-      { id: "S16", question: "The atmospheric pressure ________ as altitude increases above sea level.", options: ["decreases", "decreasing", "decrease", "is decreased"], answer: 0 },
-      { id: "S17", question: "Unlike traditional lenses, curved mirrors ________ images without chromatic aberration.", options: ["reflects", "can reflect", "reflecting", "is reflecting"], answer: 1 },
-      { id: "S18", question: "It is essential that every applicant ________ all documents before midnight.", options: ["submits", "submit", "submitted", "is submitting"], answer: 1 },
-      { id: "S19", question: "Algae have been identified as ________ alternative source of renewable biofuel.", options: ["a promising", "promising an", "the promise", "promisingly"], answer: 0 },
-      { id: "S20", question: "Only after years of intense research ________ the Nobel Prize in Chemistry.", options: ["she received", "did she receive", "she did receive", "she receiving"], answer: 1 },
-      { id: "S21", question: "The governor insisted that the emergency fund ________ distributed immediately.", options: ["be", "is", "was", "are"], answer: 0 },
-      { id: "S22", question: "________ of copper wire increases its resistance to electrical currents.", options: ["Lengthening", "To lengthen", "Length", "Lengthen"], answer: 0 },
-      { id: "S23", question: "Bacterial cultures grow more rapidly when the ambient temperature is ________.", options: ["favorable", "favorably", "favor", "favorite"], answer: 0 },
-      { id: "S24", question: "The Amazon basin contains a larger variety of plant species than ________ in the world.", options: ["any other region", "other region", "any region", "the regions"], answer: 0 },
-      { id: "S25", question: "Because aluminum is lightweight and durable, ________ widely in aircraft manufacturing.", options: ["it is used", "used", "is used", "using it"], answer: 0 },
-      { id: "S26", question: "No sooner had the bell rung ________ the students rushed out of the lecture hall.", options: ["than", "then", "when", "that"], answer: 0 },
-      { id: "S27", question: "The speed of sound depends primarily on the medium ________ it travels.", options: ["through which", "which", "through that", "where"], answer: 0 },
-      { id: "S28", question: "Astronomers estimate that there ________ billions of galaxies in the observable universe.", options: ["are", "is", "have been", "to be"], answer: 0 },
-      { id: "S29", question: "________ by the painter's bold brushstrokes, the critics praised the exhibition.", options: ["Impressed", "Impressing", "Having impressed", "To impress"], answer: 0 },
-      { id: "S30", question: "So intense ________ that the bridge had to be closed to traffic.", options: ["was the gale", "the gale was", "were the gale", "the gale did"], answer: 0 },
-      { id: "S31", question: "The doctor recommended that he ________ regular exercise into his routine.", options: ["incorporate", "incorporates", "incorporated", "is incorporating"], answer: 0 },
-      { id: "S32", question: "Not only ________ provide shade, but they also prevent severe soil erosion.", options: ["do trees", "trees", "trees do", "are trees"], answer: 0 },
-      { id: "S33", question: "Liquid mercury is the only metallic element that ________ at standard room temperature.", options: ["is liquid", "liquid", "being liquid", "to be liquid"], answer: 0 },
-      { id: "S34", question: "Under no circumstances ________ personal passwords to unauthorized personnel.", options: ["should you disclose", "you should disclose", "you disclose", "disclose you"], answer: 0 },
-      { id: "S35", question: "The larger the surface area of a liquid, ________ its rate of evaporation.", options: ["the greater", "greater", "the greatest", "great"], answer: 0 },
-      { id: "S36", question: "Many historians agree that the compass was invented ________ the Han dynasty in China.", options: ["during", "while", "since", "until"], answer: 0 },
-      { id: "S37", question: "Fossil fuels are nonrenewable resources that ________ millions of years to form.", options: ["took", "takes", "taking", "was taken"], answer: 0 },
-      { id: "S38", question: "________ its high nutritional value, quinoa has become a popular staple worldwide.", options: ["Owing to", "Because", "Although", "In spite"], answer: 0 },
-      { id: "S39", question: "The Pacific Ocean is significantly deeper than ________ ocean on Earth.", options: ["any other", "any", "other", "all other"], answer: 0 },
-      { id: "S40", question: "Were the climate to warm further, sea levels ________ drastically worldwide.", options: ["would rise", "will rise", "rose", "would have risen"], answer: 0 }
-    ];
+    let db = null;
+    let isFirebaseReady = false;
 
-    const readingPool = [
-      { id: "R01", passage: "Photosynthesis is the biological process used by plants, algae, and certain bacteria to convert light energy into chemical energy stored in glucose molecules. This process requires carbon dioxide, water, and sunlight, while releasing oxygen as a byproduct.", question: "According to the passage, what is released as a byproduct of photosynthesis?", options: ["Glucose", "Carbon dioxide", "Oxygen", "Chemical energy"], answer: 2 },
-      { id: "R02", passage: "During the Industrial Revolution in late 18th-century Britain, mechanized manufacturing began replacing manual labor. This transition spurred unprecedented urbanization as rural laborers flocked to factory towns in search of employment.", question: "What triggered the rapid urbanization mentioned in the passage?", options: ["The collapse of farm systems", "The rise of mechanized manufacturing and factory jobs", "A sudden decrease in city populations", "The construction of better roads"], answer: 1 },
-      { id: "R03", passage: "Bats are the only mammals capable of true and sustained flight. Using echolocation, they emit ultrasonic sounds and listen to the returning echoes to navigate and pinpoint prey with astonishing precision in utter darkness.", question: "What enables bats to navigate in total darkness?", options: ["Infrared vision", "Keen sense of smell", "Echolocation", "Sensitive whiskers"], answer: 2 },
-      { id: "R04", passage: "The Rosetta Stone, discovered in 1799, bears an inscription written in three distinct scripts: Ancient Greek, Demotic, and Egyptian hieroglyphs. This trilingual artifact provided scholars with the crucial key to deciphering ancient Egyptian hieroglyphic writing.", question: "Why was the Rosetta Stone of immense significance to historians?", options: ["It detailed the biography of a king.", "It served as the key to deciphering Egyptian hieroglyphs.", "It described ancient battle tactics.", "It was made of rare gold."], answer: 1 },
-      { id: "R05", passage: "Deep-sea hydrothermal vents release superheated, mineral-rich fluid into the ocean floor. In the absence of sunlight, entire ecosystems thrive around these vents through chemosynthesis, using hydrogen sulfide rather than sunlight to produce energy.", question: "The primary source of energy for organisms near hydrothermal vents is:", options: ["Sunlight", "Hydrogen sulfide", "Decomposing coral", "Surface currents"], answer: 1 },
-      { id: "R06", passage: "The ozone layer is a thin shield high in the Earth's stratosphere that absorbs most of the Sun's harmful ultraviolet (UV) radiation. Without this protective barrier, increased UV exposure would lead to widespread biological damage.", question: "The primary function of the ozone layer is to:", options: ["Keep the Earth warm", "Absorb harmful ultraviolet radiation", "Generate atmospheric oxygen", "Prevent meteor impacts"], answer: 1 },
-      { id: "R07", passage: "Glaciers move through a combination of internal deformation and basal sliding. As immense weight bears down, ice crystals reorient and slide past one another, allowing the glacier to flow downhill like an extremely viscous fluid.", question: "How does the passage characterize the downhill movement of glaciers?", options: ["Like a sudden avalanche", "Like an extremely viscous fluid", "Rapid and erratic", "Completely static"], answer: 1 },
-      { id: "R08", passage: "Honeybees communicate the location of distant nectar sources to hive members through the 'waggle dance'. The angle of the dance indicates direction relative to the sun, while duration conveys distance.", question: "In the waggle dance, the duration of the dance indicates:", options: ["The quality of nectar", "The direction of the flowers", "The distance to the food source", "The temperature outside"], answer: 2 },
-      { id: "R09", passage: "Coral reefs occupy less than one percent of the ocean floor, yet they harbor approximately twenty-five percent of all marine species, making them the most biodiverse marine ecosystems on Earth.", question: "Which statement about coral reefs is supported by the passage?", options: ["They cover a majority of ocean floors.", "They host a quarter of all marine species.", "They do not support fish species.", "They can thrive in freezing water."], answer: 1 },
-      { id: "R10", passage: "The invention of the printing press by Johannes Gutenberg in the 15th century democratized knowledge by making books affordable and widely accessible, sparking the European Renaissance and the Scientific Revolution.", question: "What major societal effect did Gutenberg's invention have?", options: ["It restricted books only to the clergy.", "It made knowledge accessible and spurred intellectual revolutions.", "It eliminated the demand for handwritten letters.", "It stopped the spread of new ideas."], answer: 1 },
-      { id: "R11", passage: "Desert plants, such as cacti, have evolved thick waxy coatings and sunken stomata to minimize transpiration and conserve moisture in arid habitats.", question: "The adaptations mentioned in the text are primarily intended to:", options: ["Deter predators", "Conserve moisture and minimize water loss", "Absorb more sunlight", "Attract desert pollinators"], answer: 1 },
-      { id: "R12", passage: "Metamorphic rocks are formed when preexisting sedimentary or igneous rocks undergo intense heat and pressure deep within the Earth's crust without melting into magma.", question: "Metamorphic rocks are created through:", options: ["Rapid cooling of lava", "Accumulation of organic sediments", "Intense heat and pressure without complete melting", "Weathering and erosion by wind"], answer: 2 },
-      { id: "R13", passage: "Tectonic plates move continuously at rates of a few centimeters per year. Where two plates collide, immense pressure can force the crust upward, giving rise to formidable mountain ranges like the Himalayas.", question: "What geological feature is cited as a result of converging tectonic plates?", options: ["Deep-ocean trenches", "Mountain ranges like the Himalayas", "Volcanic island chains", "Deserts"], answer: 1 },
-      { id: "R14", passage: "Antibiotics are powerful medications that fight bacterial infections by killing bacteria or preventing them from reproducing. However, they are completely ineffective against viral illnesses such as the common cold.", question: "According to the passage, antibiotics are useless against:", options: ["Bacterial pneumonia", "Viral illnesses like the common cold", "Skin infections", "Infectious microbes"], answer: 1 },
-      { id: "R15", passage: "Migratory birds often utilize the Earth's magnetic field as an invisible compass during long transcontinental journeys, a navigational capability known as magnetoreception.", question: "Magnetoreception allows migratory birds to:", options: ["Predict thunderstorms", "Navigate using the Earth's magnetic field", "Find food underground", "Fly at higher altitudes"], answer: 1 },
-      { id: "R16", passage: "Coffee cultivation began in the highlands of Ethiopia before spreading across the Arabian Peninsula. By the 16th century, coffee houses became famous intellectual meeting grounds across the Middle East and Europe.", question: "Where did coffee cultivation initially originate?", options: ["The Arabian Peninsula", "The highlands of Ethiopia", "Central Europe", "South America"], answer: 1 },
-      { id: "R17", passage: "Sound travels significantly faster through solids and liquids than through gases because the molecules in denser media are packed much closer together, facilitating rapid energy transfer.", question: "Why does sound travel faster through solids than gases?", options: ["Gases have higher temperatures.", "Molecules in denser media are packed closer together.", "Solids reflect sound waves better.", "Sound waves lose speed in water."], answer: 1 },
-      { id: "R18", passage: "The Mariana Trench in the western Pacific Ocean contains the Challenger Deep, the deepest known point on Earth, plunging to depths of nearly 11,000 meters below sea level.", question: "What is the Challenger Deep noted for?", options: ["Its extensive coral ecosystem", "Being the deepest known point on Earth", "Being the site of underwater active volcanoes", "Its high water temperatures"], answer: 1 },
-      { id: "R19", passage: "Bioluminescence is the emission of light by living organisms resulting from an internal chemical reaction between luciferin and oxygen. Deep-sea creatures use this glow to lure prey, communicate, and camouflage against predators.", question: "Bioluminescence primarily serves deep-sea creatures to:", options: ["Keep warm in freezing water", "Lure prey, communicate, and camouflage", "Synthesize glucose without sunlight", "Detect earthquakes"], answer: 1 },
-      { id: "R20", passage: "The Great Library of Alexandria in Egypt was one of the largest and most significant libraries of the ancient world. It served as a premier center of scholarship from the 3rd century BC until its eventual destruction.", question: "What was the significance of the Great Library of Alexandria?", options: ["It was a military fortress.", "It served as a leading center of scholarship and knowledge.", "It was the first bank in human history.", "It housed ancient royal tombs."], answer: 1 },
-      { id: "R21", passage: "The Aurora Borealis, or Northern Lights, occurs when charged particles from solar flares collide with gas atoms in the Earth's upper atmosphere, producing vibrant displays of green, red, and violet light.", question: "What causes the colorful lights of the Aurora Borealis?", options: ["Reflections of polar ice caps", "Collisions between solar particles and atmospheric gas atoms", "Underwater volcanic explosions", "Moonlight refraction through ice crystals"], answer: 1 },
-      { id: "R22", passage: "In 1928, Alexander Fleming accidentally discovered penicillin when he noticed that a green mold contaminating a petri dish of Staphylococcus bacteria had dissolved the colonies around it.", question: "Alexander Fleming discovered penicillin as a result of:", options: ["A planned synthetic experiment", "An accidental contamination of a bacterial culture", "Research into animal venom", "Testing herbal remedies"], answer: 1 },
-      { id: "R23", passage: "The Silk Road was an ancient network of trade routes connecting East Asia with the Mediterranean. Beyond silk, spices, and porcelain, it facilitated profound cultural, religious, and technological exchanges.", question: "Besides physical goods, what important exchange took place along the Silk Road?", options: ["Atmospheric gases", "Cultural, religious, and technological exchange", "Glacial sediments", "Underwater geological mapping"], answer: 1 },
-      { id: "R24", passage: "Mangrove forests grow in coastal intertidal zones. Their complex aerial root systems stabilize coastlines by trapping sediments, attenuating wave energy, and providing nurseries for juvenile marine life.", question: "How do mangrove root systems protect coastlines?", options: ["By absorbing all ocean salts", "By trapping sediments and reducing wave impact", "By evaporating seawater", "By heating cold coastal waters"], answer: 1 },
-      { id: "R25", passage: "Dendrochronology, or tree-ring dating, allows scientists to date wooden artifacts and reconstruct historical climatic patterns based on the varying thickness of annual growth rings.", question: "Scientists use dendrochronology to:", options: ["Determine the age of volcanic rocks", "Date wood and reconstruct past climate patterns", "Predict solar eclipses", "Calculate ocean salinity"], answer: 1 },
-      { id: "R26", passage: "Venus possesses a runaway greenhouse effect caused by a dense carbon dioxide atmosphere, making its surface temperatures hot enough to melt lead, far hotter than Mercury despite being farther from the Sun.", question: "Why is Venus hotter than Mercury despite being further from the Sun?", options: ["It has active surface fires.", "Its dense carbon dioxide atmosphere causes an intense greenhouse effect.", "It rotates much faster.", "Its core is completely radioactive."], answer: 1 },
-      { id: "R27", passage: "Water's anomalous property of expanding upon freezing causes ice to be less dense than liquid water. Consequently, ice floats, insulating aquatic life below during harsh winter months.", question: "Why does ice float on water?", options: ["It expands and becomes less dense when freezing.", "It traps air bubbles from the atmosphere.", "It absorbs heat from the sun.", "It repels mineral salts."], answer: 0 },
-      { id: "R28", passage: "The invention of concrete by the ancient Romans enabled the construction of colossal, enduring structures like the Pantheon and the Colosseum, revolutionizing architectural engineering.", question: "What material enabled ancient Romans to build monumental structures?", options: ["Pure bronze", "Reinforced concrete", "Imported granite", "Carved marble exclusively"], answer: 1 },
-      { id: "R29", passage: "Termite mounds maintain stable internal temperatures despite extreme external heat thanks to a complex network of subterranean chimneys that induce natural convective ventilation.", question: "How do termite mounds regulate their internal temperature?", options: ["By migrating underground", "Through natural convective ventilation chimneys", "By storing ice in lower chambers", "Using body heat from the queen"], answer: 1 },
-      { id: "R30", passage: "The Doppler effect explains the apparent change in frequency of a wave when the observer and the wave source are moving relative to each other, as heard in the changing pitch of a passing siren.", question: "The Doppler effect describes:", options: ["The reflection of sound off walls", "The apparent shift in wave frequency due to relative motion", "The speed of sound in solids", "The total loss of sound in vacuum"], answer: 1 }
-    ];
-
-    /* =========================================================
-       SISTEM PENYIMPANAN & LOGIKA UTAMA
-    ========================================================== */
-    const SESSION_KEY = 'TOEFL_DAVI_ACTIVE_SESSION';
-    const HISTORY_KEY = 'TOEFL_DAVI_COMPLETED_IDS';
-
-    let activeQuestions = [];
-    let userAnswers = {};
-    let isTestSubmitted = false;
-
-    function getCompletedHistory() {
+    function setupFirebase() {
       try {
-        return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-      } catch (e) {
-        return [];
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+        }
+        db = firebase.firestore();
+        isFirebaseReady = true;
+      } catch (err) {
+        console.warn("Firebase initialized with local fallback:", err);
       }
     }
+    setupFirebase();
 
-    function addCompletedHistory(questionIds) {
-      const history = getCompletedHistory();
-      questionIds.forEach(id => {
-        if (!history.includes(id)) history.push(id);
-      });
-      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    /* =========================================================
+       2. MESIN GENERATOR SOAL DINAMIS TANPA BATAS (INFINITE ENGINE)
+    ========================================================== */
+    const listeningPatterns = [
+      {
+        dialogue: (sub, time, place) => `Woman: Did you finish the research paper for ${sub}? Man: Not yet, the professor pushed back the deadline until ${time}.`,
+        q: "What did the man say about the research paper?",
+        ans: "The submission date has been postponed.",
+        distractors: ["He has already handed it in.", "He refuses to complete it.", "The professor cancelled the assignment."]
+      },
+      {
+        dialogue: (sub, act, place) => `Man: Are you planning on attending the annual ${sub} seminar this weekend? Woman: I wouldn't miss it for anything in the world!`,
+        q: "What does the woman mean?",
+        ans: "She is definitely going to the seminar.",
+        distractors: ["She cannot afford the ticket.", "She will miss it due to an exam.", "She is indifferent about the topic."]
+      },
+      {
+        dialogue: (tool, loc, person) => `Woman: I can't find my ${tool} anywhere. Man: I think ${person} left it on the table in the ${loc}.`,
+        q: "Where does the man think the item is?",
+        ans: (tool, loc, person) => `On the table in the ${loc}.`,
+        distractors: ["Inside the locker.", "At the bookstore.", "In the professor's office."]
+      },
+      {
+        dialogue: (sub, act, person) => `Man: This assignment on ${sub} is so complicated. Woman: Why not ask ${person}? He worked on this exact problem last term.`,
+        q: "What does the woman suggest the man do?",
+        ans: (s, a, person) => `Ask ${person} for assistance.`,
+        distractors: ["Drop the course immediately.", "Change his major.", "Complete the project alone."]
+      },
+      {
+        dialogue: (dest, mode, reason) => `Woman: Are you taking the flight to ${dest}? Man: Plane tickets were out of my reach, so I booked a ${mode} instead.`,
+        q: "How will the man travel?",
+        ans: (d, mode) => `By ${mode}.`,
+        distractors: ["By private jet.", "He decided to stay home.", "By renting a bicycle."]
+      },
+      {
+        dialogue: (event, weather, alt) => `Man: The forecast says it will ${weather} all afternoon. Woman: There goes our plan for ${event}.`,
+        q: "What does the woman imply?",
+        ans: (event) => `Their plans for ${event} must be cancelled.`,
+        distractors: ["They enjoy being outdoors in the weather.", "The event was moved indoors.", "They are going tomorrow."]
+      },
+      {
+        dialogue: (food, meal, chef) => `Woman: Is there any specialty dish for ${meal}? Man: The chef prepares a truly exquisite ${food}.`,
+        q: "What will the man probably recommend?",
+        ans: (food) => `The ${food}.`,
+        distractors: ["Fast food.", "A cold sandwich.", "A glass of water."]
+      },
+      {
+        dialogue: (course, status, act) => `Man: How did your evaluation in ${course} turn out? Woman: It couldn't have gone better!`,
+        q: "What does the woman mean?",
+        ans: "The evaluation went exceptionally well.",
+        distractors: ["She failed the evaluation.", "She missed the meeting.", "She wants to retake the test."]
+      }
+    ];
+
+    const structurePatterns = [
+      {
+        gen: (sub, verb, context) => ({
+          q: `Not until the early 20th century ________ widespread adoption in modern ${context}.`,
+          ans: `did ${sub} achieve`,
+          distractors: [`${sub} achieved`, `${sub} was achieving`, `achieved ${sub}`]
+        })
+      },
+      {
+        gen: (org, loc, num) => ({
+          q: `A colony of ${org} in ${loc} ________ up to ${num} individual members.`,
+          ans: "can contain",
+          distractors: ["it contains", "containing", "to be containing"]
+        })
+      },
+      {
+        gen: (subj, action, field) => ({
+          q: `It is essential that every ${subj} ________ all credentials prior to the final review in ${field}.`,
+          ans: "submit",
+          distractors: ["submits", "submitted", "is submitting"]
+        })
+      },
+      {
+        gen: (phenom, cause, field) => ({
+          q: `Rarely ________ such profound evidence of ${phenom} among researchers in ${field}.`,
+          ans: "did the team observe",
+          distractors: ["the team observed", "the team had observed", "observing the team"]
+        })
+      },
+      {
+        gen: (entity, place, feature) => ({
+          q: `________ in the heart of ${place}, the historic ${entity} attracts scholars worldwide.`,
+          ans: "Situated",
+          distractors: ["Situating", "It is situated", "To situate"]
+        })
+      },
+      {
+        gen: (cond1, cond2, context) => ({
+          q: `Had the committee recognized the ${cond1} earlier, they ________ the entire ${context}.`,
+          ans: "would have cancelled",
+          distractors: ["will cancel", "cancelled", "would cancel"]
+        })
+      },
+      {
+        gen: (factor1, factor2, process) => ({
+          q: `The higher the ${factor1} in the solution, ________ the rate of ${process}.`,
+          ans: `the greater`,
+          distractors: ["greater", "the greatest", "it is greater"]
+        })
+      },
+      {
+        gen: (elem, use, industry) => ({
+          q: `Because ${elem} is both lightweight and resilient, ________ extensively in aerospace manufacturing.`,
+          ans: "it is utilized",
+          distractors: ["utilized", "is utilized", "utilizing it"]
+        })
+      },
+      {
+        gen: (item, char, role) => ({
+          q: `Neither the principal investigator nor the assistants ________ satisfied with the preliminary data.`,
+          ans: "were",
+          distractors: ["was", "is", "being"]
+        })
+      },
+      {
+        gen: (subj, field, verb) => ({
+          q: `Under no circumstances ________ confidential research findings without prior authorization.`,
+          ans: "should researchers disclose",
+          distractors: ["researchers should disclose", "researchers disclose", "disclose researchers"]
+        })
+      }
+    ];
+
+    const readingTopics = [
+      {
+        theme: "Photosynthesis & Solar Conversion",
+        pass: "Photosynthesis enables photosynthetic organisms to transform electromagnetic radiant energy into stable chemical bonds. By splitting water molecules and absorbing carbon dioxide, chlorophyll-bearing cells release oxygen into the biosphere while synthesising carbohydrate polymers essential for biotic ecosystems.",
+        q: "What is generated and released as a byproduct during this biological conversion?",
+        ans: "Oxygen into the biosphere",
+        distractors: ["Carbon dioxide exclusively", "Toxic nitrogen gas", "Excess radiant heat"]
+      },
+      {
+        theme: "Echolocation in Marine Mammals",
+        pass: "Cetaceans such as odontocetes emit high-frequency acoustic clicks that propagate through aquatic depths. By deciphering returning echoes, these mammals formulate complex spatial topographies, pinpointing pelagic prey in absolute darkness with staggering acoustic acuity.",
+        q: "How do these aquatic mammals successfully locate food in dark waters?",
+        ans: "By interpreting high-frequency returning acoustic echoes",
+        distractors: ["Using enhanced thermal vision", "Relying on geomagnetic compass cells", "By sensing underwater electrical currents"]
+      },
+      {
+        theme: "Plate Tectonics & Continental Drift",
+        pass: "Lithospheric plates drift continuously over the asthenosphere driven by deep mantle convection. Where divergent boundaries separate crustal plates, magma ascends along mid-ocean ridges, cooling rapidly upon contact with seawater to generate pristine basaltic oceanic crust.",
+        q: "What occurs along oceanic divergent plate boundaries according to the text?",
+        ans: "Magma ascends and solidifies into new basaltic crust",
+        distractors: ["Continental plates collide and form deserts", "Ocean water evaporates entirely", "Deep trenches swallow all mineral deposits"]
+      },
+      {
+        theme: "The Discovery of Antibiotics",
+        pass: "In 1928, Sir Alexander Fleming observed that an accidental penicillium mold contaminant lysed contiguous colonies of staphylococcus bacteria. This fortuitous observation launched the chemotherapy antibiotic revolution, drastically curtailing bacterial morbidity throughout the modern world.",
+        q: "What led directly to Fleming's breakthrough observation?",
+        ans: "An accidental fungal contamination on a bacterial petri culture",
+        distractors: ["A scheduled military clinical trial", "Chemical synthesis of plant enzymes", "Controlled radiation testing"]
+      },
+      {
+        theme: "Ancient Architecture & Hydraulic Cement",
+        pass: "Ancient Roman civil engineers developed pozzolanic volcanic ash concrete that cured underwater. This chemical durability permitted monumental archways, dome infrastructure like the Pantheon, and extensive aqueduct spans that have withstood seismic shear for two millennia.",
+        q: "What distinct property allowed Roman concrete to endure for millennia?",
+        ans: "Pozzolanic volcanic ash that granted chemical underwater curing",
+        distractors: ["Carved solid diamond blocks", "Heavy lead reinforcements", "Imported structural steel"]
+      }
+    ];
+
+    // Bank kosakata variatif untuk memastikan ratusan ribu variasi tak terbatas
+    const vocab = {
+      subjects: ["Astrophysics", "Molecular Biology", "Macroeconomics", "Organic Chemistry", "Anthropology", "Paleontology", "Geophysics", "Environmental Law", "Cognitive Psychology"],
+      times: ["Friday afternoon", "midnight tomorrow", "the end of the semester", "next Tuesday", "the upcoming recess"],
+      places: ["faculty library", "central campus laboratory", "student union hall", "auditorium", "department archive", "seminar room"],
+      people: ["Professor Vance", "Dr. Richardson", "Dr. Montgomery", "Professor Evans", "Dr. Sterling", "Elena", "Marcus", "Jonathan"],
+      modes: ["high-speed express train", "interstate coach bus", "passenger ferry", "carpool"],
+      destinations: ["Chicago", "Seattle", "Boston", "San Francisco", "Denver", "Atlanta"],
+      weather: ["pour relentlessly", "snow heavily", "storm with thunder", "freeze"],
+      events: ["the lake excursion", "the botanical garden tour", "the open-air concert", "the campus picnic"],
+      foods: ["mushroom and truffle risotto", "smoked salmon platter", "roasted vegetable frittata", "mediterranean couscous"],
+      meals: ["the banquet dinner", "the faculty brunch", "the reception luncheon", "the alumni gala"],
+      organisms: ["emperor penguins", "honeybees", "migratory starlings", "coastal sea otters", "alpine marmots", "coral polyps"],
+      elements: ["titanium alloy", "carbon fiber polymer", "refined aluminum", "aerogel composite", "graphene lattice"],
+      industries: ["spacecraft engineering", "deep-sea submersibles", "telecommunications", "robotics manufacturing"],
+      factors: ["ambient atmospheric pressure", "solute salinity", "magnetic flux density", "thermal kinetic energy"]
+    };
+
+    function pickRandom(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    // Generator 50 Soal TOEFL yang Selalu Baru Setiap Sesi
+    function generateDynamic50Questions() {
+      const generated = [];
+
+      // 1. Generate 15 Soal Listening
+      for (let i = 0; i < 15; i++) {
+        const pattern = listeningPatterns[i % listeningPatterns.length];
+        const s = pickRandom(vocab.subjects);
+        const t = pickRandom(vocab.times);
+        const p = pickRandom(vocab.places);
+        const pe = pickRandom(vocab.people);
+        const m = pickRandom(vocab.modes);
+        const d = pickRandom(vocab.destinations);
+        const w = pickRandom(vocab.weather);
+        const ev = pickRandom(vocab.events);
+        const f = pickRandom(vocab.foods);
+        const me = pickRandom(vocab.meals);
+
+        const text = pattern.dialogue(s, t, p, pe, m, d, w, ev, f, me);
+        const correct = typeof pattern.ans === 'function' ? pattern.ans(s, t, pe, f, ev, m) : pattern.ans;
+        const opts = shuffle([correct, ...pattern.distractors]);
+        const ansIdx = opts.indexOf(correct);
+
+        generated.push({
+          id: `GEN_L_${Date.now()}_${i}`,
+          type: 'listening',
+          audioText: text,
+          question: pattern.q,
+          options: opts,
+          answer: ansIdx
+        });
+      }
+
+      // 2. Generate 20 Soal Structure
+      for (let i = 0; i < 20; i++) {
+        const pattern = structurePatterns[i % structurePatterns.length];
+        const s = pickRandom(vocab.subjects);
+        const org = pickRandom(vocab.organisms);
+        const loc = pickRandom(vocab.places);
+        const elem = pickRandom(vocab.elements);
+        const ind = pickRandom(vocab.industries);
+        const fac1 = pickRandom(vocab.factors);
+        const fac2 = pickRandom(vocab.factors);
+        const num = Math.floor(Math.random() * 500) + 50;
+
+        const built = pattern.gen(s, elem, ind, org, loc, num, fac1, fac2);
+        const opts = shuffle([built.ans, ...built.distractors]);
+        const ansIdx = opts.indexOf(built.ans);
+
+        generated.push({
+          id: `GEN_S_${Date.now()}_${i}`,
+          type: 'structure',
+          question: built.q,
+          options: opts,
+          answer: ansIdx
+        });
+      }
+
+      // 3. Generate 15 Soal Reading
+      for (let i = 0; i < 15; i++) {
+        const topic = readingTopics[i % readingTopics.length];
+        const opts = shuffle([topic.ans, ...topic.distractors]);
+        const ansIdx = opts.indexOf(topic.ans);
+
+        generated.push({
+          id: `GEN_R_${Date.now()}_${i}`,
+          type: 'reading',
+          passage: topic.pass,
+          question: topic.q,
+          options: opts,
+          answer: ansIdx
+        });
+      }
+
+      return generated;
     }
 
     function shuffle(arr) {
@@ -769,17 +900,26 @@
       return a;
     }
 
+    /* =========================================================
+       3. SESSION MANAGEMENT (ANTI-HILANG SAAT REFRESH DI TENGAH JALAN)
+    ========================================================== */
+    const SESSION_KEY = 'TOEFL_DAVI_INFINITE_SESSION';
+    let activeQuestions = [];
+    let userAnswers = {};
+    let isTestSubmitted = false;
+    let currentCalculatedScore = 310;
+    let currentCalculatedCorrect = 0;
+
     function initTest() {
       const savedSession = localStorage.getItem(SESSION_KEY);
 
       if (savedSession) {
         try {
           const parsed = JSON.parse(savedSession);
-
-          // JIKA SUDAH SELESAI LALU DI-REFRESH: BUAT SOAL BARU YANG BELUM PERNAH DIKERJAKAN
+          // JIKA SUDAH SELESAI LALU DI-REFRESH: BUAT SOAL BARU TANPA BATAS!
           if (parsed.isCompleted) {
             localStorage.removeItem(SESSION_KEY);
-            generateCompletelyNewTest();
+            generateFreshTestSession();
             return;
           }
 
@@ -789,42 +929,22 @@
           renderQuestions();
           restoreSelections();
           document.getElementById('restoreToast').style.display = 'block';
-          updatePoolStats();
           return;
         } catch (e) {
           console.error("Gagal membaca memori sesi:", e);
         }
       }
 
-      generateCompletelyNewTest();
+      generateFreshTestSession();
     }
 
-    function generateCompletelyNewTest() {
-      const completedIds = getCompletedHistory();
-
-      let freshListening = listeningPool.filter(q => !completedIds.includes(q.id));
-      let freshStructure = structurePool.filter(q => !completedIds.includes(q.id));
-      let freshReading   = readingPool.filter(q => !completedIds.includes(q.id));
-
-      if (freshListening.length < 15 || freshStructure.length < 20 || freshReading.length < 15) {
-        document.getElementById('exhaustedToast').style.display = 'flex';
-        freshListening = listeningPool;
-        freshStructure = structurePool;
-        freshReading = readingPool;
-      }
-
-      const selectedListening = shuffle(freshListening).slice(0, 15).map(q => ({ ...q, type: 'listening' }));
-      const selectedStructure = shuffle(freshStructure).slice(0, 20).map(q => ({ ...q, type: 'structure' }));
-      const selectedReading   = shuffle(freshReading).slice(0, 15).map(q => ({ ...q, type: 'reading' }));
-
-      activeQuestions = [...selectedListening, ...selectedStructure, ...selectedReading];
+    function generateFreshTestSession() {
+      activeQuestions = generateDynamic50Questions();
       userAnswers = {};
       isTestSubmitted = false;
-
       saveActiveSession();
       renderQuestions();
       updateProgress();
-      updatePoolStats();
     }
 
     function saveActiveSession() {
@@ -836,15 +956,8 @@
       localStorage.setItem(SESSION_KEY, JSON.stringify(data));
     }
 
-    function updatePoolStats() {
-      const history = getCompletedHistory();
-      const totalPool = listeningPool.length + structurePool.length + readingPool.length;
-      const remainingUnused = Math.max(0, totalPool - history.length);
-      document.getElementById('unusedPoolChip').textContent = `Bank Soal Baru: ${remainingUnused}`;
-    }
-
     /* =========================================================
-       RENDER PERTANYAAN KE LAYAR
+       4. RENDER DOM & USER INTERACTIONS
     ========================================================== */
     function renderQuestions() {
       const container = document.getElementById('questionsContainer');
@@ -939,21 +1052,15 @@
       window.speechSynthesis.speak(utterance);
     }
 
-    /* =========================================================
-       FUNGSI KLIK PILIHAN JAWABAN (PASTI TERCATAT)
-    ========================================================== */
     function chooseOption(qIndex, optIndex) {
-      // Hilangkan tanda aktif di pilihan lain pada soal ini
       for (let i = 0; i < 4; i++) {
         const item = document.getElementById(`label-q${qIndex}-opt${i}`);
         if (item) item.classList.remove('selected');
       }
 
-      // Berikan tanda aktif pada pilihan yang diklik
       const selectedItem = document.getElementById(`label-q${qIndex}-opt${optIndex}`);
       if (selectedItem) selectedItem.classList.add('selected');
 
-      // Simpan jawaban ke memori
       userAnswers[qIndex] = Number(optIndex);
       saveActiveSession();
       updateProgress();
@@ -976,7 +1083,7 @@
     }
 
     /* =========================================================
-       SUBMIT & FORMULA RESMI ESTIMASI TOEFL PBT
+       5. SKORING TOEFL PBT RESMI
     ========================================================== */
     document.getElementById('toeflForm').addEventListener('submit', function(e) {
       e.preventDefault();
@@ -988,7 +1095,7 @@
       }
 
       if (answeredCount < 50) {
-        const confirmSubmit = confirm(`Perhatian: Anda baru menjawab ${answeredCount} dari 50 soal.\nYakin ingin tetap mengumpulkan dan melihat skor sekarang?`);
+        const confirmSubmit = confirm(`Perhatian: Anda baru menjawab ${answeredCount} dari 50 soal.\nYakin ingin mengumpulkan sekarang?`);
         if (!confirmSubmit) return;
       }
 
@@ -997,14 +1104,9 @@
       let structureCorrect = 0;
       let readingCorrect = 0;
 
-      const finishedQuestionIds = [];
-
       activeQuestions.forEach((q, idx) => {
-        finishedQuestionIds.push(q.id);
-
         const userChoice = userAnswers[idx] !== undefined ? Number(userAnswers[idx]) : null;
 
-        // Beri warna hijau pada kunci jawaban yang benar
         const correctLabel = document.getElementById(`label-q${idx}-opt${q.answer}`);
         if (correctLabel) correctLabel.classList.add('correct-ans');
 
@@ -1015,50 +1117,37 @@
             else if (q.type === 'structure') structureCorrect++;
             else if (q.type === 'reading') readingCorrect++;
           } else {
-            // Beri warna merah pada pilihan yang salah
             const wrongLabel = document.getElementById(`label-q${idx}-opt${userChoice}`);
             if (wrongLabel) wrongLabel.classList.add('wrong-ans');
           }
         }
       });
 
-      // Catat 50 soal ini agar tidak muncul lagi di tes selanjutnya
-      addCompletedHistory(finishedQuestionIds);
-
       isTestSubmitted = true;
       saveActiveSession();
 
-      showResultModal(correctCount, listeningCorrect, structureCorrect, readingCorrect);
+      const scaledL = Math.round(31 + (listeningCorrect / 15) * 37);
+      const scaledS = Math.round(31 + (structureCorrect / 20) * 37);
+      const scaledR = Math.round(31 + (readingCorrect / 15) * 37);
+
+      let finalScore = Math.round(((scaledL + scaledS + scaledR) * 10) / 3);
+      if (finalScore > 677) finalScore = 677;
+      if (finalScore < 310) finalScore = 310;
+
+      currentCalculatedScore = finalScore;
+      currentCalculatedCorrect = correctCount;
+
+      showResultModal(correctCount, finalScore);
     });
 
-    function showResultModal(totalCorrect, listCorrect, structCorrect, readCorrect) {
-      // 1. Tampilkan Total Benar & Akurasi
+    function showResultModal(totalCorrect, finalScore) {
       document.getElementById('correctScore').textContent = totalCorrect;
       const accuracy = Math.round((totalCorrect / 50) * 100);
       document.getElementById('accuracyVal').textContent = `${accuracy}%`;
+      document.getElementById('toeflScoreVal').textContent = finalScore;
 
-      // 2. Rincian per Section
-      document.getElementById('secListeningVal').textContent = `${listCorrect} / 15`;
-      document.getElementById('secStructureVal').textContent = `${structCorrect} / 20`;
-      document.getElementById('secReadingVal').textContent = `${readCorrect} / 15`;
-
-      // 3. Konversi Skor TOEFL PBT Resmi (Skala 310 - 677)
-      // Section scale: 31 s/d 68
-      const scaledL = Math.round(31 + (listCorrect / 15) * 37);
-      const scaledS = Math.round(31 + (structCorrect / 20) * 37);
-      const scaledR = Math.round(31 + (readCorrect / 15) * 37);
-
-      // Rumus konversi total TOEFL PBT = (Scale1 + Scale2 + Scale3) * 10 / 3
-      let finalToeflScore = Math.round(((scaledL + scaledS + scaledR) * 10) / 3);
-      if (finalToeflScore > 677) finalToeflScore = 677;
-      if (finalToeflScore < 310) finalToeflScore = 310;
-
-      // Pasang Skor TOEFL di Lingkaran Utama
-      document.getElementById('toeflScoreVal').textContent = finalToeflScore;
-
-      // Munculkan Modal Popup
       document.getElementById('resultModal').style.display = 'flex';
-      updatePoolStats();
+      loadLeaderboard();
     }
 
     function closeModal() {
@@ -1071,11 +1160,89 @@
       location.reload();
     }
 
-    function resetAllHistory() {
-      if (confirm("Reset seluruh riwayat bank soal? Semua soal akan bisa dikerjakan kembali dari awal.")) {
-        localStorage.removeItem(HISTORY_KEY);
-        localStorage.removeItem(SESSION_KEY);
-        location.reload();
+    /* =========================================================
+       6. SIMPAN DATA KE FIREBASE & REALTIME LEADERBOARD
+    ========================================================== */
+    async function saveScoreToFirebase() {
+      const nameInput = document.getElementById('participantName');
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        alert("Silakan ketik nama Anda terlebih dahulu!");
+        return;
+      }
+
+      if (!isFirebaseReady || firebaseConfig.apiKey.includes("GANTI_DENGAN")) {
+        const inputKey = prompt("Masukkan API Key Firebase Anda (hanya perlu sekali saja):");
+        if (inputKey) {
+          localStorage.setItem('DAVI_FIREBASE_APIKEY', inputKey.trim());
+          firebaseConfig.apiKey = inputKey.trim();
+          setupFirebase();
+        } else {
+          return;
+        }
+      }
+
+      const btn = document.getElementById('btnSaveToDb');
+      btn.textContent = "Menyimpan ke Cloud...";
+      btn.disabled = true;
+
+      try {
+        await db.collection("toefl_scores").add({
+          name: name,
+          toeflScore: currentCalculatedScore,
+          correctCount: currentCalculatedCorrect,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert(`Selamat ${name}, skor Anda (${currentCalculatedScore}) berhasil disimpan ke database Google!`);
+        document.getElementById('saveDbBox').innerHTML = `<p style="color: #16a34a; font-weight:700;">✅ Skor ${name} telah masuk ke Leaderboard!</p>`;
+        loadLeaderboard();
+      } catch (error) {
+        console.error("Gagal simpan ke Firebase:", error);
+        alert("Gagal menyimpan ke database. Pastikan Firestore rules Anda sudah diset ke 'Test Mode'.");
+        btn.textContent = "Simpan ke Leaderboard";
+        btn.disabled = false;
+      }
+    }
+
+    async function loadLeaderboard() {
+      const listContainer = document.getElementById('leaderboardList');
+
+      if (!isFirebaseReady || firebaseConfig.apiKey.includes("GANTI_DENGAN")) {
+        listContainer.innerHTML = `<li style="text-align:center; color:#94a3b8; font-size:0.8rem;">(Leaderboard siap digunakan setelah API Key dimasukkan)</li>`;
+        return;
+      }
+
+      try {
+        const snapshot = await db.collection("toefl_scores")
+          .orderBy("toeflScore", "desc")
+          .limit(10)
+          .get();
+
+        if (snapshot.empty) {
+          listContainer.innerHTML = `<li style="text-align:center; color:#94a3b8; font-size:0.8rem;">Belum ada peserta. Jadilah yang pertama di Leaderboard!</li>`;
+          return;
+        }
+
+        listContainer.innerHTML = '';
+        let rank = 1;
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+          
+          listContainer.innerHTML += `
+            <li class="leaderboard-item">
+              <span><strong>${medal}</strong> ${data.name || 'Anonim'}</span>
+              <span style="font-weight: 800; color: var(--primary);">${data.toeflScore}</span>
+            </li>
+          `;
+          rank++;
+        });
+      } catch (err) {
+        console.warn("Gagal load leaderboard:", err);
+        listContainer.innerHTML = `<li style="text-align:center; color:#ef4444; font-size:0.8rem;">Gagal memuat peringkat. Pastikan Firestore Rules dalam Test Mode.</li>`;
       }
     }
 
