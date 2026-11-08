@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <title>Simulasi Test TOEFL By Davi Nur Alim</title>
+  <title>Simulasi Test TOEFL By Davi Nur Alim - Special for Rahma Vinda</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -42,7 +42,7 @@
     }
 
     body {
-      background: radial-gradient(circle at top left, #f1f5f9, #f8fafc 40%);
+      background: radial-gradient(circle at top left, #fdf2f8 0%, #f1f5f9 25%, #f8fafc 50%);
       color: var(--text-main);
       line-height: 1.6;
       min-height: 100vh;
@@ -82,7 +82,7 @@
     .brand-author {
       font-size: 0.78rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      background: linear-gradient(135deg, #4f46e5, #e11d48);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       display: block;
@@ -96,7 +96,6 @@
       flex-wrap: wrap;
     }
 
-    /* BADGE TIMER BARU */
     .timer-badge {
       font-size: 0.82rem;
       font-weight: 700;
@@ -153,6 +152,55 @@
       max-width: 960px;
       margin: 25px auto 80px;
       padding: 0 20px;
+    }
+
+    /* KARTU DEDIKASI SPESIAL RAHMA VINDA */
+    .dedication-card {
+      background: linear-gradient(135deg, #ffffff 0%, #fff1f2 40%, #fdf4ff 100%);
+      border: 1.5px solid #fecdd3;
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dedication-text {
+      width: 100%;
+    }
+
+    .dedication-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #be123c;
+      background: #ffe4e6;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+
+    .dedication-title {
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: #881337;
+      margin-bottom: 4px;
+    }
+
+    .dedication-title .highlight-name {
+      background: linear-gradient(135deg, #e11d48, #9333ea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 800;
+    }
+
+    .dedication-sub {
+      font-size: 0.88rem;
+      color: #4c0519;
+      line-height: 1.5;
     }
 
     .toast-box {
@@ -477,7 +525,6 @@
       color: white !important;
     }
 
-    /* KOTAK PEMBAHASAN MATERI (EDUKATIF) */
     .explanation-box {
       display: none;
       margin-top: 18px;
@@ -687,10 +734,9 @@
     <div class="header-content">
       <div class="brand-box">
         <h1>Simulasi Test TOEFL</h1>
-        <span class="brand-author">Dibuat secara resmi oleh Davi Nur Alim</span>
+        <span class="brand-author">Dibuat oleh Davi Nur Alim • Edisi Khusus Rahma Vinda</span>
       </div>
       <div class="header-stats">
-        <!-- BADGE TIMER STOPWATCH REALTIME -->
         <div class="timer-badge">
           ⏱️ <span id="timerDisplay">00:00</span> • TOEFL PBT Exam
         </div>
@@ -703,8 +749,19 @@
   </header>
 
   <main class="container">
+    <!-- KOTAK DEDIKASI SPESIAL UNTUK RAHMA VINDA -->
+    <div class="dedication-card">
+      <div class="dedication-text">
+        <span class="dedication-badge">Dedicated Special Edition</span>
+        <div class="dedication-title">Khusus untuk <span class="highlight-name">Rahma Vinda</span></div>
+        <div class="dedication-sub">
+          Selamat berjuang dan semangat latihannya! Setiap soal yang kamu selesaikan dengan tekun akan membawamu semakin dekat dengan skor impian. <em>Do your best, believe in yourself, and shine!</em>
+        </div>
+      </div>
+    </div>
+
     <div id="restoreToast" class="toast-box toast-restore">
-      ✨ <strong>Sesi Dipulihkan!</strong> Soal dan jawaban Anda yang sedang dikerjakan tetap aman tersimpan.
+      <strong>Sesi Dipulihkan!</strong> Soal dan jawaban Anda yang sedang dikerjakan tetap aman tersimpan.
     </div>
 
     <form id="toeflForm">
@@ -717,14 +774,19 @@
   </main>
 
   <footer>
-    <p>Simulasi TOEFL 2026 (50 Soal) • <strong>By Davi Nur Alim</strong></p>
+    <p>Simulasi TOEFL 2026 • <strong>Dibuat oleh Davi Nur Alim, khusus untuk Rahma Vinda</strong></p>
   </footer>
 
   <div class="modal-overlay" id="resultModal">
     <div class="modal-card">
-      <div style="font-size: 2.8rem; margin-bottom: 4px;">🎯</div>
+      <div style="font-size: 2.8rem; margin-bottom: 4px;">🎉</div>
       <h2 style="font-size: 1.5rem; font-weight: 800;">Hasil Tes TOEFL Anda</h2>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;">Standar Akademik 2026 • By Davi Nur Alim</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Standar Akademik 2026 • By Davi Nur Alim</p>
+
+      <!-- PESAN MOTIVASI PERSONAL UNTUK RAHMA VINDA DI POPUP SKOR -->
+      <div style="background: #fff1f2; border: 1.5px dashed #f43f5e; border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 14px; font-size: 0.86rem; color: #9f1239; line-height: 1.5;">
+        <strong>Hebat sekali, Rahma Vinda!</strong> Apapun hasilnya, proses belajarmu sangat luar biasa. Evaluasi pembahasannya dan terus melangkah maju! 
+      </div>
 
       <div class="score-badge-circle">
         <span class="num" id="toeflScoreVal">310</span>
@@ -1260,7 +1322,6 @@
 
         fullHtml += `</div>`;
 
-        // KOTAK PEMBAHASAN MATERI (TERSEMBUNYI SAAT UJIAN, MUNCUL SETELAH SUBMIT)
         fullHtml += `
           <div class="explanation-box" id="explain-box-${index}">
             <div class="explanation-header" id="explain-header-${index}">💡 Pembahasan & Analisis Soal</div>
@@ -1413,7 +1474,7 @@
     }
 
     function chooseOption(qIndex, optIndex) {
-      if (isTestSubmitted) return; // Kunci setelah submit
+      if (isTestSubmitted) return;
 
       for (let i = 0; i < 4; i++) {
         const item = document.getElementById(`label-q${qIndex}-opt${i}`);
@@ -1464,14 +1525,12 @@
       activeQuestions.forEach((q, idx) => {
         const userChoice = userAnswers[idx] !== undefined ? Number(userAnswers[idx]) : null;
 
-        // Tandai kunci benar warna hijau
         const correctLabel = document.getElementById(`label-q${idx}-opt${q.answer}`);
         if (correctLabel) correctLabel.classList.add('correct-ans');
 
         const explainBox = document.getElementById(`explain-box-${idx}`);
         const explainHeader = document.getElementById(`explain-header-${idx}`);
 
-        // Tampilkan kotak pembahasan
         if (explainBox) {
           explainBox.style.display = 'block';
 
@@ -1527,7 +1586,6 @@
 
     function closeModal() {
       document.getElementById('resultModal').style.display = 'none';
-      // Scroll halus ke soal pertama untuk mulai membaca pembahasan
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
