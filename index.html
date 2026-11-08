@@ -1099,7 +1099,7 @@
 
   <script>
     /* =========================================================
-       0. FIREBASE REALTIME DATABASE CONFIGURATION (SUDAH TERISI)
+       0. FIREBASE REALTIME DATABASE CONFIGURATION
     ========================================================== */
     const firebaseConfig = {
       apiKey: "AIzaSyANxL5wAh_8l8h8muSbyu0L-xGc9KX47hI",
@@ -1117,6 +1117,9 @@
     localStorage.setItem('TOEFL_SESSION_UID', currentUserId);
 
     let currentUserName = localStorage.getItem('TOEFL_USER_NAME') || '';
+    
+    // GEMBOK ANTI-DOBEL: Memastikan hanya 1 baris log dibuat per sesi buka halaman
+    let hasLoggedVisit = false;
 
     function showNotice(msg) {
       const box = document.getElementById('firebaseNoticeBox');
@@ -1212,12 +1215,7 @@
         status: isTestSubmitted ? "Selesai Ujian" : "Mengerjakan Soal"
       };
 
-      userRef.set(payload).catch(err => {
-        if (err.message.includes("permission_denied")) {
-          showNotice("PERMISSION DENIED! Pastikan tab Rules di Firebase sudah diset <code>.read: true, .write: true</code>!");
-        }
-      });
-
+      userRef.set(payload);
       userRef.onDisconnect().remove();
     }
 
@@ -1254,8 +1252,6 @@
         document.getElementById('footerOnlineCount').textContent = count;
 
         renderOnlineUsersList(activeList);
-      }, (error) => {
-        showNotice("Gagal membaca pengguna online: " + error.message);
       });
 
       // Baca Log Kunjungan
@@ -1272,6 +1268,10 @@
 
     function logVisitEntry(action = "Membuka Simulasi") {
       if (!isFirebaseReady || !db || !currentUserName) return;
+      
+      // Cegah pencatatan ganda saat memuat halaman pertama kali
+      if (hasLoggedVisit && action === "Membuka Simulasi") return;
+      hasLoggedVisit = true;
 
       const now = new Date();
       const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB';
