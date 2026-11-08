@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light only">
+  <meta name="supported-color-schemes" content="light">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -12,26 +14,32 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- FIREBASE SDK (COMPAT VERSION FOR EASY INTEGRATION) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <style>
     :root {
+      color-scheme: light only;
+      supported-color-schemes: light;
       --primary: #4f46e5;
       --primary-hover: #4338ca;
       --primary-soft: #eef2ff;
-      --accent: #06b6d4;
+      --accent: #0284c7;
       --text-main: #0f172a;
-      --text-muted: #64748b;
+      --text-muted: #475569;
       --bg: #f8fafc;
       --surface: #ffffff;
-      --border: #e2e8f0;
-      --border-focus: #c7d2fe;
-      --success: #10b981;
+      --border: #cbd5e1;
+      --border-focus: #818cf8;
+      --success: #059669;
       --success-soft: #ecfdf5;
-      --danger: #f43f5e;
+      --danger: #dc2626;
       --danger-soft: #fff1f2;
       --radius-md: 14px;
-      --radius-lg: 20px;
-      --shadow-card: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
-      --shadow-hover: 0 12px 20px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.03);
+      --radius-lg: 18px;
+      --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
     * {
@@ -41,28 +49,33 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
+    html {
+      background-color: #f1f5f9;
+      color-scheme: light only;
+    }
+
     body {
-      background: radial-gradient(circle at top left, #fdf2f8 0%, #f1f5f9 25%, #f8fafc 50%);
+      background-color: #f1f5f9;
       color: var(--text-main);
       line-height: 1.6;
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
 
     /* HEADER */
     header {
       position: sticky;
       top: 0;
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+      background: #ffffff;
+      border-bottom: 2px solid #e2e8f0;
       z-index: 100;
-      box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.04);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
     }
 
     .header-content {
       max-width: 960px;
       margin: 0 auto;
-      padding: 14px 20px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -73,68 +86,90 @@
     .brand-box h1 {
       font-size: 1.25rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #1e1b4b 0%, var(--primary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: inline-block;
+      color: #1e1b4b;
+      display: block;
     }
 
     .brand-author {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #4f46e5, #e11d48);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #4f46e5;
       display: block;
-      margin-top: -2px;
+      margin-top: 2px;
     }
 
     .header-stats {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
-    .timer-badge {
-      font-size: 0.82rem;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid #c7d2fe;
-      background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.08);
-      font-variant-numeric: tabular-nums;
-    }
-
     .stat-chip {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 999px;
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
       background: #ffffff;
       color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: 6px;
-      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .stat-chip:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .live-chip {
+      color: #065f46;
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+
+    .live-chip:hover {
+      background: #d1fae5;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      display: inline-block;
+      animation: pulseGreen 1.8s infinite;
+    }
+
+    .timer-badge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1.5px solid #c7d2fe;
+      background: #eef2ff;
+      color: #3730a3;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
     }
 
     .stat-chip.active-chip {
-      color: var(--primary);
+      color: #4338ca;
       background: #ffffff;
-      border-color: #c7d2fe;
-      box-shadow: 0 0 12px rgba(99, 102, 241, 0.15);
+      border-color: #818cf8;
+      font-weight: 800;
+      cursor: default;
     }
 
     .progress-bar-bg {
-      width: 120px;
-      height: 9px;
+      width: 80px;
+      height: 8px;
       background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
@@ -143,27 +178,26 @@
     .progress-bar-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
+      background: #4f46e5;
       border-radius: 999px;
-      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: width 0.3s ease;
     }
 
     .container {
       max-width: 960px;
-      margin: 25px auto 80px;
-      padding: 0 20px;
+      margin: 20px auto 70px;
+      padding: 0 16px;
     }
 
     /* KARTU DEDIKASI SPESIAL RAHMA VINDA */
     .dedication-card {
-      background: linear-gradient(135deg, #ffffff 0%, #fff1f2 40%, #fdf4ff 100%);
-      border: 1.5px solid #fecdd3;
+      background: #ffffff;
+      border: 2px solid #fecdd3;
+      border-left: 6px solid #e11d48;
       border-radius: var(--radius-lg);
-      padding: 20px 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 10px 25px -5px rgba(244, 63, 94, 0.1);
-      position: relative;
-      overflow: hidden;
+      padding: 18px 20px;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow-card);
     }
 
     .dedication-text {
@@ -176,7 +210,7 @@
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      color: #be123c;
+      color: #9f1239;
       background: #ffe4e6;
       padding: 3px 10px;
       border-radius: 999px;
@@ -184,76 +218,72 @@
     }
 
     .dedication-title {
-      font-size: 1.08rem;
+      font-size: 1.15rem;
       font-weight: 800;
       color: #881337;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .dedication-title .highlight-name {
-      background: linear-gradient(135deg, #e11d48, #9333ea);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 800;
+      color: #e11d48;
+      font-weight: 900;
     }
 
     .dedication-sub {
-      font-size: 0.88rem;
-      color: #4c0519;
-      line-height: 1.5;
+      font-size: 0.92rem;
+      color: #334155;
+      line-height: 1.55;
+    }
+
+    .user-greeting-banner {
+      background: #eef2ff;
+      border: 1.5px solid #c7d2fe;
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: #312e81;
+    }
+
+    .user-greeting-btn {
+      background: #ffffff;
+      border: 1px solid #c7d2fe;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: #4338ca;
+      cursor: pointer;
     }
 
     .toast-box {
       display: none;
-      padding: 14px 20px;
+      padding: 14px 18px;
       border-radius: var(--radius-md);
-      margin-bottom: 22px;
+      margin-bottom: 20px;
       font-size: 0.92rem;
       font-weight: 600;
-      animation: fadeIn 0.4s ease;
-      box-shadow: var(--shadow-card);
-    }
-
-    .toast-restore {
+      animation: fadeIn 0.3s ease;
       background: #ecfdf5;
-      border: 1px solid #a7f3d0;
+      border: 1.5px solid #6ee7b7;
       color: #065f46;
     }
 
     /* SECTION BANNERS */
     .section-banner {
       color: #ffffff;
-      padding: 24px 28px;
+      padding: 20px 22px;
       border-radius: var(--radius-lg);
-      margin: 40px 0 22px;
-      box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.12);
-      position: relative;
-      overflow: hidden;
+      margin: 35px 0 20px;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
     }
 
-    .banner-listening {
-      background: linear-gradient(135deg, #1e1b4b 0%, #3730a3 50%, #4f46e5 100%);
-    }
-
-    .banner-structure {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-    }
-
-    .banner-reading {
-      background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
-    }
-
-    .section-banner::after {
-      content: '';
-      position: absolute;
-      top: -30px;
-      right: -30px;
-      width: 140px;
-      height: 140px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 50%;
-      pointer-events: none;
-    }
+    .banner-listening { background: #1e1b4b; }
+    .banner-structure { background: #0f172a; }
+    .banner-reading   { background: #064e3b; }
 
     .section-badge {
       display: inline-flex;
@@ -263,114 +293,100 @@
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.8px;
-      background: rgba(255, 255, 255, 0.18);
-      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.2);
       padding: 4px 12px;
       border-radius: 999px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .section-banner h2 {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 800;
       margin-bottom: 4px;
+      color: #ffffff;
     }
 
     .section-banner p {
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.88rem;
+      color: #f1f5f9;
     }
 
     .question-card {
-      background: var(--surface);
+      background: #ffffff;
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      padding: 24px 28px;
-      margin-bottom: 22px;
+      border: 1.5px solid #cbd5e1;
+      padding: 20px 22px;
+      margin-bottom: 18px;
       box-shadow: var(--shadow-card);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .question-card:hover {
-      border-color: var(--border-focus);
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-2px);
     }
 
     .q-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .q-number {
       font-weight: 800;
-      color: var(--primary);
+      color: #4338ca;
       font-size: 0.95rem;
     }
 
     .q-tag {
       font-size: 0.74rem;
-      font-weight: 700;
+      font-weight: 800;
       background: #f1f5f9;
-      color: var(--text-muted);
+      color: #334155;
       padding: 4px 10px;
       border-radius: 999px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #cbd5e1;
     }
 
     .reading-passage {
       background: #f8fafc;
       border-left: 4px solid var(--accent);
-      padding: 16px 20px;
+      padding: 14px 16px;
       border-radius: 0 var(--radius-md) var(--radius-md) 0;
-      font-size: 0.96rem;
-      color: #334155;
-      margin-bottom: 18px;
-      line-height: 1.75;
+      font-size: 0.94rem;
+      color: #1e293b;
+      margin-bottom: 16px;
+      line-height: 1.7;
     }
 
     .audio-player-box {
-      background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
-      border: 1.5px solid #ddd6fe;
-      padding: 16px 20px;
+      background: #f5f3ff;
+      border: 1.5px solid #c4b5fd;
+      padding: 14px 18px;
       border-radius: var(--radius-md);
-      margin-bottom: 18px;
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.05);
+      margin-bottom: 16px;
     }
 
     .audio-controls-row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
       width: 100%;
       justify-content: space-between;
     }
 
     .audio-btn {
-      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-      color: white;
+      background: #6d28d9;
+      color: #ffffff;
       border: none;
-      padding: 11px 24px;
+      padding: 10px 20px;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.28);
-    }
-
-    .audio-btn:hover {
-      transform: translateY(-1px);
+      gap: 8px;
     }
 
     .audio-btn.is-playing {
-      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+      background: #be123c !important;
     }
 
     .sound-waves {
@@ -402,164 +418,139 @@
       background: #ffffff;
       padding: 3px 4px;
       border-radius: 999px;
-      border: 1px solid #ddd6fe;
+      border: 1px solid #c4b5fd;
     }
 
     .speed-btn {
       background: transparent;
       border: none;
-      padding: 6px 14px;
+      padding: 5px 12px;
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 700;
-      color: #6b21a8;
+      color: #5b21b6;
       cursor: pointer;
-      transition: all 0.15s ease;
     }
 
     .speed-btn.active {
-      background: #7c3aed;
-      color: white;
+      background: #6d28d9;
+      color: #ffffff;
     }
 
     .audio-status-label {
-      font-size: 0.76rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      color: #6d28d9;
+      color: #5b21b6;
       margin-top: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .audio-status-label::before {
-      content: '';
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #8b5cf6;
-      display: inline-block;
     }
 
     .question-text {
       font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 16px;
     }
 
     .options-group {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 9px;
     }
 
     .option-item {
       display: flex;
       align-items: center;
-      padding: 13px 18px;
+      padding: 12px 16px;
       border-radius: var(--radius-md);
-      border: 1.5px solid var(--border);
+      border: 1.5px solid #cbd5e1;
       background: #ffffff;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      font-size: 0.95rem;
+      font-size: 0.94rem;
+      color: #1e293b;
       user-select: none;
     }
 
-    .option-item:hover {
-      background: #f8fafc;
-      border-color: #cbd5e1;
-      transform: translateX(4px);
-    }
-
     .option-item.selected {
-      border-color: var(--primary) !important;
-      background: linear-gradient(90deg, #f5f3ff 0%, #ffffff 100%) !important;
-      color: #1e1b4b;
+      border-color: #4f46e5 !important;
+      background: #eef2ff !important;
+      color: #1e1b4b !important;
       font-weight: 700;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
     }
 
     .opt-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: #f1f5f9;
-      color: var(--text-muted);
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: #e2e8f0;
+      color: #334155;
       font-weight: 800;
       font-size: 0.85rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 14px;
+      margin-right: 12px;
       flex-shrink: 0;
-      transition: all 0.2s ease;
     }
 
     .option-item.selected .opt-badge {
-      background: var(--primary);
+      background: #4f46e5;
       color: #ffffff;
     }
 
     .option-item.correct-ans {
-      background: var(--success-soft) !important;
-      border-color: var(--success) !important;
+      background: #ecfdf5 !important;
+      border-color: #059669 !important;
       color: #065f46 !important;
       font-weight: 700 !important;
     }
 
     .option-item.correct-ans .opt-badge {
-      background: var(--success) !important;
-      color: white !important;
+      background: #059669 !important;
+      color: #ffffff !important;
     }
 
     .option-item.wrong-ans {
-      background: var(--danger-soft) !important;
-      border-color: var(--danger) !important;
+      background: #fff1f2 !important;
+      border-color: #dc2626 !important;
       color: #991b1b !important;
     }
 
     .option-item.wrong-ans .opt-badge {
-      background: var(--danger) !important;
-      color: white !important;
+      background: #dc2626 !important;
+      color: #ffffff !important;
     }
 
     .explanation-box {
       display: none;
-      margin-top: 18px;
-      padding: 16px 20px;
+      margin-top: 16px;
+      padding: 14px 18px;
       border-radius: var(--radius-md);
       font-size: 0.92rem;
-      line-height: 1.65;
-      animation: fadeIn 0.3s ease;
-      border: 1.5px solid #e2e8f0;
+      line-height: 1.6;
+      border: 1.5px solid #cbd5e1;
       background: #f8fafc;
     }
 
     .explanation-box.is-correct-box {
-      border-left: 5px solid var(--success);
+      border-left: 5px solid #059669;
       background: #f0fdf4;
       color: #166534;
     }
 
     .explanation-box.is-wrong-box {
-      border-left: 5px solid var(--danger);
-      background: #fff1f2;
+      border-left: 5px solid #dc2626;
+      background: #fef2f2;
       color: #991b1b;
     }
 
     .explanation-header {
       font-weight: 800;
       font-size: 0.95rem;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      margin-bottom: 6px;
     }
 
     .explanation-content {
-      color: #334155;
+      color: #1e293b;
       font-size: 0.88rem;
     }
 
@@ -568,41 +559,55 @@
     }
 
     .submit-container {
-      margin-top: 45px;
+      margin-top: 40px;
       text-align: center;
     }
 
     .btn-submit {
-      background: linear-gradient(135deg, var(--primary) 0%, #3730a3 100%);
-      color: white;
+      background: #4338ca;
+      color: #ffffff;
       border: none;
-      padding: 18px 56px;
-      font-size: 1.12rem;
+      padding: 16px 44px;
+      font-size: 1.05rem;
       font-weight: 800;
       border-radius: 999px;
       cursor: pointer;
-      box-shadow: 0 8px 24px -2px rgba(79, 70, 229, 0.4);
-      transition: all 0.25s ease;
-    }
-
-    .btn-submit:hover {
-      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(67, 56, 202, 0.35);
     }
 
     footer {
       text-align: center;
-      padding: 28px;
+      padding: 24px 16px;
       background: #ffffff;
-      border-top: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 0.9rem;
+      border-top: 1.5px solid #e2e8f0;
+      color: #475569;
+      font-size: 0.88rem;
     }
 
+    .footer-log-btn {
+      display: inline-block;
+      margin-top: 10px;
+      background: #f1f5f9;
+      border: 1.5px solid #cbd5e1;
+      color: #1e293b;
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .footer-log-btn:hover {
+      background: #e2e8f0;
+    }
+
+    /* MODAL OVERLAY */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
       display: none;
       justify-content: center;
       align-items: center;
@@ -611,52 +616,242 @@
     }
 
     .modal-card {
-      background: white;
+      background: #ffffff;
       max-width: 480px;
       width: 100%;
       border-radius: var(--radius-lg);
-      padding: 34px 28px;
+      padding: 28px 22px;
       text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      animation: modalPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* MODAL LOG MONITORING FIREBASE */
+    .modal-card-log {
+      max-width: 650px;
+      text-align: left;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .log-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+    }
+
+    .log-modal-header h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .log-close-btn {
+      background: #f1f5f9;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .log-close-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .log-modal-body {
+      overflow-y: auto;
+      padding-right: 4px;
+      flex: 1;
+    }
+
+    .log-section-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #475569;
+      margin: 14px 0 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .online-user-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      margin-bottom: 8px;
+    }
+
+    .online-user-item.is-self {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+    }
+
+    .user-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar-tag {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #e0e7ff;
+      color: #3730a3;
+      font-weight: 800;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+    }
+
+    .user-avatar-tag.self-tag {
+      background: #ffe4e6;
+      color: #be123c;
+    }
+
+    .user-info-name {
+      font-weight: 800;
+      font-size: 0.92rem;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .user-info-detail {
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    .user-status-pill {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: #065f46;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .log-table-box {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 6px;
+    }
+
+    .log-table-box th {
+      background: #f1f5f9;
+      color: #334155;
+      font-weight: 800;
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    .log-table-box td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #1e293b;
+    }
+
+    .log-time-badge {
+      font-weight: 800;
+      color: #4338ca;
+      font-variant-numeric: tabular-nums;
+      background: #eef2ff;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* MODAL INPUT NAMA PENGUNJUNG */
+    .name-input-group {
+      margin: 18px 0;
+      text-align: left;
+    }
+
+    .name-input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .name-input-field {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .name-input-field:focus {
+      border-color: #4f46e5;
     }
 
     .score-badge-circle {
-      width: 150px;
-      height: 150px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
-      border: 6px solid var(--primary);
-      margin: 18px auto;
+      background: #eef2ff;
+      border: 5px solid #4f46e5;
+      margin: 16px auto;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 10px 25px -4px rgba(79, 70, 229, 0.25);
     }
 
     .score-badge-circle .num {
-      font-size: 3rem;
+      font-size: 2.8rem;
       font-weight: 800;
-      color: var(--primary);
+      color: #3730a3;
       line-height: 1;
     }
 
     .score-badge-circle .sub {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.6px;
-      color: var(--text-muted);
+      color: #475569;
       margin-top: 6px;
     }
 
     .score-breakdown-card {
       background: #f8fafc;
-      border: 1.5px solid #e2e8f0;
+      border: 1.5px solid #cbd5e1;
       border-radius: var(--radius-md);
-      padding: 16px 20px;
-      margin: 20px 0;
+      padding: 14px 16px;
+      margin: 18px 0;
       text-align: left;
     }
 
@@ -664,8 +859,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 0;
-      font-size: 0.92rem;
+      padding: 8px 0;
+      font-size: 0.9rem;
+      color: #1e293b;
       border-bottom: 1px solid #e2e8f0;
     }
 
@@ -676,9 +872,9 @@
 
     .breakdown-badge {
       font-weight: 800;
-      padding: 4px 12px;
+      padding: 3px 10px;
       border-radius: 999px;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
     }
 
     .badge-listening { background: #e0e7ff; color: #3730a3; }
@@ -688,43 +884,53 @@
 
     .modal-btns {
       display: flex;
-      gap: 12px;
-      margin-top: 20px;
+      gap: 10px;
+      margin-top: 18px;
     }
 
     .btn-modal {
       flex: 1;
-      padding: 14px;
+      padding: 12px;
       border-radius: 999px;
       font-weight: 800;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       cursor: pointer;
       border: none;
     }
 
     .btn-modal-review {
-      background: #f1f5f9;
-      color: var(--text-main);
+      background: #e2e8f0;
+      color: #0f172a;
     }
 
     .btn-modal-retake {
-      background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
-      color: white;
+      background: #4338ca;
+      color: #ffffff;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-8px); }
+      from { opacity: 0; transform: translateY(-6px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes modalPop {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
     }
 
     @keyframes soundWave {
       0%, 100% { height: 4px; }
       50% { height: 14px; }
+    }
+
+    @keyframes pulseGreen {
+      0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+      }
+      100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
     }
   </style>
 </head>
@@ -737,13 +943,21 @@
         <span class="brand-author">Dibuat oleh Davi Nur Alim • Edisi Khusus Rahma Vinda</span>
       </div>
       <div class="header-stats">
+        <!-- CHIP REALTIME FIREBASE -->
+        <div class="stat-chip live-chip" onclick="openLogModal()" title="Klik untuk melihat siapa saja yang sedang online">
+          <span class="pulse-dot"></span> <span id="onlineUsersCount">1</span> Online
+        </div>
+        <div class="stat-chip" onclick="openLogModal()" title="Klik untuk melihat catatan log kunjungan & jam buka">
+          👥 <span id="totalVisitorsCount">0</span> Kunjungan
+        </div>
+
         <div class="timer-badge">
-          ⏱️ <span id="timerDisplay">00:00</span> • TOEFL PBT Exam
+          ⏱️ <span id="timerDisplay">00:00</span>
         </div>
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="progressBar"></div>
         </div>
-        <div class="stat-chip active-chip" id="progressChip">0 / 50 Terjawab</div>
+        <div class="stat-chip active-chip" id="progressChip">0 / 50</div>
       </div>
     </div>
   </header>
@@ -760,7 +974,13 @@
       </div>
     </div>
 
-    <div id="restoreToast" class="toast-box toast-restore">
+    <!-- BANNER NAMA PENGUNJUNG AKTIF -->
+    <div class="user-greeting-banner">
+      <span>👤 Sesi Anda: <strong id="currentUserNameLabel">Rahma Vinda</strong></span>
+      <button type="button" class="user-greeting-btn" onclick="promptChangeName()">Ganti Nama</button>
+    </div>
+
+    <div id="restoreToast" class="toast-box">
       <strong>Sesi Dipulihkan!</strong> Soal dan jawaban Anda yang sedang dikerjakan tetap aman tersimpan.
     </div>
 
@@ -775,17 +995,23 @@
 
   <footer>
     <p>Simulasi TOEFL 2026 • <strong>Dibuat oleh Davi Nur Alim, khusus untuk Rahma Vinda</strong></p>
+    <div style="margin-top: 8px; font-size: 0.82rem; color: #64748b; display: flex; justify-content: center; gap: 14px; align-items: center; flex-wrap: wrap;">
+      <span>👥 Total Kunjungan: <strong id="footerVisitorsCount">0</strong></span>
+      <span>•</span>
+      <span>🟢 Sedang Membuka Web: <strong id="footerOnlineCount">1</strong> orang</span>
+    </div>
+    <button type="button" class="footer-log-btn" onclick="openLogModal()">📋 Buka Daftar Siapa Saja yang Online & Log Jam Kunjungan</button>
   </footer>
 
+  <!-- POPUP 1: HASIL NILAI UJIAN -->
   <div class="modal-overlay" id="resultModal">
     <div class="modal-card">
-      <div style="font-size: 2.8rem; margin-bottom: 4px;">🎉</div>
-      <h2 style="font-size: 1.5rem; font-weight: 800;">Hasil Tes TOEFL Anda</h2>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Standar Akademik 2026 • By Davi Nur Alim</p>
+      <div style="font-size: 2.5rem; margin-bottom: 4px;">🎉</div>
+      <h2 style="font-size: 1.4rem; font-weight: 800; color: #0f172a;">Hasil Tes TOEFL Anda</h2>
+      <p style="font-size: 0.8rem; color: #475569; margin-bottom: 12px;">Standar Akademik 2026 • By Davi Nur Alim</p>
 
-      <!-- PESAN MOTIVASI PERSONAL UNTUK RAHMA VINDA DI POPUP SKOR -->
       <div style="background: #fff1f2; border: 1.5px dashed #f43f5e; border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 14px; font-size: 0.86rem; color: #9f1239; line-height: 1.5;">
-        <strong>Hebat sekali, Rahma Vinda!</strong> Apapun hasilnya, proses belajarmu sangat luar biasa. Evaluasi pembahasannya dan terus melangkah maju! 
+        <strong>Hebat sekali, <span id="resModalUserName">Rahma Vinda</span>!</strong> Apapun hasilnya, proses belajarmu sangat luar biasa. Evaluasi pembahasannya dan terus melangkah maju!
       </div>
 
       <div class="score-badge-circle">
@@ -819,7 +1045,317 @@
     </div>
   </div>
 
+  <!-- POPUP 2: DAFTAR YANG ONLINE & LOG JAM KUNJUNGAN REALTIME -->
+  <div class="modal-overlay" id="logModal">
+    <div class="modal-card modal-card-log">
+      <div class="log-modal-header">
+        <h3>👥 Siapa Saja yang Online & Log Kunjungan</h3>
+        <button type="button" class="log-close-btn" onclick="closeLogModal()">✕</button>
+      </div>
+
+      <div class="log-modal-body">
+        <!-- BAGIAN 1: DAFTAR ORANG YANG SEDANG ONLINE -->
+        <div class="log-section-title">
+          <span>🟢 Sedang Membuka Web Saat Ini</span>
+          <span style="color:#059669; font-size: 0.76rem;" id="firebaseSyncStatus">● Realtime Sync</span>
+        </div>
+        <div id="onlineUsersList">
+          <p style="font-size:0.85rem; color:#64748b;">Memuat data pengunjung online...</p>
+        </div>
+
+        <!-- BAGIAN 2: LOG CATATAN JAM KUNJUNGAN -->
+        <div class="log-section-title" style="margin-top: 22px;">
+          <span>⏱️ Catatan Jam Kunjungan Terbaru</span>
+        </div>
+        <table class="log-table-box">
+          <thead>
+            <tr>
+              <th style="width: 32%;">Nama Pengunjung</th>
+              <th style="width: 36%;">Jam / Waktu Buka</th>
+              <th style="width: 32%;">Perangkat</th>
+            </tr>
+          </thead>
+          <tbody id="visitLogTableBody">
+            <tr><td colspan="3" style="text-align:center; color:#64748b;">Memuat log kunjungan...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 14px; text-align: right;">
+        <button type="button" class="btn-modal btn-modal-review" style="padding: 9px 24px;" onclick="closeLogModal()">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POPUP 3: PROMPT INPUT NAMA PENGUNJUNG PERTAMA KALI -->
+  <div class="modal-overlay" id="nameModal">
+    <div class="modal-card" style="max-width: 400px;">
+      <div style="font-size: 2.2rem; margin-bottom: 6px;">👋</div>
+      <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a;">Selamat Datang di Ujian TOEFL</h3>
+      <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Masukkan nama Anda untuk mencatat kehadiran di daftar log dan ujian.</p>
+      
+      <div class="name-input-group">
+        <label for="nameInput">Nama Lengkap Anda:</label>
+        <input type="text" id="nameInput" class="name-input-field" placeholder="Contoh: Rahma Vinda" maxlength="30" autofocus>
+      </div>
+
+      <button type="button" class="btn-submit" style="width: 100%; padding: 14px; font-size: 1rem;" onclick="saveUserName()">Mulai & Catat Kehadiran</button>
+    </div>
+  </div>
+
   <script>
+    /* =========================================================
+       0. FIREBASE REALTIME DATABASE CONFIGURATION
+       -> GANTI VALUE DI BAWAH INI DENGAN CONFIG FIREBASE ANDA
+    ========================================================== */
+    const firebaseConfig = {
+      apiKey: "GANTI_DENGAN_API_KEY_ANDA",
+      authDomain: "GANTI_DENGAN_AUTH_DOMAIN_ANDA",
+      databaseURL: "GANTI_DENGAN_DATABASE_URL_ANDA",
+      projectId: "GANTI_DENGAN_PROJECT_ID_ANDA",
+      storageBucket: "GANTI_DENGAN_STORAGE_BUCKET_ANDA",
+      messagingSenderId: "GANTI_DENGAN_SENDER_ID_ANDA",
+      appId: "GANTI_DENGAN_APP_ID_ANDA"
+    };
+
+    let db = null;
+    let isFirebaseReady = false;
+    let currentUserId = localStorage.getItem('TOEFL_SESSION_UID') || ('user_' + Math.random().toString(36).substring(2, 9));
+    localStorage.setItem('TOEFL_SESSION_UID', currentUserId);
+
+    let currentUserName = localStorage.getItem('TOEFL_USER_NAME') || '';
+
+    function initFirebase() {
+      if (firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("GANTI_DENGAN")) {
+        try {
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          db = firebase.database();
+          isFirebaseReady = true;
+          document.getElementById('firebaseSyncStatus').textContent = "● Terhubung ke Firebase";
+        } catch (err) {
+          console.warn("Firebase gagal inisialisasi, beralih ke local tracker:", err);
+          isFirebaseReady = false;
+        }
+      } else {
+        document.getElementById('firebaseSyncStatus').textContent = "● Mode Demo (Masukkan config Firebase)";
+      }
+    }
+
+    function getDeviceName() {
+      const ua = navigator.userAgent;
+      if (/Android/i.test(ua)) return "Android (Mobile)";
+      if (/iPhone|iPad|iPod/i.test(ua)) return "iOS (Mobile)";
+      if (/Windows/i.test(ua)) return "Windows PC";
+      if (/Macintosh/i.test(ua)) return "MacBook";
+      return "Web Browser";
+    }
+
+    /* KONTROL LOG NAMA & KEHADIRAN */
+    function checkUserName() {
+      if (!currentUserName) {
+        document.getElementById('nameModal').style.display = 'flex';
+      } else {
+        updateUserNameUI();
+        registerOnlinePresence();
+        logVisitEntry();
+      }
+    }
+
+    function saveUserName() {
+      const input = document.getElementById('nameInput');
+      const val = (input && input.value.trim()) ? input.value.trim() : "Rahma Vinda";
+      currentUserName = val;
+      localStorage.setItem('TOEFL_USER_NAME', currentUserName);
+      document.getElementById('nameModal').style.display = 'none';
+
+      updateUserNameUI();
+      registerOnlinePresence();
+      logVisitEntry();
+    }
+
+    function promptChangeName() {
+      const newName = prompt("Masukkan nama baru Anda:", currentUserName);
+      if (newName && newName.trim()) {
+        currentUserName = newName.trim();
+        localStorage.setItem('TOEFL_USER_NAME', currentUserName);
+        updateUserNameUI();
+        registerOnlinePresence();
+        logVisitEntry("Ganti Identitas Sesi");
+      }
+    }
+
+    function updateUserNameUI() {
+      const label = document.getElementById('currentUserNameLabel');
+      if (label) label.textContent = currentUserName;
+      const resName = document.getElementById('resModalUserName');
+      if (resName) resName.textContent = currentUserName;
+    }
+
+    /* SISTEM REALTIME ONLINE FIREBASE */
+    function registerOnlinePresence() {
+      if (!isFirebaseReady || !db) {
+        renderLocalMockPresence();
+        return;
+      }
+
+      const userOnlineRef = db.ref('online_users/' + currentUserId);
+      const connectedRef = db.ref('.info/connected');
+
+      connectedRef.on('value', (snap) => {
+        if (snap.val() === true) {
+          userOnlineRef.onDisconnect().remove();
+
+          userOnlineRef.set({
+            name: currentUserName,
+            device: getDeviceName(),
+            joinedAt: Date.now(),
+            status: "Sedang Mengerjakan Soal"
+          });
+        }
+      });
+
+      // Dengarkan daftar pengguna yang online secara real-time
+      db.ref('online_users').on('value', (snap) => {
+        const data = snap.val() || {};
+        const usersArray = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+
+        updateOnlineCount(usersArray.length);
+        renderOnlineUsersList(usersArray);
+      });
+    }
+
+    function logVisitEntry(action = "Membuka Web Ujian") {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB';
+      const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+
+      if (isFirebaseReady && db) {
+        // Catat ke node visits di Firebase
+        db.ref('visits').push({
+          name: currentUserName,
+          action: action,
+          device: getDeviceName(),
+          timestamp: Date.now(),
+          timeFormatted: `${dateStr}, ${timeStr}`
+        });
+
+        // Dengarkan riwayat kunjungan
+        db.ref('visits').limitToLast(20).on('value', (snap) => {
+          const data = snap.val() || {};
+          const list = Object.keys(data).map(k => data[k]).reverse();
+          updateTotalVisitsCount(list.length);
+          renderVisitLogs(list);
+        });
+      } else {
+        // Fallback Local Storage
+        let logs = JSON.parse(localStorage.getItem('TOEFL_LOCAL_VISITS') || '[]');
+        logs.unshift({
+          name: currentUserName || "Rahma Vinda",
+          action: action,
+          device: getDeviceName(),
+          timeFormatted: `${dateStr}, ${timeStr}`
+        });
+        if (logs.length > 20) logs = logs.slice(0, 20);
+        localStorage.setItem('TOEFL_LOCAL_VISITS', JSON.stringify(logs));
+
+        updateTotalVisitsCount(logs.length);
+        renderVisitLogs(logs);
+      }
+    }
+
+    function updateOnlineCount(count) {
+      const total = Math.max(1, count);
+      document.getElementById('onlineUsersCount').textContent = total;
+      document.getElementById('footerOnlineCount').textContent = total;
+    }
+
+    function updateTotalVisitsCount(count) {
+      document.getElementById('totalVisitorsCount').textContent = count;
+      document.getElementById('footerVisitorsCount').textContent = count;
+    }
+
+    function renderOnlineUsersList(users) {
+      const container = document.getElementById('onlineUsersList');
+      if (!container) return;
+
+      if (!users.length) {
+        container.innerHTML = `<p style="font-size:0.85rem; color:#64748b;">Hanya Anda yang sedang online.</p>`;
+        return;
+      }
+
+      let html = '';
+      users.forEach(u => {
+        const isSelf = (u.id === currentUserId || u.name === currentUserName);
+        const initials = u.name ? u.name.split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase() : 'U';
+
+        html += `
+          <div class="online-user-item ${isSelf ? 'is-self' : ''}">
+            <div class="user-left">
+              <div class="user-avatar-tag ${isSelf ? 'self-tag' : ''}">${initials}</div>
+              <div>
+                <div class="user-info-name">
+                  ${u.name} ${isSelf ? '<span style="font-size:0.7rem; background:#ffe4e6; color:#be123c; padding:1px 6px; border-radius:999px;">Anda</span>' : ''}
+                </div>
+                <div class="user-info-detail">${u.device} • <span style="color:#059669; font-weight:700;">${u.status || 'Aktif'}</span></div>
+              </div>
+            </div>
+            <div class="user-status-pill">
+              <span class="pulse-dot" style="width:6px; height:6px;"></span> Online Sekarang
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function renderVisitLogs(logs) {
+      const tbody = document.getElementById('visitLogTableBody');
+      if (!tbody) return;
+
+      if (!logs.length) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#64748b;">Belum ada log kunjungan.</td></tr>`;
+        return;
+      }
+
+      let html = '';
+      logs.forEach(item => {
+        html += `
+          <tr>
+            <td><strong>${item.name}</strong></td>
+            <td><span class="log-time-badge">${item.timeFormatted}</span></td>
+            <td style="color:#64748b;">${item.device}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+
+    /* FALLBACK TAMPILAN BILA FIREBASE CONFIG BELUM DIISI */
+    function renderLocalMockPresence() {
+      const mockUsers = [
+        { id: currentUserId, name: currentUserName || "Rahma Vinda", device: getDeviceName(), status: "Sedang Mengerjakan Soal" },
+        { id: "mock_davi", name: "Davi Nur Alim", device: "Windows PC", status: "Admin / Author" }
+      ];
+      updateOnlineCount(mockUsers.length);
+      renderOnlineUsersList(mockUsers);
+
+      const logs = JSON.parse(localStorage.getItem('TOEFL_LOCAL_VISITS') || '[]');
+      updateTotalVisitsCount(logs.length || 1);
+      renderVisitLogs(logs);
+    }
+
+    function openLogModal() {
+      const modal = document.getElementById('logModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeLogModal() {
+      const modal = document.getElementById('logModal');
+      if (modal) modal.style.display = 'none';
+    }
+
     /* =========================================================
        1. LIVE STOPWATCH TIMER UJIAN
     ========================================================== */
@@ -1238,7 +1774,7 @@
         if (index === 0) {
           fullHtml += `
             <div class="section-banner banner-listening">
-              <span class="section-badge">🎧 Section 1</span>
+              <span class="section-badge">Section 1</span>
               <h2>Listening Comprehension (No. 1 - 15)</h2>
               <p>Dengarkan dialog resmi TOEFL. Tekan tombol audio untuk mendengarkan nada pembuka, percakapan, dan narator soal.</p>
             </div>
@@ -1246,7 +1782,7 @@
         } else if (index === 15) {
           fullHtml += `
             <div class="section-banner banner-structure">
-              <span class="section-badge">✍️ Section 2</span>
+              <span class="section-badge">Section 2</span>
               <h2>Structure & Written Expression (No. 16 - 35)</h2>
               <p>Pilihlah salah satu kata atau frasa yang melengkapi kalimat tata bahasa ilmiah tingkat tinggi.</p>
             </div>
@@ -1254,7 +1790,7 @@
         } else if (index === 35) {
           fullHtml += `
             <div class="section-banner banner-reading">
-              <span class="section-badge">📖 Section 3</span>
+              <span class="section-badge">Section 3</span>
               <h2>Reading Comprehension (No. 36 - 50)</h2>
               <p>Bacalah teks riset ilmiah mutakhir berikut, kemudian jawab pertanyaan pemahaman terkait.</p>
             </div>
@@ -1281,7 +1817,7 @@
                 <button type="button" class="audio-btn" id="audio-btn-${index}" 
                         data-audio="${safeAudio}" data-question="${safeQuestion}" 
                         onclick="playOfficialToeflAudio(this, ${index})">
-                  <span>🔊 Putar Percakapan Resmi</span>
+                  <span>Putar Percakapan Resmi</span>
                   <div class="sound-waves">
                     <span class="sound-wave-bar"></span>
                     <span class="sound-wave-bar"></span>
@@ -1324,7 +1860,7 @@
 
         fullHtml += `
           <div class="explanation-box" id="explain-box-${index}">
-            <div class="explanation-header" id="explain-header-${index}">💡 Pembahasan & Analisis Soal</div>
+            <div class="explanation-header" id="explain-header-${index}">Pembahasan & Analisis Soal</div>
             <div class="explanation-content" id="explain-content-${index}">
               <p style="margin-bottom:6px;"><strong>Kunci Jawaban: (${letters[q.answer]}) ${q.options[q.answer]}</strong></p>
               <div>${q.explanation}</div>
@@ -1385,7 +1921,7 @@
       window.speechSynthesis.cancel();
       isCurrentlySpeaking = true;
       btn.classList.add('is-playing');
-      btn.querySelector('span').textContent = '⏹️ Hentikan Audio';
+      btn.querySelector('span').textContent = 'Hentikan Audio';
 
       if (statusLabel) statusLabel.textContent = "Sedang memutar nada pembuka chime...";
 
@@ -1465,7 +2001,7 @@
     function resetAllAudioButtons() {
       document.querySelectorAll('.audio-btn').forEach(b => {
         b.classList.remove('is-playing');
-        b.querySelector('span').textContent = '🔊 Putar Percakapan Resmi';
+        b.querySelector('span').textContent = 'Putar Percakapan Resmi';
       });
       document.querySelectorAll('.audio-status-label').forEach(lbl => {
         lbl.textContent = "Selesai diputar. Klik tombol untuk mengulang.";
@@ -1495,8 +2031,13 @@
 
       const chip = document.getElementById('progressChip');
       const bar = document.getElementById('progressBar');
-      if (chip) chip.textContent = `${answeredCount} / 50 Terjawab`;
+      if (chip) chip.textContent = `${answeredCount} / 50`;
       if (bar) bar.style.width = `${percentage}%`;
+
+      // Perbarui status online realtime jika terhubung firebase
+      if (isFirebaseReady && db) {
+        db.ref('online_users/' + currentUserId + '/status').set(`Mengerjakan Soal (${answeredCount}/50)`);
+      }
     }
 
     /* SUBMIT & AKTIFKAN PEMBAHASAN */
@@ -1542,17 +2083,17 @@
               else if (q.type === 'reading') readingCorrect++;
 
               explainBox.className = 'explanation-box is-correct-box';
-              if (explainHeader) explainHeader.innerHTML = '🟢 <strong>Jawaban Anda Benar!</strong>';
+              if (explainHeader) explainHeader.innerHTML = '<strong>Jawaban Anda Benar!</strong>';
             } else {
               const wrongLabel = document.getElementById(`label-q${idx}-opt${userChoice}`);
               if (wrongLabel) wrongLabel.classList.add('wrong-ans');
 
               explainBox.className = 'explanation-box is-wrong-box';
-              if (explainHeader) explainHeader.innerHTML = '🔴 <strong>Jawaban Anda Kurang Tepat</strong>';
+              if (explainHeader) explainHeader.innerHTML = '<strong>Jawaban Anda Kurang Tepat</strong>';
             }
           } else {
             explainBox.className = 'explanation-box is-wrong-box';
-            if (explainHeader) explainHeader.innerHTML = '⚪ <strong>Soal Ini Tidak Anda Jawab</strong>';
+            if (explainHeader) explainHeader.innerHTML = '<strong>Soal Ini Tidak Anda Jawab</strong>';
           }
         }
       });
@@ -1567,6 +2108,12 @@
       let finalScore = Math.round(((scaledL + scaledS + scaledR) * 10) / 3);
       if (finalScore > 677) finalScore = 677;
       if (finalScore < 310) finalScore = 310;
+
+      logVisitEntry(`Selesai Ujian (Skor: ${finalScore})`);
+
+      if (isFirebaseReady && db) {
+        db.ref('online_users/' + currentUserId + '/status').set(`Selesai Ujian (Skor: ${finalScore})`);
+      }
 
       showResultModal(correctCount, listeningCorrect, structureCorrect, readingCorrect, finalScore);
     });
@@ -1590,11 +2137,16 @@
     }
 
     function resetToNewQuestions() {
+      logVisitEntry("Mereset Ujian & Mengambil Soal Baru");
       localStorage.removeItem(STORAGE_KEY);
       location.reload();
     }
 
-    window.addEventListener('DOMContentLoaded', initTest);
+    window.addEventListener('DOMContentLoaded', () => {
+      initFirebase();
+      checkUserName();
+      initTest();
+    });
   </script>
 </body>
 </html>
