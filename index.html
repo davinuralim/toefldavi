@@ -626,7 +626,7 @@
     }
 
     .modal-card-log {
-      max-width: 680px;
+      max-width: 700px;
       text-align: left;
       max-height: 85vh;
       display: flex;
@@ -739,6 +739,18 @@
       color: #64748b;
     }
 
+    /* BADGE STATUS REALTIME DI KARTU ONLINE */
+    .user-progress-badge {
+      display: inline-block;
+      font-weight: 800;
+      font-size: 0.78rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e0e7ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+    }
+
     .user-status-pill {
       font-size: 0.72rem;
       font-weight: 800;
@@ -805,6 +817,11 @@
       background: #fef3c7;
       color: #92400e;
       border: 1px solid #fde68a;
+    }
+    .badge-exit {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
     }
 
     .name-input-group {
@@ -1142,6 +1159,7 @@
     localStorage.setItem('TOEFL_SESSION_UID', currentUserId);
 
     let currentUserName = localStorage.getItem('TOEFL_USER_NAME') || '';
+    let currentDisconnectLogRef = null;
 
     // Deteksi apakah ini kunjungan tab baru atau cuma refresh halaman
     const isPageRefresh = sessionStorage.getItem('TOEFL_TAB_ACTIVE') === 'true';
@@ -1201,6 +1219,7 @@
       updateUserNameUI();
       if (isFirebaseReady) {
         pushUserOnline();
+        setupDisconnectLog();
         logVisitEntry("Masuk Ujian Baru", false);
       }
     }
@@ -1213,6 +1232,7 @@
         updateUserNameUI();
         if (isFirebaseReady) {
           pushUserOnline();
+          setupDisconnectLog();
           logVisitEntry("Ganti Nama", true);
         }
       }
@@ -1225,20 +1245,42 @@
       if (resName) resName.textContent = currentUserName || "Peserta";
     }
 
-    /* PUSH STATUS ONLINE KE FIREBASE DENGAN HEARTBEAT */
+    /* PUSH STATUS ONLINE KE FIREBASE LENGKAP DENGAN JUMLAH SOAL */
     function pushUserOnline() {
       if (!isFirebaseReady || !db || !currentUserName) return;
+
+      const answeredCount = Object.keys(userAnswers || {}).length;
+      const statusText = isTestSubmitted ? "Selesai Ujian" : `Mengerjakan Soal (${answeredCount}/50)`;
 
       const userRef = db.ref('online_users/' + currentUserId);
       const payload = {
         name: currentUserName,
         device: getDeviceName(),
         lastActive: Date.now(),
-        status: isTestSubmitted ? "Selesai Ujian" : "Mengerjakan Soal"
+        status: statusText,
+        answeredCount: answeredCount
       };
 
       userRef.set(payload);
       userRef.onDisconnect().remove();
+    }
+
+    /* PASANG LOG OTOMATIS SAAT USER KELUAR DARI WEB (DISCONNECT) */
+    function setupDisconnectLog() {
+      if (!isFirebaseReady || !db || !currentUserName) return;
+
+      if (currentDisconnectLogRef) {
+        currentDisconnectLogRef.onDisconnect().cancel();
+      }
+
+      currentDisconnectLogRef = db.ref('visits').push();
+      currentDisconnectLogRef.onDisconnect().set({
+        name: currentUserName,
+        action: "Keluar dari Web",
+        isRefresh: true, // Tidak dihitung ke total kunjungan
+        device: getDeviceName(),
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      });
     }
 
     function startFirebasePresence() {
@@ -1246,8 +1288,8 @@
 
       if (currentUserName) {
         pushUserOnline();
+        setupDisconnectLog();
 
-        // Pembeda: Apakah refresh atau kunjungan tab baru
         if (isPageRefresh) {
           logVisitEntry("Refresh Halaman", true);
         } else {
@@ -1282,13 +1324,13 @@
         renderOnlineUsersList(activeList);
       });
 
-      // Baca Log Kunjungan (Hanya menghitung kunjungan baru ke total, tidak menghitung refresh)
+      // Baca Log Kunjungan (Hanya menghitung kunjungan baru ke total, tidak menghitung refresh atau keluar)
       db.ref('visits').limitToLast(40).on('value', (snap) => {
         const data = snap.val() || {};
         const list = Object.keys(data).map(k => data[k]).reverse();
 
-        // TOTAL KUNJUNGAN HANYA MENGHITUNG SESI ASLI (BUKAN REFRESH)
-        const genuineVisits = list.filter(item => item.isRefresh !== true && item.action !== "Refresh Halaman");
+        // Total kunjungan murni hanya dihitung dari yang masuk ujian baru
+        const genuineVisits = list.filter(item => item.isRefresh !== true && item.action !== "Refresh Halaman" && item.action !== "Keluar dari Web");
         
         document.getElementById('totalVisitorsCount').textContent = genuineVisits.length;
         document.getElementById('footerVisitorsCount').textContent = genuineVisits.length;
@@ -1297,11 +1339,10 @@
       });
     }
 
-    /* PENCATAT LOG KUNJUNGAN DENGAN FILTER REFRESH */
+    /* PENCATAT LOG KUNJUNGAN */
     function logVisitEntry(action = "Masuk Ujian Baru", isRefresh = false) {
       if (!isFirebaseReady || !db || !currentUserName) return;
 
-      // Proteksi anti-spam: Jangan kirim refresh berulang jika dilakukan dalam waktu < 6 detik
       const nowMs = Date.now();
       const lastRefreshTime = parseInt(sessionStorage.getItem('TOEFL_LAST_LOG_TIME') || '0', 10);
       if (isRefresh && (nowMs - lastRefreshTime < 6000)) {
@@ -1336,6 +1377,7 @@
       users.forEach(u => {
         const isSelf = (u.id === currentUserId);
         const initial = u.name ? u.name.charAt(0).toUpperCase() : 'P';
+        const displayStatus = u.status || 'Mengerjakan Soal (0/50)';
 
         html += `
           <div class="online-user-item ${isSelf ? 'is-self' : ''}">
@@ -1345,7 +1387,9 @@
                 <div class="user-info-name">
                   ${u.name} ${isSelf ? '<span style="font-size:0.7rem; background:#ffe4e6; color:#be123c; padding:1px 6px; border-radius:999px;">HP Ini</span>' : ''}
                 </div>
-                <div class="user-info-detail">${u.device} • <span style="color:#059669; font-weight:700;">${u.status || 'Aktif'}</span></div>
+                <div class="user-info-detail">
+                  ${u.device} • <span class="user-progress-badge">${displayStatus}</span>
+                </div>
               </div>
             </div>
             <div class="user-status-pill">
@@ -1371,19 +1415,31 @@
         let badgeClass = "badge-login";
         let actionIcon = "🟢";
 
-        if (item.action === "Refresh Halaman" || item.isRefresh) {
+        if (item.action === "Refresh Halaman") {
           badgeClass = "badge-refresh";
           actionIcon = "🔄";
+        } else if (item.action === "Keluar dari Web") {
+          badgeClass = "badge-exit";
+          actionIcon = "🔴";
         } else if (item.action && item.action.includes("Selesai")) {
           badgeClass = "badge-finish";
           actionIcon = "🏆";
+        }
+
+        // Format waktu dinamis jika dikirim oleh trigger server disconnect
+        let timeDisplay = item.timeFormatted;
+        if (!timeDisplay && item.timestamp) {
+          const d = new Date(item.timestamp);
+          const timeStr = d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB';
+          const dateStr = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+          timeDisplay = `${dateStr}, ${timeStr}`;
         }
 
         html += `
           <tr>
             <td><strong>${item.name}</strong></td>
             <td><span class="action-badge ${badgeClass}">${actionIcon} ${item.action || 'Masuk Baru'}</span></td>
-            <td><span class="log-time-badge">${item.timeFormatted}</span></td>
+            <td><span class="log-time-badge">${timeDisplay || 'Baru saja'}</span></td>
             <td style="color:#64748b;">${item.device}</td>
           </tr>
         `;
@@ -1400,6 +1456,13 @@
       const modal = document.getElementById('logModal');
       if (modal) modal.style.display = 'none';
     }
+
+    // Bersihkan sesi saat user menutup tab
+    window.addEventListener('pagehide', () => {
+      if (isFirebaseReady && db && currentUserId) {
+        db.ref('online_users/' + currentUserId).remove();
+      }
+    });
 
     /* =========================================================
        1. LIVE STOPWATCH TIMER UJIAN
@@ -1635,7 +1698,7 @@
         q: "What serves as the primary energetic foundation for organisms residing around abyssal vents?",
         ans: "Chemolithoautotrophy using inorganic sulfur and methane compounds as electron donors",
         distractors: ["Solar photosynthesis filtering through shallow surface waters", "Decomposing plant matter drifting from coastal forests", "Thermal radiation stored inside volcanic glass"],
-        explain: "<strong>Kutipan Bukti Bacaan:</strong> Kalimat kedua menegaskan: <em>'...flourish without solar photons through chemolithoautotrophy, wherein symbiotic archaebacteria synthesize organic biomass using reduced sulfur dan methane compounds...'</em>."
+        explain: "<strong>Kutipan Bukti Bacaan:</strong> Kalimat kedua menegaskan: <em>'...flourish without solar photons through chemolithoautotrophy, wherein symbiotic archaebacteria synthesize organic biomass using reduced sulfur and methane compounds...'</em>."
       }
     ];
 
@@ -2054,6 +2117,7 @@
       isCurrentlySpeaking = false;
     }
 
+    /* PEMBARUAN PROGRES REALTIME KE FIREBASE SETIAP KALI SOAL DIKLIK */
     function chooseOption(qIndex, optIndex) {
       if (isTestSubmitted) return;
 
@@ -2068,6 +2132,16 @@
       userAnswers[qIndex] = Number(optIndex);
       saveCurrentState();
       updateProgress();
+
+      // Kirim pembaruan jumlah soal yang sudah dijawab secara live ke Firebase
+      if (isFirebaseReady && db && currentUserId) {
+        const answeredCount = Object.keys(userAnswers).length;
+        db.ref('online_users/' + currentUserId).update({
+          status: `Mengerjakan Soal (${answeredCount}/50)`,
+          answeredCount: answeredCount,
+          lastActive: Date.now()
+        });
+      }
     }
 
     function updateProgress() {
@@ -2078,10 +2152,6 @@
       const bar = document.getElementById('progressBar');
       if (chip) chip.textContent = `${answeredCount} / 50`;
       if (bar) bar.style.width = `${percentage}%`;
-
-      if (isFirebaseReady && db) {
-        db.ref('online_users/' + currentUserId + '/status').set(`Mengerjakan Soal (${answeredCount}/50)`);
-      }
     }
 
     /* SUBMIT & AKTIFKAN PEMBAHASAN */
@@ -2156,7 +2226,10 @@
       logVisitEntry(`Selesai Ujian (Skor: ${finalScore})`, true);
 
       if (isFirebaseReady && db) {
-        db.ref('online_users/' + currentUserId + '/status').set(`Selesai Ujian (Skor: ${finalScore})`);
+        db.ref('online_users/' + currentUserId).update({
+          status: `Selesai Ujian (Skor: ${finalScore})`,
+          lastActive: Date.now()
+        });
       }
 
       showResultModal(correctCount, listeningCorrect, structureCorrect, readingCorrect, finalScore);
