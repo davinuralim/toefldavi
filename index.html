@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- FIREBASE SDK (COMPAT VERSION FOR EASY INTEGRATION) -->
+  <!-- FIREBASE SDK COMPAT -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -62,7 +62,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* HEADER */
     header {
       position: sticky;
       top: 0;
@@ -189,14 +188,13 @@
       padding: 0 16px;
     }
 
-    /* KARTU DEDIKASI SPESIAL RAHMA VINDA */
     .dedication-card {
       background: #ffffff;
       border: 2px solid #fecdd3;
       border-left: 6px solid #e11d48;
       border-radius: var(--radius-lg);
       padding: 18px 20px;
-      margin-bottom: 22px;
+      margin-bottom: 16px;
       box-shadow: var(--shadow-card);
     }
 
@@ -236,27 +234,40 @@
     }
 
     .user-greeting-banner {
-      background: #eef2ff;
+      background: #ffffff;
       border: 1.5px solid #c7d2fe;
       border-radius: var(--radius-md);
-      padding: 8px 14px;
-      margin-bottom: 18px;
+      padding: 10px 16px;
+      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.85rem;
-      color: #312e81;
+      font-size: 0.88rem;
+      color: #1e1b4b;
+      box-shadow: var(--shadow-card);
     }
 
     .user-greeting-btn {
-      background: #ffffff;
+      background: #eef2ff;
       border: 1px solid #c7d2fe;
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 999px;
       font-weight: 700;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: #4338ca;
       cursor: pointer;
+    }
+
+    .status-alert-box {
+      display: none;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: #fef2f2;
+      border: 1.5px solid #fecaca;
+      color: #b91c1c;
     }
 
     .toast-box {
@@ -272,7 +283,6 @@
       color: #065f46;
     }
 
-    /* SECTION BANNERS */
     .section-banner {
       color: #ffffff;
       padding: 20px 22px;
@@ -554,10 +564,6 @@
       font-size: 0.88rem;
     }
 
-    .explanation-content strong {
-      color: #0f172a;
-    }
-
     .submit-container {
       margin-top: 40px;
       text-align: center;
@@ -595,14 +601,8 @@
       font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
 
-    .footer-log-btn:hover {
-      background: #e2e8f0;
-    }
-
-    /* MODAL OVERLAY */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -625,7 +625,6 @@
       box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
     }
 
-    /* MODAL LOG MONITORING FIREBASE */
     .modal-card-log {
       max-width: 650px;
       text-align: left;
@@ -665,11 +664,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .log-close-btn:hover {
-      background: #e2e8f0;
-      color: #0f172a;
     }
 
     .log-modal-body {
@@ -789,7 +783,6 @@
       border-radius: 4px;
     }
 
-    /* MODAL INPUT NAMA PENGUNJUNG */
     .name-input-group {
       margin: 18px 0;
       text-align: left;
@@ -943,8 +936,7 @@
         <span class="brand-author">Dibuat oleh Davi Nur Alim • Edisi Khusus Rahma Vinda</span>
       </div>
       <div class="header-stats">
-        <!-- CHIP REALTIME FIREBASE -->
-        <div class="stat-chip live-chip" onclick="openLogModal()" title="Klik untuk melihat siapa saja yang sedang online">
+        <div class="stat-chip live-chip" onclick="openLogModal()" title="Klik untuk melihat siapa saja yang online">
           <span class="pulse-dot"></span> <span id="onlineUsersCount">1</span> Online
         </div>
         <div class="stat-chip" onclick="openLogModal()" title="Klik untuk melihat catatan log kunjungan & jam buka">
@@ -963,6 +955,10 @@
   </header>
 
   <main class="container">
+    <div id="firebaseNoticeBox" class="status-alert-box">
+      ⚠️ <strong>Status Firebase:</strong> <span id="firebaseStatusText">Mengecek koneksi database...</span>
+    </div>
+
     <!-- KOTAK DEDIKASI SPESIAL UNTUK RAHMA VINDA -->
     <div class="dedication-card">
       <div class="dedication-text">
@@ -974,10 +970,10 @@
       </div>
     </div>
 
-    <!-- BANNER NAMA PENGUNJUNG AKTIF -->
+    <!-- BANNER NAMA PENGUNJUNG HP INI -->
     <div class="user-greeting-banner">
-      <span>👤 Sesi Anda: <strong id="currentUserNameLabel">Rahma Vinda</strong></span>
-      <button type="button" class="user-greeting-btn" onclick="promptChangeName()">Ganti Nama</button>
+      <span>👤 Sesi Anda: <strong id="currentUserNameLabel">...</strong></span>
+      <button type="button" class="user-greeting-btn" onclick="promptChangeName()">Ganti Nama HP Ini</button>
     </div>
 
     <div id="restoreToast" class="toast-box">
@@ -1054,16 +1050,14 @@
       </div>
 
       <div class="log-modal-body">
-        <!-- BAGIAN 1: DAFTAR ORANG YANG SEDANG ONLINE -->
         <div class="log-section-title">
           <span>🟢 Sedang Membuka Web Saat Ini</span>
           <span style="color:#059669; font-size: 0.76rem;" id="firebaseSyncStatus">● Realtime Sync</span>
         </div>
         <div id="onlineUsersList">
-          <p style="font-size:0.85rem; color:#64748b;">Memuat data pengunjung online...</p>
+          <p style="font-size:0.85rem; color:#64748b;">Menghubungkan ke database Firebase...</p>
         </div>
 
-        <!-- BAGIAN 2: LOG CATATAN JAM KUNJUNGAN -->
         <div class="log-section-title" style="margin-top: 22px;">
           <span>⏱️ Catatan Jam Kunjungan Terbaru</span>
         </div>
@@ -1076,7 +1070,7 @@
             </tr>
           </thead>
           <tbody id="visitLogTableBody">
-            <tr><td colspan="3" style="text-align:center; color:#64748b;">Memuat log kunjungan...</td></tr>
+            <tr><td colspan="3" style="text-align:center; color:#64748b;">Belum ada data riwayat kunjungan.</td></tr>
           </tbody>
         </table>
       </div>
@@ -1087,193 +1081,209 @@
     </div>
   </div>
 
-  <!-- POPUP 3: PROMPT INPUT NAMA PENGUNJUNG PERTAMA KALI -->
+  <!-- POPUP 3: PROMPT INPUT NAMA PENGUNJUNG -->
   <div class="modal-overlay" id="nameModal">
     <div class="modal-card" style="max-width: 400px;">
       <div style="font-size: 2.2rem; margin-bottom: 6px;">👋</div>
-      <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a;">Selamat Datang di Ujian TOEFL</h3>
-      <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Masukkan nama Anda untuk mencatat kehadiran di daftar log dan ujian.</p>
+      <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a;">Nama Anda di HP Ini</h3>
+      <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Masukkan nama Anda agar terbaca saat membuka web bersama HP lainnya:</p>
       
       <div class="name-input-group">
-        <label for="nameInput">Nama Lengkap Anda:</label>
-        <input type="text" id="nameInput" class="name-input-field" placeholder="Contoh: Rahma Vinda" maxlength="30" autofocus>
+        <label for="nameInput">Nama Lengkap / Panggilan:</label>
+        <input type="text" id="nameInput" class="name-input-field" placeholder="Misal: Rahma Vinda / Davi" maxlength="30" autofocus>
       </div>
 
-      <button type="button" class="btn-submit" style="width: 100%; padding: 14px; font-size: 1rem;" onclick="saveUserName()">Mulai & Catat Kehadiran</button>
+      <button type="button" class="btn-submit" style="width: 100%; padding: 14px; font-size: 1rem;" onclick="saveUserName()">Simpan & Masuk Ujian</button>
     </div>
   </div>
 
   <script>
     /* =========================================================
-       0. FIREBASE REALTIME DATABASE CONFIGURATION
-       -> GANTI VALUE DI BAWAH INI DENGAN CONFIG FIREBASE ANDA
+       0. FIREBASE REALTIME DATABASE CONFIGURATION (SUDAH TERISI)
     ========================================================== */
     const firebaseConfig = {
-      apiKey: "GANTI_DENGAN_API_KEY_ANDA",
-      authDomain: "GANTI_DENGAN_AUTH_DOMAIN_ANDA",
-      databaseURL: "GANTI_DENGAN_DATABASE_URL_ANDA",
-      projectId: "GANTI_DENGAN_PROJECT_ID_ANDA",
-      storageBucket: "GANTI_DENGAN_STORAGE_BUCKET_ANDA",
-      messagingSenderId: "GANTI_DENGAN_SENDER_ID_ANDA",
-      appId: "GANTI_DENGAN_APP_ID_ANDA"
+      apiKey: "AIzaSyANxL5wAh_8l8h8muSbyu0L-xGc9KX47hI",
+      authDomain: "toefl-davi.firebaseapp.com",
+      databaseURL: "https://toefl-davi-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "toefl-davi",
+      storageBucket: "toefl-davi.firebasestorage.app",
+      messagingSenderId: "924101919017",
+      appId: "1:924101919017:web:7b9fca5ba0c9300c13f738"
     };
 
     let db = null;
     let isFirebaseReady = false;
-    let currentUserId = localStorage.getItem('TOEFL_SESSION_UID') || ('user_' + Math.random().toString(36).substring(2, 9));
+    let currentUserId = localStorage.getItem('TOEFL_SESSION_UID') || ('hp_' + Math.random().toString(36).substring(2, 9));
     localStorage.setItem('TOEFL_SESSION_UID', currentUserId);
 
     let currentUserName = localStorage.getItem('TOEFL_USER_NAME') || '';
 
+    function showNotice(msg) {
+      const box = document.getElementById('firebaseNoticeBox');
+      const text = document.getElementById('firebaseStatusText');
+      if (box && text) {
+        box.style.display = 'block';
+        text.innerHTML = msg;
+      }
+    }
+
     function initFirebase() {
-      if (firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("GANTI_DENGAN")) {
-        try {
-          if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-          }
-          db = firebase.database();
-          isFirebaseReady = true;
-          document.getElementById('firebaseSyncStatus').textContent = "● Terhubung ke Firebase";
-        } catch (err) {
-          console.warn("Firebase gagal inisialisasi, beralih ke local tracker:", err);
-          isFirebaseReady = false;
+      try {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
         }
-      } else {
-        document.getElementById('firebaseSyncStatus').textContent = "● Mode Demo (Masukkan config Firebase)";
+        db = firebase.database();
+        isFirebaseReady = true;
+
+        document.getElementById('firebaseNoticeBox').style.display = 'none';
+        document.getElementById('firebaseSyncStatus').textContent = "● Terhubung Realtime";
+
+        startFirebasePresence();
+      } catch (err) {
+        showNotice("Gagal menghubungkan ke Firebase: " + err.message);
+        document.getElementById('firebaseSyncStatus').textContent = "● Gagal Terhubung";
       }
     }
 
     function getDeviceName() {
       const ua = navigator.userAgent;
-      if (/Android/i.test(ua)) return "Android (Mobile)";
-      if (/iPhone|iPad|iPod/i.test(ua)) return "iOS (Mobile)";
+      if (/Android/i.test(ua)) return "HP Android";
+      if (/iPhone|iPad/i.test(ua)) return "Apple iPhone/iPad";
       if (/Windows/i.test(ua)) return "Windows PC";
       if (/Macintosh/i.test(ua)) return "MacBook";
-      return "Web Browser";
+      return "Browser HP";
     }
 
-    /* KONTROL LOG NAMA & KEHADIRAN */
     function checkUserName() {
       if (!currentUserName) {
         document.getElementById('nameModal').style.display = 'flex';
       } else {
         updateUserNameUI();
-        registerOnlinePresence();
-        logVisitEntry();
+        if (isFirebaseReady) {
+          pushUserOnline();
+          logVisitEntry();
+        }
       }
     }
 
     function saveUserName() {
       const input = document.getElementById('nameInput');
-      const val = (input && input.value.trim()) ? input.value.trim() : "Rahma Vinda";
+      const val = (input && input.value.trim()) ? input.value.trim() : ("Peserta " + currentUserId.substring(3, 6));
       currentUserName = val;
       localStorage.setItem('TOEFL_USER_NAME', currentUserName);
       document.getElementById('nameModal').style.display = 'none';
 
       updateUserNameUI();
-      registerOnlinePresence();
-      logVisitEntry();
+      if (isFirebaseReady) {
+        pushUserOnline();
+        logVisitEntry();
+      }
     }
 
     function promptChangeName() {
-      const newName = prompt("Masukkan nama baru Anda:", currentUserName);
+      const newName = prompt("Ganti nama peserta untuk HP ini:", currentUserName);
       if (newName && newName.trim()) {
         currentUserName = newName.trim();
         localStorage.setItem('TOEFL_USER_NAME', currentUserName);
         updateUserNameUI();
-        registerOnlinePresence();
-        logVisitEntry("Ganti Identitas Sesi");
+        if (isFirebaseReady) {
+          pushUserOnline();
+          logVisitEntry("Ganti Nama");
+        }
       }
     }
 
     function updateUserNameUI() {
       const label = document.getElementById('currentUserNameLabel');
-      if (label) label.textContent = currentUserName;
+      if (label) label.textContent = currentUserName || "Belum Mengisi Nama";
       const resName = document.getElementById('resModalUserName');
-      if (resName) resName.textContent = currentUserName;
+      if (resName) resName.textContent = currentUserName || "Peserta";
     }
 
-    /* SISTEM REALTIME ONLINE FIREBASE */
-    function registerOnlinePresence() {
-      if (!isFirebaseReady || !db) {
-        renderLocalMockPresence();
-        return;
-      }
+    /* PUSH STATUS ONLINE KE FIREBASE DENGAN HEARTBEAT */
+    function pushUserOnline() {
+      if (!isFirebaseReady || !db || !currentUserName) return;
 
-      const userOnlineRef = db.ref('online_users/' + currentUserId);
-      const connectedRef = db.ref('.info/connected');
+      const userRef = db.ref('online_users/' + currentUserId);
+      const payload = {
+        name: currentUserName,
+        device: getDeviceName(),
+        lastActive: Date.now(),
+        status: isTestSubmitted ? "Selesai Ujian" : "Mengerjakan Soal"
+      };
 
-      connectedRef.on('value', (snap) => {
-        if (snap.val() === true) {
-          userOnlineRef.onDisconnect().remove();
-
-          userOnlineRef.set({
-            name: currentUserName,
-            device: getDeviceName(),
-            joinedAt: Date.now(),
-            status: "Sedang Mengerjakan Soal"
-          });
+      userRef.set(payload).catch(err => {
+        if (err.message.includes("permission_denied")) {
+          showNotice("PERMISSION DENIED! Pastikan tab Rules di Firebase sudah diset <code>.read: true, .write: true</code>!");
         }
       });
 
-      // Dengarkan daftar pengguna yang online secara real-time
+      userRef.onDisconnect().remove();
+    }
+
+    function startFirebasePresence() {
+      if (!isFirebaseReady || !db) return;
+
+      if (currentUserName) {
+        pushUserOnline();
+        logVisitEntry();
+      }
+
+      // Heartbeat berkala tiap 8 detik
+      setInterval(() => {
+        if (currentUserName && isFirebaseReady && db) {
+          db.ref('online_users/' + currentUserId + '/lastActive').set(Date.now());
+        }
+      }, 8000);
+
+      // Baca semua pengguna online yang aktif
       db.ref('online_users').on('value', (snap) => {
         const data = snap.val() || {};
-        const usersArray = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        const now = Date.now();
+        const activeList = [];
 
-        updateOnlineCount(usersArray.length);
-        renderOnlineUsersList(usersArray);
+        Object.keys(data).forEach(key => {
+          const u = data[key];
+          if (u && u.lastActive && (now - u.lastActive < 25000)) {
+            activeList.push({ id: key, ...u });
+          }
+        });
+
+        const count = Math.max(1, activeList.length);
+        document.getElementById('onlineUsersCount').textContent = count;
+        document.getElementById('footerOnlineCount').textContent = count;
+
+        renderOnlineUsersList(activeList);
+      }, (error) => {
+        showNotice("Gagal membaca pengguna online: " + error.message);
+      });
+
+      // Baca Log Kunjungan
+      db.ref('visits').limitToLast(25).on('value', (snap) => {
+        const data = snap.val() || {};
+        const list = Object.keys(data).map(k => data[k]).reverse();
+
+        document.getElementById('totalVisitorsCount').textContent = list.length;
+        document.getElementById('footerVisitorsCount').textContent = list.length;
+
+        renderVisitLogs(list);
       });
     }
 
-    function logVisitEntry(action = "Membuka Web Ujian") {
+    function logVisitEntry(action = "Membuka Simulasi") {
+      if (!isFirebaseReady || !db || !currentUserName) return;
+
       const now = new Date();
       const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB';
       const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
 
-      if (isFirebaseReady && db) {
-        // Catat ke node visits di Firebase
-        db.ref('visits').push({
-          name: currentUserName,
-          action: action,
-          device: getDeviceName(),
-          timestamp: Date.now(),
-          timeFormatted: `${dateStr}, ${timeStr}`
-        });
-
-        // Dengarkan riwayat kunjungan
-        db.ref('visits').limitToLast(20).on('value', (snap) => {
-          const data = snap.val() || {};
-          const list = Object.keys(data).map(k => data[k]).reverse();
-          updateTotalVisitsCount(list.length);
-          renderVisitLogs(list);
-        });
-      } else {
-        // Fallback Local Storage
-        let logs = JSON.parse(localStorage.getItem('TOEFL_LOCAL_VISITS') || '[]');
-        logs.unshift({
-          name: currentUserName || "Rahma Vinda",
-          action: action,
-          device: getDeviceName(),
-          timeFormatted: `${dateStr}, ${timeStr}`
-        });
-        if (logs.length > 20) logs = logs.slice(0, 20);
-        localStorage.setItem('TOEFL_LOCAL_VISITS', JSON.stringify(logs));
-
-        updateTotalVisitsCount(logs.length);
-        renderVisitLogs(logs);
-      }
-    }
-
-    function updateOnlineCount(count) {
-      const total = Math.max(1, count);
-      document.getElementById('onlineUsersCount').textContent = total;
-      document.getElementById('footerOnlineCount').textContent = total;
-    }
-
-    function updateTotalVisitsCount(count) {
-      document.getElementById('totalVisitorsCount').textContent = count;
-      document.getElementById('footerVisitorsCount').textContent = count;
+      db.ref('visits').push({
+        name: currentUserName,
+        action: action,
+        device: getDeviceName(),
+        timestamp: Date.now(),
+        timeFormatted: `${dateStr}, ${timeStr}`
+      });
     }
 
     function renderOnlineUsersList(users) {
@@ -1281,28 +1291,28 @@
       if (!container) return;
 
       if (!users.length) {
-        container.innerHTML = `<p style="font-size:0.85rem; color:#64748b;">Hanya Anda yang sedang online.</p>`;
+        container.innerHTML = `<p style="font-size:0.85rem; color:#64748b;">Belum ada pengguna lain yang terdeteksi online.</p>`;
         return;
       }
 
       let html = '';
       users.forEach(u => {
-        const isSelf = (u.id === currentUserId || u.name === currentUserName);
-        const initials = u.name ? u.name.split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase() : 'U';
+        const isSelf = (u.id === currentUserId);
+        const initial = u.name ? u.name.charAt(0).toUpperCase() : 'P';
 
         html += `
           <div class="online-user-item ${isSelf ? 'is-self' : ''}">
             <div class="user-left">
-              <div class="user-avatar-tag ${isSelf ? 'self-tag' : ''}">${initials}</div>
+              <div class="user-avatar-tag ${isSelf ? 'self-tag' : ''}">${initial}</div>
               <div>
                 <div class="user-info-name">
-                  ${u.name} ${isSelf ? '<span style="font-size:0.7rem; background:#ffe4e6; color:#be123c; padding:1px 6px; border-radius:999px;">Anda</span>' : ''}
+                  ${u.name} ${isSelf ? '<span style="font-size:0.7rem; background:#ffe4e6; color:#be123c; padding:1px 6px; border-radius:999px;">HP Ini</span>' : ''}
                 </div>
                 <div class="user-info-detail">${u.device} • <span style="color:#059669; font-weight:700;">${u.status || 'Aktif'}</span></div>
               </div>
             </div>
             <div class="user-status-pill">
-              <span class="pulse-dot" style="width:6px; height:6px;"></span> Online Sekarang
+              <span class="pulse-dot" style="width:6px; height:6px;"></span> Online
             </div>
           </div>
         `;
@@ -1315,7 +1325,7 @@
       if (!tbody) return;
 
       if (!logs.length) {
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#64748b;">Belum ada log kunjungan.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#64748b;">Belum ada catatan log kunjungan.</td></tr>`;
         return;
       }
 
@@ -1330,20 +1340,6 @@
         `;
       });
       tbody.innerHTML = html;
-    }
-
-    /* FALLBACK TAMPILAN BILA FIREBASE CONFIG BELUM DIISI */
-    function renderLocalMockPresence() {
-      const mockUsers = [
-        { id: currentUserId, name: currentUserName || "Rahma Vinda", device: getDeviceName(), status: "Sedang Mengerjakan Soal" },
-        { id: "mock_davi", name: "Davi Nur Alim", device: "Windows PC", status: "Admin / Author" }
-      ];
-      updateOnlineCount(mockUsers.length);
-      renderOnlineUsersList(mockUsers);
-
-      const logs = JSON.parse(localStorage.getItem('TOEFL_LOCAL_VISITS') || '[]');
-      updateTotalVisitsCount(logs.length || 1);
-      renderVisitLogs(logs);
     }
 
     function openLogModal() {
@@ -2034,7 +2030,6 @@
       if (chip) chip.textContent = `${answeredCount} / 50`;
       if (bar) bar.style.width = `${percentage}%`;
 
-      // Perbarui status online realtime jika terhubung firebase
       if (isFirebaseReady && db) {
         db.ref('online_users/' + currentUserId + '/status').set(`Mengerjakan Soal (${answeredCount}/50)`);
       }
